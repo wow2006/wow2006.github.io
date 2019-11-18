@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article# " lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="An other Computer Graphics and Vision blog.">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Salt and Pepper</title>
+<link href="assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<link href="https://fonts.googleapis.com/css?family=Playfair+Display:700,900" rel="stylesheet">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="rss.xml">
+<link rel="canonical" href="https://wow2006.github.io/">
+<!--[if lt IE 9]><script src="assets/js/html5.js"></script><![endif]--><link rel="prefetch" href="posts/how-to-use-boost-program-options/how-to-use-boost-program-options/" type="text/html">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
+
+<!-- Header and menu bar -->
+<div class="container">
+      <header class="blog-header py-3"><div class="row nbb-header align-items-center">
+          <div class="col-md-3 col-xs-2 col-sm-2" style="width: auto;">
+            <button class="navbar-toggler navbar-light bg-light nbb-navbar-toggler" type="button" data-toggle="collapse" data-target=".bs-nav-collapsible" aria-controls="bs-navbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse bs-nav-collapsible bootblog4-search-form-holder">
+                
+            </div>
+        </div>
+          <div class="col-md-6 col-xs-10 col-sm-10 bootblog4-brand" style="width: auto;">
+            <a class="navbar-brand blog-header-logo text-dark" href="https://wow2006.github.io/">
+
+            <span id="blog-title">Salt and Pepper</span>
+        </a>
+          </div>
+            <div class="col-md-3 justify-content-end align-items-center bs-nav-collapsible collapse flex-collapse bootblog4-right-nav">
+            <nav class="navbar navbar-light bg-white"><ul class="navbar-nav bootblog4-right-nav"></ul></nav>
+</div>
+    </div>
+</header><nav class="navbar navbar-expand-md navbar-light bg-white static-top"><div class="collapse navbar-collapse bs-nav-collapsible" id="bs-navbar">
+            <ul class="navbar-nav nav-fill d-flex w-100">
+<li class="nav-item">
+<a href="pages/projects/" class="nav-link">Projects</a>
+                </li>
+<li class="nav-item">
+<a href="pages/resume/" class="nav-link">Resume</a>
+                </li>
+<li class="nav-item">
+<a href="archive.html" class="nav-link">Archive</a>
+                </li>
+<li class="nav-item">
+<a href="categories/" class="nav-link">Tags</a>
+
+                
+            </li>
+</ul>
+</div>
+<!-- /.navbar-collapse -->
+</nav>
+</div>
+
+<div class="container" id="content" role="main">
+    <div class="body-content">
+        <!--Body content-->
+        
+        
+        
+    
+        
+
+    
+        
+    <div class="postindex">
+            <article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/how-to-use-boost-program-options/how-to-use-boost-program-options/" class="u-url">How to use Boost program options</a></h1>
+                <div class="metadata">
+                    <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                        Ahmed Abdel Aal
+                    </span></p>
+            <p class="dateline">
+            <a href="posts/how-to-use-boost-program-options/how-to-use-boost-program-options/" rel="bookmark">
+            <time class="published dt-published" datetime="2019-08-15T18:16:40+02:00" itemprop="datePublished" title="2019-08-15 18:16">2019-08-15 18:16</time></a>
+            </p>
+                </div>
+            </header><div class="e-content entry-content">
+                    <div>
+<h6>Content:</h6>
+<ul>
+<li><a href="posts/how-to-use-boost-program-options/how-to-use-boost-program-options/#introduction">Introduction</a></li>
+<li><a href="posts/how-to-use-boost-program-options/how-to-use-boost-program-options/#naive">Naive Example</a></li>
+<li><a href="posts/how-to-use-boost-program-options/how-to-use-boost-program-options/#boost">Intruction to Boost <code>program-options</code></a></li>
+<li><a href="posts/how-to-use-boost-program-options/how-to-use-boost-program-options/#boost-example">Boost Example</a></li>
+<li><a href="posts/how-to-use-boost-program-options/how-to-use-boost-program-options/#adv-boost-example">Advanced Boost Example</a></li>
+</ul>
+<h6>Introduction: <a name="introduction"></a>
+</h6>
+<p>I want to pass arguments to a program. so, I will check <code>argc</code> and <code>argv</code> for input.</p>
+<h6>side-note:</h6>
+<ul>
+<li>
+<code>argc</code> is a count of arguments passed to our program. It is always greater than 1.</li>
+<li>
+<code>argv</code> is an array of <code>char*</code> of arguments. First <code>argv[0]</code> is the full path for our program.</li>
+</ul>
+<h6>Naive Example: <a name="naive"></a>
+</h6>
+<p>I will show simple example without <code>Boost</code>.</p>
+<pre class="code literal-block"><span></span><span class="c1">// STL</span>
+<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span> <span class="n">argv</span><span class="p">[])</span> <span class="p">{</span>
+  <span class="k">if</span><span class="p">(</span><span class="n">argc</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">"Usage:</span><span class="se">\n\t</span><span class="s">"</span> <span class="o">&lt;&lt;</span> <span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">" input_file output_file</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">EXIT_FAILURE</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">inputFileName</span>  <span class="o">=</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+  <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">outputFileName</span> <span class="o">=</span> <span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+
+  <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">inputFileName</span> <span class="o">&lt;&lt;</span> <span class="s">", "</span> <span class="o">&lt;&lt;</span> <span class="n">outputFileName</span> <span class="o">&lt;&lt;</span> <span class="sc">'\n'</span><span class="p">;</span>
+
+  <span class="k">return</span> <span class="n">EXIT_SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+
+
+<p>Still, It will take some effort to make it match with Unix <a href="http://tldp.org/LDP/abs/html/standard-options.html">standard</a>.</p>
+<h6>Intruction to Boost <code>program-options</code>: <a name="boost"></a>
+</h6>
+<p>Program options are a library for check and parse program options.
+For a simple application, It will look like overkilling. Still, It will
+provide us with a lot of free features.</p>
+<ul>
+<li>We can use dash and double dash argument.</li>
+<li>We can specify which argument is required.</li>
+<li>We can specify a variable type.</li>
+<li>We can group arguments.</li>
+</ul>
+<p><code>That all I use</code></p>
+<h6>Installation:</h6>
+<ul>
+<li>Ubuntu:
+<code>sudo apt install libboost-program-options-dev -y</code>
+or for full boost
+<code>sudo apt install libboost-all-dev -y</code>
+</li>
+<li>Arch Linux:
+<code>sudo pacman -S boost</code>
+</li>
+<li>Windows <code>vcpkg</code>:
+<code>vcpkg install boost:x86-windows</code>
+</li>
+</ul>
+<h6>Boost Example: <a name="boost-example"></a>
+</h6>
+<pre class="code literal-block"><span></span><span class="nb">cmake_minimum_required</span><span class="p">(</span><span class="s">VERSION</span> <span class="s">3.9</span><span class="p">)</span>
+<span class="nb">project</span><span class="p">(</span><span class="s">naive-boost-example</span> <span class="s">CXX</span><span class="p">)</span>
+
+<span class="nb">find_package</span><span class="p">(</span><span class="s">Boost</span> <span class="s">COMPONENTS</span> <span class="s">program_options</span> <span class="s">REQUIRED</span><span class="p">)</span>
+
+<span class="nb">add_executable</span><span class="p">(</span>
+  <span class="s">naive-boost-example</span>
+  <span class="s">naive-boost-example.cpp</span>
+<span class="p">)</span>
+
+<span class="nb">target_link_libraries</span><span class="p">(</span>
+  <span class="s">naive-boost-example</span>
+  <span class="s">PUBLIC</span>
+  <span class="s">Boost::program_options</span>
+<span class="p">)</span>
+</pre>
+
+
+<pre class="code literal-block"><span></span><span class="c1">// STL</span>
+<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="c1">// Boost</span>
+<span class="cp">#include</span> <span class="cpf">&lt;boost/program_options.hpp&gt;</span><span class="cp"></span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span> <span class="n">argv</span><span class="p">[])</span> <span class="p">{</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">input</span><span class="p">,</span> <span class="n">output</span><span class="p">;</span>
+  <span class="k">using</span> <span class="k">namespace</span> <span class="n">boost</span><span class="o">::</span><span class="n">program_options</span><span class="p">;</span>
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="n">options_description</span> <span class="n">desc</span><span class="p">{</span><span class="s">"Options"</span><span class="p">};</span>
+    <span class="n">desc</span><span class="p">.</span><span class="n">add_options</span><span class="p">()(</span><span class="s">"help,h"</span><span class="p">,</span> <span class="s">"Help screen"</span><span class="p">)</span>
+    <span class="p">(</span><span class="s">"input,i"</span><span class="p">,</span> <span class="n">value</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="n">input</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">required</span><span class="p">(),</span> <span class="s">"Input file"</span><span class="p">)</span>
+    <span class="p">(</span><span class="s">"output,o"</span><span class="p">,</span> <span class="n">value</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="n">output</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">required</span><span class="p">(),</span> <span class="s">"Input output"</span><span class="p">);</span>
+
+    <span class="n">variables_map</span> <span class="n">vm</span><span class="p">;</span>
+    <span class="n">store</span><span class="p">(</span><span class="n">parse_command_line</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">,</span> <span class="n">desc</span><span class="p">),</span> <span class="n">vm</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">vm</span><span class="p">.</span><span class="n">count</span><span class="p">(</span><span class="s">"help"</span><span class="p">))</span> <span class="p">{</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">desc</span> <span class="o">&lt;&lt;</span> <span class="sc">'\n'</span><span class="p">;</span>
+      <span class="k">return</span> <span class="n">EXIT_SUCCESS</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="n">notify</span><span class="p">(</span><span class="n">vm</span><span class="p">);</span>
+  <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="k">const</span> <span class="n">error</span> <span class="o">&amp;</span><span class="n">ex</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="n">ex</span><span class="p">.</span><span class="n">what</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="sc">'\n'</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">EXIT_FAILURE</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">input</span> <span class="o">&lt;&lt;</span> <span class="s">", "</span> <span class="o">&lt;&lt;</span> <span class="n">output</span> <span class="o">&lt;&lt;</span> <span class="sc">'\n'</span><span class="p">;</span>
+  <span class="k">return</span> <span class="n">EXIT_SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+
+
+<h6>Advanced Boost Example: <a name="adv-boost-example"></a>
+</h6>
+<p>Now we need to use grouping. I want to make two options group.
+First for images and the second for general options.
+We can also add description for each one. We can add <code>help-module</code> and check input.</p>
+<pre class="code literal-block"><span></span><span class="c1">// STL</span>
+<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="c1">// Boost</span>
+<span class="cp">#include</span> <span class="cpf">&lt;boost/program_options.hpp&gt;</span><span class="cp"></span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span> <span class="n">argv</span><span class="p">[])</span> <span class="p">{</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">input</span><span class="p">,</span> <span class="n">output</span><span class="p">;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">calibration</span><span class="p">;</span>
+  <span class="k">using</span> <span class="k">namespace</span> <span class="n">boost</span><span class="o">::</span><span class="n">program_options</span><span class="p">;</span>
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="n">options_description</span> <span class="n">all_desc</span><span class="p">{</span><span class="s">"All options"</span><span class="p">};</span>
+    <span class="n">all_desc</span><span class="p">.</span><span class="n">add_options</span><span class="p">()</span>
+      <span class="p">(</span><span class="s">"help,h"</span><span class="p">,</span> <span class="s">"Help screen"</span><span class="p">)</span>
+      <span class="p">(</span><span class="s">"help-module"</span><span class="p">,</span> <span class="n">value</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">(),</span> <span class="s">"Help for every module"</span><span class="p">);</span>
+
+    <span class="n">options_description</span> <span class="n">desc</span><span class="p">{</span><span class="s">"general options"</span><span class="p">};</span>
+    <span class="n">desc</span><span class="p">.</span><span class="n">add_options</span><span class="p">()</span>
+    <span class="p">(</span><span class="s">"calib,c"</span><span class="p">,</span> <span class="n">value</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="n">calibration</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">required</span><span class="p">(),</span> <span class="s">"Calibration fil"</span><span class="p">);</span>
+
+    <span class="n">options_description</span> <span class="n">image_desc</span><span class="p">{</span><span class="s">"image options"</span><span class="p">};</span>
+    <span class="n">image_desc</span><span class="p">.</span><span class="n">add_options</span><span class="p">()</span>
+    <span class="p">(</span><span class="s">"input,i"</span><span class="p">,</span> <span class="n">value</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="n">input</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">required</span><span class="p">(),</span> <span class="s">"Input file"</span><span class="p">)</span>
+    <span class="p">(</span><span class="s">"output,o"</span><span class="p">,</span> <span class="n">value</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="n">output</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">required</span><span class="p">(),</span> <span class="s">"Input output"</span><span class="p">);</span>
+
+    <span class="n">all_desc</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">desc</span><span class="p">).</span><span class="n">add</span><span class="p">(</span><span class="n">image_desc</span><span class="p">);</span>
+
+    <span class="n">variables_map</span> <span class="n">vm</span><span class="p">;</span>
+    <span class="n">store</span><span class="p">(</span><span class="n">parse_command_line</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">,</span> <span class="n">all_desc</span><span class="p">),</span> <span class="n">vm</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">vm</span><span class="p">.</span><span class="n">count</span><span class="p">(</span><span class="s">"help"</span><span class="p">))</span> <span class="p">{</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">all_desc</span> <span class="o">&lt;&lt;</span> <span class="sc">'\n'</span><span class="p">;</span>
+      <span class="k">return</span> <span class="n">EXIT_SUCCESS</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">vm</span><span class="p">.</span><span class="n">count</span><span class="p">(</span><span class="s">"help-module"</span><span class="p">))</span> <span class="p">{</span>
+      <span class="k">const</span> <span class="k">auto</span> <span class="n">module</span> <span class="o">=</span> <span class="n">vm</span><span class="p">[</span><span class="s">"help-module"</span><span class="p">].</span><span class="n">as</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">();</span>
+      <span class="k">if</span><span class="p">(</span><span class="n">module</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="p">{</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">"SHIT</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"IN "</span> <span class="o">&lt;&lt;</span> <span class="n">module</span> <span class="o">&lt;&lt;</span> <span class="sc">'\n'</span><span class="p">;</span>
+      <span class="k">if</span><span class="p">(</span><span class="n">module</span> <span class="o">==</span> <span class="s">"general"</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">desc</span> <span class="o">&lt;&lt;</span> <span class="sc">'\n'</span><span class="p">;</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="n">module</span> <span class="o">==</span> <span class="s">"image"</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">image_desc</span> <span class="o">&lt;&lt;</span> <span class="sc">'\n'</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="k">return</span> <span class="n">EXIT_SUCCESS</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="n">notify</span><span class="p">(</span><span class="n">vm</span><span class="p">);</span>
+  <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="k">const</span> <span class="n">error</span> <span class="o">&amp;</span><span class="n">ex</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="n">ex</span><span class="p">.</span><span class="n">what</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="sc">'\n'</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">EXIT_FAILURE</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">input</span> <span class="o">&lt;&lt;</span> <span class="s">", "</span> <span class="o">&lt;&lt;</span> <span class="n">output</span> <span class="o">&lt;&lt;</span> <span class="sc">'\n'</span><span class="p">;</span>
+  <span class="k">return</span> <span class="n">EXIT_SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+</div>
+                </div>
+            </article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/visual-slam-book/visual-slam-book/" class="u-url">Visual SLAM Book</a></h1>
+                <div class="metadata">
+                    <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                        Ahmed Abdel Aal
+                    </span></p>
+            <p class="dateline">
+            <a href="posts/visual-slam-book/visual-slam-book/" rel="bookmark">
+            <time class="published dt-published" datetime="2019-08-14T21:40:24+02:00" itemprop="datePublished" title="2019-08-14 21:40">2019-08-14 21:40</time></a>
+            </p>
+                </div>
+            </header><div class="e-content entry-content">
+                    <ol>
+<li>[ ] Part I:<ul>
+<li>[x] Lecture 1: preface</li>
+<li>[ ] Lecture 2: an overview of a SLAM system.</li>
+<li>[ ] Lecture 3: rigid body motion in 3D space.</li>
+<li>[ ] Lecture 4: Lie group and Lie algebra.</li>
+<li>[ ] Lecture 5: pinhole camera model and image expression in computer.</li>
+<li>[ ] Lecture 6: nonlinear optimization.</li>
+</ul>
+</li>
+<li>[ ] Part II:<ul>
+<li>[ ] Lecture 7: feature based visual odometry.</li>
+<li>[ ] Lecture 8: Lecture 8: direct (or intensity-based) method for VO.</li>
+<li>[ ] Lecture 9: a practice chapter for VO.</li>
+<li>[ ] Lecture 10: back-end optimization.</li>
+<li>[ ] Lecture 11: pose graph in the back-end optimization.</li>
+<li>[ ] Lecture 12: loop closure detection, mainly Bag-of-Word (BoW) based method.</li>
+<li>[ ] Lecture 13: map building.</li>
+<li>[ ] Lecture 14: current open source SLAM projects and future development direction.</li>
+</ul>
+</li>
+</ol>
+</div>
+            </article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/how-to-use-nikola/how-to-use-nikola/" class="u-url">How to use nikola?</a></h1>
+                <div class="metadata">
+                    <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                        Ahmed Abdel Aal
+                    </span></p>
+            <p class="dateline">
+            <a href="posts/how-to-use-nikola/how-to-use-nikola/" rel="bookmark">
+            <time class="published dt-published" datetime="2019-08-14T02:03:23+02:00" itemprop="datePublished" title="2019-08-14 02:03">2019-08-14 02:03</time></a>
+            </p>
+                </div>
+            </header><div class="e-content entry-content">
+                    <div>
+<h5>Content:</h5>
+<ol>
+<li><a href="posts/how-to-use-nikola/how-to-use-nikola/#new_post">Create new post</a></li>
+<li><a href="posts/how-to-use-nikola/how-to-use-nikola/#install_theme">Install new theme</a></li>
+<li><a href="posts/how-to-use-nikola/how-to-use-nikola/#install_plugin">Install new plugin</a></li>
+<li><a href="posts/how-to-use-nikola/how-to-use-nikola/#automatic">Automatic rebuild</a></li>
+</ol>
+<h5>How to generate static website using Nikola?</h5>
+<p>Nikola is static website generator. It's really easy to use.</p>
+<pre class="code literal-block"><span></span>pip install Nikola                <span class="c1"># Install Nikola package</span>
+nikola init --demo my_first_site  <span class="c1"># Create website directory</span>
+<span class="nb">cd</span> my_first_site                  <span class="c1"># Change directory to the site</span>
+nikola build                      <span class="c1"># Build the site</span>
+nikola serve --browser            <span class="c1"># Run the server</span>
+</pre>
+
+
+<p>Now website will appear in web browser.</p>
+<h5>Create new post:<a name="new_post"></a>
+</h5>
+<p>Nikola support most popular Markup language. To create new post.</p>
+<pre class="code literal-block"><span></span>nikola new_post
+</pre>
+
+
+<p>Nikola will ask you for title. Assume that your title will be <code>HelloWorld</code>.
+You can edit that blog at <code>posts/helloworld.rst</code>. After edit the new plog,
+just run <code>nikola build</code>.</p>
+<p>To specifiy Markdown type:</p>
+<pre class="code literal-block"><span></span>nikola new_post -f markdown
+</pre>
+
+
+<p>Now, we can edit markdown blog at <code>posts/helloworld.md</code>.</p>
+<h5>Install a theme:<a name="install_theme"></a>
+</h5>
+<p>We can install new theme for the website. To list avaiable themes.</p>
+<pre class="code literal-block"><span></span>nikola theme -l
+</pre>
+
+
+<p>To install <code>lanyon</code> theme.</p>
+<pre class="code literal-block"><span></span>nikola theme -i lanyon
+</pre>
+
+
+<p>Build and run server again.</p>
+<h5>Install a plugin:<a name="install_plugin"></a>
+</h5>
+<p>We can install new plugin for the website. To list avaiable plugins.</p>
+<pre class="code literal-block"><span></span>nikola plugin -l
+</pre>
+
+
+<p>To install <code>latex</code> plugin.</p>
+<pre class="code literal-block"><span></span>nikola plugin -i latex
+</pre>
+
+
+<p>Build and run server again.</p>
+<h5>Automatic rebuild:<a name="automatic"></a>
+</h5>
+<p>Build and run server again. Hmmm, I hate repticton. Nikola support nice
+automatic tool watch files. It build and update server.
+Still you need to install some packages first.</p>
+<pre class="code literal-block"><span></span>pip install aiohttp watchdog
+nikola auto
+</pre>
+</div>
+                </div>
+            </article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/eigen3-tutorial/eigen3-tutorial/" class="u-url">Eigen3 Tutorial</a></h1>
+                <div class="metadata">
+                    <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                        Ahmed Abdel Aal
+                    </span></p>
+            <p class="dateline">
+            <a href="posts/eigen3-tutorial/eigen3-tutorial/" rel="bookmark">
+            <time class="published dt-published" datetime="2019-08-14T02:02:18+02:00" itemprop="datePublished" title="2019-08-14 02:02">2019-08-14 02:02</time></a>
+            </p>
+                </div>
+            </header><div class="e-content entry-content">
+                    <div>
+<h5>Content:</h5>
+<ol>
+<li><a href="posts/eigen3-tutorial/eigen3-tutorial/#install">Install</a></li>
+<li><a href="posts/eigen3-tutorial/eigen3-tutorial/#cmake">CMake</a></li>
+<li><a href="posts/eigen3-tutorial/eigen3-tutorial/#simple">SimpleExample</a></li>
+</ol>
+<h5>Install Eigen3:<a name="install"></a>
+</h5>
+<ul>
+<li>Ubuntu 18.04:</li>
+</ul>
+<pre class="code literal-block"><span></span>sudo apt install libeigen3-dev -y
+</pre>
+
+
+<ul>
+<li>Arch Linux:</li>
+</ul>
+<pre class="code literal-block"><span></span>sudo pacman -S eigen --noconfirm
+</pre>
+
+
+<ul>
+<li>Windows using vcpkg:</li>
+</ul>
+<pre class="code literal-block"><span></span>vcpkg install eigen3
+</pre>
+
+
+<h5>Use Eigen3 with CMake:<a name="cmake"></a>
+</h5>
+<ul>
+<li>Create project directory</li>
+</ul>
+<pre class="code literal-block"><span></span>mkdir eigen3_tutorial/<span class="o">{</span>src,build<span class="o">}</span> -p  <span class="c1"># Create project root directory</span>
+<span class="nb">cd</span> eigen3_tutorial/src                <span class="c1"># Change directory to src</span>
+touch CMakeLists.txt main.cpp         <span class="c1"># Create empty CMakeLists.txt and main.cpp</span>
+</pre>
+
+
+<ul>
+<li>Create <code>CMakeLists.txt</code>
+</li>
+</ul>
+<pre class="code literal-block"><span></span><span class="nb">cmake_minimum_required</span><span class="p">(</span><span class="s">VERSION</span> <span class="s">3.9</span><span class="p">)</span>
+<span class="nb">project</span><span class="p">(</span><span class="s">eigen3_tutorial</span> <span class="s">CXX</span><span class="p">)</span>
+
+<span class="nb">find_package</span><span class="p">(</span><span class="s">Eigen3</span> <span class="s">REQUIRED</span><span class="p">)</span>
+
+<span class="nb">add_executable</span><span class="p">(</span>
+  <span class="s">eigen3_tutorial</span>
+  <span class="s">main.cpp</span>
+<span class="p">)</span>
+
+<span class="nb">target_link_libraries</span><span class="p">(</span>
+  <span class="s">eigen3_tutorial</span>
+  <span class="s">PRIVATE</span>
+  <span class="s">Eigen3::Eigen</span>
+<span class="p">)</span>
+</pre>
+
+
+<ul>
+<li>Create <code>main.cpp</code>
+</li>
+</ul>
+<pre class="code literal-block"><span></span><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span> <span class="n">argv</span><span class="p">[])</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+
+
+<h5>Create simple example:<a name="simple"></a>
+</h5>
+<pre class="code literal-block"><span></span><span class="c1">// STL</span>
+<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="c1">// Eigen3</span>
+<span class="cp">#include</span> <span class="cpf">&lt;Eigen/Core&gt; // TODO(Hussein)</span><span class="cp"></span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span> <span class="n">argv</span><span class="p">[])</span> <span class="p">{</span>
+  <span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span> <span class="n">vec3</span><span class="p">;</span> <span class="c1">// TODO(Hussein)</span>
+  <span class="n">vec3</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">;</span>      <span class="c1">// TODO(Hussein)</span>
+
+  <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">vec3</span><span class="p">.</span><span class="n">transpose</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="sc">'\n'</span><span class="p">;</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+</div>
+                </div>
+            </article>
+</div>
+    
+
+    
+
+    
+
+
+        <!--End of body content-->
+
+        <footer id="footer">
+            Contents © 2019         <a href="mailto:eng.ahmedhussein89@gmail.com">Ahmed Abdel Aal</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
+            
+            
+        </footer>
+</div>
+</div>
+
+
+        <script src="assets/js/all-nocdn.js"></script><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>

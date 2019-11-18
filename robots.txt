@@ -1,0 +1,4 @@
+Sitemap: https://wow2006.github.io/sitemapindex.xml
+
+User-Agent: *
+Host: wow2006.github.io

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Salt and Pepper (Posts about eigen)</title><link>https://wow2006.github.io/</link><description></description><atom:link href="https://wow2006.github.io/categories/eigen.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2019 &lt;a href="mailto:eng.ahmedhussein89@gmail.com"&gt;Ahmed Abdel Aal&lt;/a&gt; </copyright><lastBuildDate>Mon, 18 Nov 2019 16:08:58 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Eigen3 Tutorial</title><link>https://wow2006.github.io/posts/eigen3-tutorial/eigen3-tutorial/</link><dc:creator>Ahmed Abdel Aal</dc:creator><description>&lt;div&gt;&lt;h5&gt;Content:&lt;/h5&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;a href="https://wow2006.github.io/posts/eigen3-tutorial/eigen3-tutorial/#install"&gt;Install&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://wow2006.github.io/posts/eigen3-tutorial/eigen3-tutorial/#cmake"&gt;CMake&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://wow2006.github.io/posts/eigen3-tutorial/eigen3-tutorial/#simple"&gt;SimpleExample&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h5&gt;Install Eigen3:&lt;a name="install"&gt;&lt;/a&gt;&lt;/h5&gt;
+&lt;ul&gt;
+&lt;li&gt;Ubuntu 18.04:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;sudo apt install libeigen3-dev -y
+&lt;/pre&gt;
+
+
+&lt;ul&gt;
+&lt;li&gt;Arch Linux:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;sudo pacman -S eigen --noconfirm
+&lt;/pre&gt;
+
+
+&lt;ul&gt;
+&lt;li&gt;Windows using vcpkg:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;vcpkg install eigen3
+&lt;/pre&gt;
+
+
+&lt;h5&gt;Use Eigen3 with CMake:&lt;a name="cmake"&gt;&lt;/a&gt;&lt;/h5&gt;
+&lt;ul&gt;
+&lt;li&gt;Create project directory&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;mkdir eigen3_tutorial/&lt;span class="o"&gt;{&lt;/span&gt;src,build&lt;span class="o"&gt;}&lt;/span&gt; -p  &lt;span class="c1"&gt;# Create project root directory&lt;/span&gt;
+&lt;span class="nb"&gt;cd&lt;/span&gt; eigen3_tutorial/src                &lt;span class="c1"&gt;# Change directory to src&lt;/span&gt;
+touch CMakeLists.txt main.cpp         &lt;span class="c1"&gt;# Create empty CMakeLists.txt and main.cpp&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;ul&gt;
+&lt;li&gt;Create &lt;code&gt;CMakeLists.txt&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nb"&gt;cmake_minimum_required&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;VERSION&lt;/span&gt; &lt;span class="s"&gt;3.9&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nb"&gt;project&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;eigen3_tutorial&lt;/span&gt; &lt;span class="s"&gt;CXX&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="nb"&gt;find_package&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;Eigen3&lt;/span&gt; &lt;span class="s"&gt;REQUIRED&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="nb"&gt;add_executable&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+  &lt;span class="s"&gt;eigen3_tutorial&lt;/span&gt;
+  &lt;span class="s"&gt;main.cpp&lt;/span&gt;
+&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="nb"&gt;target_link_libraries&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+  &lt;span class="s"&gt;eigen3_tutorial&lt;/span&gt;
+  &lt;span class="s"&gt;PRIVATE&lt;/span&gt;
+  &lt;span class="s"&gt;Eigen3::Eigen&lt;/span&gt;
+&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;ul&gt;
+&lt;li&gt;Create &lt;code&gt;main.cpp&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;iostream&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;main&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;argc&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;char&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;argv&lt;/span&gt;&lt;span class="p"&gt;[])&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;h5&gt;Create simple example:&lt;a name="simple"&gt;&lt;/a&gt;&lt;/h5&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;// STL&lt;/span&gt;
+&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;iostream&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+&lt;span class="c1"&gt;// Eigen3&lt;/span&gt;
+&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;Eigen/Core&amp;gt; // TODO(Hussein)&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;main&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;argc&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;char&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;argv&lt;/span&gt;&lt;span class="p"&gt;[])&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="n"&gt;Eigen&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;Vector3d&lt;/span&gt; &lt;span class="n"&gt;vec3&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="c1"&gt;// TODO(Hussein)&lt;/span&gt;
+  &lt;span class="n"&gt;vec3&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;      &lt;span class="c1"&gt;// TODO(Hussein)&lt;/span&gt;
+
+  &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;cout&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;vec3&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;transpose&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="sc"&gt;'\n'&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;</description><category>cmake</category><category>cpp</category><category>eigen</category><guid>https://wow2006.github.io/posts/eigen3-tutorial/eigen3-tutorial/</guid><pubDate>Wed, 14 Aug 2019 00:02:18 GMT</pubDate></item></channel></rss>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Salt and Pepper (Posts about python)</title><link>https://wow2006.github.io/</link><description></description><atom:link href="https://wow2006.github.io/categories/python.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2019 &lt;a href="mailto:eng.ahmedhussein89@gmail.com"&gt;Ahmed Abdel Aal&lt;/a&gt; </copyright><lastBuildDate>Mon, 18 Nov 2019 16:08:58 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>How to use nikola?</title><link>https://wow2006.github.io/posts/how-to-use-nikola/how-to-use-nikola/</link><dc:creator>Ahmed Abdel Aal</dc:creator><description>&lt;div&gt;&lt;h5&gt;Content:&lt;/h5&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;a href="https://wow2006.github.io/posts/how-to-use-nikola/how-to-use-nikola/#new_post"&gt;Create new post&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://wow2006.github.io/posts/how-to-use-nikola/how-to-use-nikola/#install_theme"&gt;Install new theme&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://wow2006.github.io/posts/how-to-use-nikola/how-to-use-nikola/#install_plugin"&gt;Install new plugin&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://wow2006.github.io/posts/how-to-use-nikola/how-to-use-nikola/#automatic"&gt;Automatic rebuild&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h5&gt;How to generate static website using Nikola?&lt;/h5&gt;
+&lt;p&gt;Nikola is static website generator. It's really easy to use.&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;pip install Nikola                &lt;span class="c1"&gt;# Install Nikola package&lt;/span&gt;
+nikola init --demo my_first_site  &lt;span class="c1"&gt;# Create website directory&lt;/span&gt;
+&lt;span class="nb"&gt;cd&lt;/span&gt; my_first_site                  &lt;span class="c1"&gt;# Change directory to the site&lt;/span&gt;
+nikola build                      &lt;span class="c1"&gt;# Build the site&lt;/span&gt;
+nikola serve --browser            &lt;span class="c1"&gt;# Run the server&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;Now website will appear in web browser.&lt;/p&gt;
+&lt;h5&gt;Create new post:&lt;a name="new_post"&gt;&lt;/a&gt;&lt;/h5&gt;
+&lt;p&gt;Nikola support most popular Markup language. To create new post.&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;nikola new_post
+&lt;/pre&gt;
+
+
+&lt;p&gt;Nikola will ask you for title. Assume that your title will be &lt;code&gt;HelloWorld&lt;/code&gt;.
+You can edit that blog at &lt;code&gt;posts/helloworld.rst&lt;/code&gt;. After edit the new plog,
+just run &lt;code&gt;nikola build&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;To specifiy Markdown type:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;nikola new_post -f markdown
+&lt;/pre&gt;
+
+
+&lt;p&gt;Now, we can edit markdown blog at &lt;code&gt;posts/helloworld.md&lt;/code&gt;.&lt;/p&gt;
+&lt;h5&gt;Install a theme:&lt;a name="install_theme"&gt;&lt;/a&gt;&lt;/h5&gt;
+&lt;p&gt;We can install new theme for the website. To list avaiable themes.&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;nikola theme -l
+&lt;/pre&gt;
+
+
+&lt;p&gt;To install &lt;code&gt;lanyon&lt;/code&gt; theme.&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;nikola theme -i lanyon
+&lt;/pre&gt;
+
+
+&lt;p&gt;Build and run server again.&lt;/p&gt;
+&lt;h5&gt;Install a plugin:&lt;a name="install_plugin"&gt;&lt;/a&gt;&lt;/h5&gt;
+&lt;p&gt;We can install new plugin for the website. To list avaiable plugins.&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;nikola plugin -l
+&lt;/pre&gt;
+
+
+&lt;p&gt;To install &lt;code&gt;latex&lt;/code&gt; plugin.&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;nikola plugin -i latex
+&lt;/pre&gt;
+
+
+&lt;p&gt;Build and run server again.&lt;/p&gt;
+&lt;h5&gt;Automatic rebuild:&lt;a name="automatic"&gt;&lt;/a&gt;&lt;/h5&gt;
+&lt;p&gt;Build and run server again. Hmmm, I hate repticton. Nikola support nice
+automatic tool watch files. It build and update server.
+Still you need to install some packages first.&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;pip install aiohttp watchdog
+nikola auto
+&lt;/pre&gt;&lt;/div&gt;</description><category>nikola</category><category>python</category><guid>https://wow2006.github.io/posts/how-to-use-nikola/how-to-use-nikola/</guid><pubDate>Wed, 14 Aug 2019 00:03:23 GMT</pubDate></item></channel></rss>

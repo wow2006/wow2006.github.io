@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article# " lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to use nikola? | Salt and Pepper</title>
+<link href="../../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<link href="https://fonts.googleapis.com/css?family=Playfair+Display:700,900" rel="stylesheet">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.xml">
+<link rel="canonical" href="https://wow2006.github.io/posts/how-to-use-nikola/how-to-use-nikola/">
+<!--[if lt IE 9]><script src="../../../assets/js/html5.js"></script><![endif]--><meta name="author" content="Ahmed Abdel Aal">
+<link rel="prev" href="../../eigen3-tutorial/eigen3-tutorial/" title="Eigen3 Tutorial" type="text/html">
+<link rel="next" href="../../visual-slam-book/visual-slam-book/" title="Visual SLAM Book" type="text/html">
+<meta property="og:site_name" content="Salt and Pepper">
+<meta property="og:title" content="How to use nikola?">
+<meta property="og:url" content="https://wow2006.github.io/posts/how-to-use-nikola/how-to-use-nikola/">
+<meta property="og:description" content="Content:
+
+Create new post
+Install new theme
+Install new plugin
+Automatic rebuild
+
+How to generate static website using Nikola?
+Nikola is static website generator. It's really easy to use.
+pip install ">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2019-08-14T02:03:23+02:00">
+<meta property="article:tag" content="nikola">
+<meta property="article:tag" content="python">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
+
+<!-- Header and menu bar -->
+<div class="container">
+      <header class="blog-header py-3"><div class="row nbb-header align-items-center">
+          <div class="col-md-3 col-xs-2 col-sm-2" style="width: auto;">
+            <button class="navbar-toggler navbar-light bg-light nbb-navbar-toggler" type="button" data-toggle="collapse" data-target=".bs-nav-collapsible" aria-controls="bs-navbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse bs-nav-collapsible bootblog4-search-form-holder">
+                
+            </div>
+        </div>
+          <div class="col-md-6 col-xs-10 col-sm-10 bootblog4-brand" style="width: auto;">
+            <a class="navbar-brand blog-header-logo text-dark" href="https://wow2006.github.io/">
+
+            <span id="blog-title">Salt and Pepper</span>
+        </a>
+          </div>
+            <div class="col-md-3 justify-content-end align-items-center bs-nav-collapsible collapse flex-collapse bootblog4-right-nav">
+            <nav class="navbar navbar-light bg-white"><ul class="navbar-nav bootblog4-right-nav">
+<li class="nav-item">
+    <a href="index.md" id="sourcelink" class="nav-link">Source</a>
+    </li>
+
+
+                    
+            </ul></nav>
+</div>
+    </div>
+</header><nav class="navbar navbar-expand-md navbar-light bg-white static-top"><div class="collapse navbar-collapse bs-nav-collapsible" id="bs-navbar">
+            <ul class="navbar-nav nav-fill d-flex w-100">
+<li class="nav-item">
+<a href="../../../pages/projects/" class="nav-link">Projects</a>
+                </li>
+<li class="nav-item">
+<a href="../../../pages/resume/" class="nav-link">Resume</a>
+                </li>
+<li class="nav-item">
+<a href="../../../archive.html" class="nav-link">Archive</a>
+                </li>
+<li class="nav-item">
+<a href="../../../categories/" class="nav-link">Tags</a>
+
+                
+            </li>
+</ul>
+</div>
+<!-- /.navbar-collapse -->
+</nav>
+</div>
+
+<div class="container" id="content" role="main">
+    <div class="body-content">
+        <!--Body content-->
+        
+        
+        
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">How to use nikola?</a></h1>
+
+        <div class="metadata">
+            <p class="byline author vcard p-author h-card"><span class="byline-name fn p-name" itemprop="author">
+                    Ahmed Abdel Aal
+            </span></p>
+            <p class="dateline">
+            <a href="." rel="bookmark">
+            <time class="published dt-published" datetime="2019-08-14T02:03:23+02:00" itemprop="datePublished" title="2019-08-14 02:03">2019-08-14 02:03</time></a>
+            </p>
+            
+        <p class="sourceline"><a href="index.md" class="sourcelink">Source</a></p>
+
+        </div>
+        
+
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <div>
+<h5>Content:</h5>
+<ol>
+<li><a href="#new_post">Create new post</a></li>
+<li><a href="#install_theme">Install new theme</a></li>
+<li><a href="#install_plugin">Install new plugin</a></li>
+<li><a href="#automatic">Automatic rebuild</a></li>
+</ol>
+<h5>How to generate static website using Nikola?</h5>
+<p>Nikola is static website generator. It's really easy to use.</p>
+<pre class="code literal-block"><span></span>pip install Nikola                <span class="c1"># Install Nikola package</span>
+nikola init --demo my_first_site  <span class="c1"># Create website directory</span>
+<span class="nb">cd</span> my_first_site                  <span class="c1"># Change directory to the site</span>
+nikola build                      <span class="c1"># Build the site</span>
+nikola serve --browser            <span class="c1"># Run the server</span>
+</pre>
+
+
+<p>Now website will appear in web browser.</p>
+<h5>Create new post:<a name="new_post"></a>
+</h5>
+<p>Nikola support most popular Markup language. To create new post.</p>
+<pre class="code literal-block"><span></span>nikola new_post
+</pre>
+
+
+<p>Nikola will ask you for title. Assume that your title will be <code>HelloWorld</code>.
+You can edit that blog at <code>posts/helloworld.rst</code>. After edit the new plog,
+just run <code>nikola build</code>.</p>
+<p>To specifiy Markdown type:</p>
+<pre class="code literal-block"><span></span>nikola new_post -f markdown
+</pre>
+
+
+<p>Now, we can edit markdown blog at <code>posts/helloworld.md</code>.</p>
+<h5>Install a theme:<a name="install_theme"></a>
+</h5>
+<p>We can install new theme for the website. To list avaiable themes.</p>
+<pre class="code literal-block"><span></span>nikola theme -l
+</pre>
+
+
+<p>To install <code>lanyon</code> theme.</p>
+<pre class="code literal-block"><span></span>nikola theme -i lanyon
+</pre>
+
+
+<p>Build and run server again.</p>
+<h5>Install a plugin:<a name="install_plugin"></a>
+</h5>
+<p>We can install new plugin for the website. To list avaiable plugins.</p>
+<pre class="code literal-block"><span></span>nikola plugin -l
+</pre>
+
+
+<p>To install <code>latex</code> plugin.</p>
+<pre class="code literal-block"><span></span>nikola plugin -i latex
+</pre>
+
+
+<p>Build and run server again.</p>
+<h5>Automatic rebuild:<a name="automatic"></a>
+</h5>
+<p>Build and run server again. Hmmm, I hate repticton. Nikola support nice
+automatic tool watch files. It build and update server.
+Still you need to install some packages first.</p>
+<pre class="code literal-block"><span></span>pip install aiohttp watchdog
+nikola auto
+</pre>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul itemprop="keywords" class="tags">
+<li><a class="tag p-category" href="../../../categories/nikola/" rel="tag">nikola</a></li>
+            <li><a class="tag p-category" href="../../../categories/python/" rel="tag">python</a></li>
+        </ul>
+<ul class="pager hidden-print">
+<li class="previous">
+                <a href="../../eigen3-tutorial/eigen3-tutorial/" rel="prev" title="Eigen3 Tutorial">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../../visual-slam-book/visual-slam-book/" rel="next" title="Visual SLAM Book">Next post</a>
+            </li>
+        </ul></nav></aside></article><!--End of body content--><footer id="footer">
+            Contents © 2019         <a href="mailto:eng.ahmedhussein89@gmail.com">Ahmed Abdel Aal</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
+            
+            
+        </footer>
+</div>
+</div>
+
+
+        <script src="../../../assets/js/all-nocdn.js"></script><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>
