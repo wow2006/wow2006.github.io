@@ -1351,3 +1351,12 @@ GLOBAL_CONTEXT = {}
 # GLOBAL_CONTEXT as parameter when the template is about to be
 # rendered
 GLOBAL_CONTEXT_FILLER = []
+
+THEME = 'canterville'
+LOGO_URL = 'https://getnikola.com/assets/img/logo.svg'
+GLOBAL_CONTEXT = {
+	'TWITTER_URL':  'https://twitter.com/n71_ah',
+	'GITHUB_URL':   'https://github.com/wow2006',
+	'LINKEDIN_URL': 'https://www.linkedin.com/in/abdelaalahmed/',
+	'BANNER_URL':   '/assets/img/silk-road.jpg'
+}
