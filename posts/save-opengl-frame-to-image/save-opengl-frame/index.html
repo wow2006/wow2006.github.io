@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html prefix="" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="Save OpenGL frame to image">
+<meta name="viewport" content="width=device-width">
+<title>Save OpenGL frame to image | Salt and Pepper</title>
+<link href="../../../assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="../../../assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="../../../assets/css/theme.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" type="text/css" href="../../../assets/css/screen.css">
+<link rel="stylesheet" type="text/css" href="../../../assets/css/nav.css">
+<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic%7COpen+Sans:700,400%7CInconsolata">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.xml">
+<link rel="canonical" href="https://wow2006.github.io/posts/save-opengl-frame-to-image/save-opengl-frame/">
+<!--[if lt IE 9]><script src="../../../assets/js/html5.js"></script><![endif]--><meta name="author" content="Ahmed Abdel Aal">
+<link rel="prev" href="../../create-cuda-pitch-memory/" title="Create CUDA pitch memory" type="text/html">
+<meta property="og:site_name" content="Salt and Pepper">
+<meta property="og:title" content="Save OpenGL frame to image">
+<meta property="og:url" content="https://wow2006.github.io/posts/save-opengl-frame-to-image/save-opengl-frame/">
+<meta property="og:description" content="Save OpenGL frame to image">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2020-01-02T02:02:18+02:00">
+<meta property="article:tag" content="cmake">
+<meta property="article:tag" content="cpp">
+<meta property="article:tag" content="opengl">
+</head>
+<body class="nav-closed">
+
+<div class="nav">
+    <h3 class="nav-title">Menu</h3>
+    <a href="#" class="nav-close">
+        <span class="hidden">Close</span>
+    </a>
+    <ul>
+<li class="nav-opened" role="presentation">
+                <a href="../../../pages/projects/">Projects</a>
+            </li>
+            <li class="nav-opened" role="presentation">
+                <a href="../../../pages/resume/">Resume</a>
+            </li>
+            <li class="nav-opened" role="presentation">
+                <a href="../../../archive.html">Archive</a>
+            </li>
+            <li class="nav-opened" role="presentation">
+                <a href="../../../categories/">Tags</a>
+            </li>
+    
+    
+    </ul>
+</div>
+<span class="nav-cover"></span>
+
+<div class="site-wrapper">
+    <header class="main-header post-head no-cover"><nav class="main-nav overlay clearfix"><a class="blog-logo" href="https://wow2006.github.io/"><img src="https://getnikola.com/assets/img/logo.svg" alt="Blog Logo"></a>
+            <a class="menu-button" href="#"><span class="burger">☰</span><span class="word">Menu</span></a>
+        </nav></header><main id="content" class="content" role="main"><article class="post post"><header class="post-header"><h1 class="post-title">Save OpenGL frame to image</h1>
+        <section class="post-meta"> by
+            Ahmed Abdel Aal
+            on
+                <a href="../../../categories/cmake/">#cmake</a>,
+                <a href="../../../categories/cpp/">#cpp</a>,
+                <a href="../../../categories/opengl/">#opengl</a>,
+            <time class="post-date" datetime="2020-01-02T02:02:18+02:00">
+                2020-01-02 02:02
+            </time></section></header><section class="post-content"><div>
+<p>I want to create GIF from for OpenGL Application.</p>
+<p>I can split this problem into two steps:
+1. Capture OpenGL frames.
+2. Convert captured frames to GIF.</p>
+<h5>Capture OpenGL frames:</h5>
+<ul>
+<li>The first idea comes to me is to take a sequence of snapshots manually.
+<code>Hmm... I won't capture every frame and It needs a lot of work and sync too.</code>
+</li>
+<li>Second idea is to capture every frame using OpenGL itself. <code>yaaay</code>
+</li>
+</ul>
+<p>OpenGL render to default framebuffer which is created with context to display it into the screen.
+So we can use framebuffer functions to read from it.
+<code>glReadBuffer</code> is a function used to read pixels from framebuffers.
+We can use it with default framebuffer too.</p>
+<blockquote>
+<p>"Talking is cheap show me code." Linus Torvalds</p>
+</blockquote>
+<pre class="code literal-block"><span></span><span class="c1">// constexpr auto g_uWidth    = 800U;</span>
+<span class="c1">// constexpr auto g_uHeight   = 600U;</span>
+<span class="c1">// constexpr auto g_uChannels = 3U;</span>
+
+<span class="k">auto</span> <span class="n">running</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+
+<span class="k">auto</span> <span class="n">index</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="kt">uint8_t</span><span class="o">&gt;</span> <span class="n">frame</span><span class="p">(</span><span class="n">g_uWidth</span><span class="o">*</span><span class="n">g_uHeight</span><span class="o">*</span><span class="n">g_uChannels</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+
+<span class="k">while</span><span class="p">(</span><span class="n">running</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">processInput</span><span class="p">();</span>
+  <span class="n">update</span><span class="p">();</span>
+  <span class="n">draw</span><span class="p">();</span>
+  <span class="n">swapBuffer</span><span class="p">();</span>
+
+  <span class="k">auto</span> <span class="n">pData</span> <span class="o">=</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">frame</span><span class="p">.</span><span class="n">data</span><span class="p">());</span>
+  <span class="c1">// Read rectange of pixels:</span>
+  <span class="c1">// starting point (0, 0)</span>
+  <span class="c1">// rectange dimention (width, height)</span>
+  <span class="c1">// Pixel format RGB</span>
+  <span class="c1">// Pixel type unsigned byte == std::uint8_t</span>
+  <span class="n">glReadPixels</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">g_uWidth</span><span class="p">,</span> <span class="n">g_uHeight</span><span class="p">,</span> <span class="n">GL_RGB</span><span class="p">,</span> <span class="n">GL_UNSIGNED_BYTE</span><span class="p">,</span> <span class="n">pData</span><span class="p">);</span>
+
+  <span class="c1">// save frame to hard. I am using STB library</span>
+  <span class="kt">char</span> <span class="n">imageName</span><span class="p">[</span><span class="mi">256</span><span class="p">];</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">snprintf</span><span class="p">(</span><span class="n">imageName</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="s">"Screenshot%02d.png"</span><span class="p">,</span> <span class="n">index</span><span class="o">++</span><span class="p">);</span>
+  <span class="n">stbi_write_png</span><span class="p">(</span><span class="n">imageName</span><span class="p">,</span> <span class="n">g_uWidth</span><span class="p">,</span> <span class="n">g_uHeight</span><span class="p">,</span> <span class="n">g_uChannels</span><span class="p">,</span> <span class="n">pData</span><span class="p">,</span> <span class="n">g_uWidth</span> <span class="o">*</span> <span class="n">g_uChannels</span><span class="p">);</span>
+<span class="p">}</span>
+</pre>
+
+
+<h5>Convert frames to GIF:</h5>
+<p>I will use ImageMagick to convert saved to frames to GIF.</p>
+<pre class="code literal-block"><span></span>convert -loop <span class="m">0</span> *.png screenshot.gif
+</pre>
+
+
+<h5>Refernce:</h5>
+<ul>
+<li><a href="https://www.khronos.org/opengl/wiki/Default_Framebuffer">Default Framebuffer</a></li>
+<li><a href="https://imagemagick.org/script/animate.php">ImageMagick GIF</a></li>
+</ul>
+</div>
+    </section><footer class="post-footer"></footer></article></main><footer class="site-footer clearfix"><section class="poweredby">Contents © 2020         <a href="mailto:eng.ahmedhussein89@gmail.com">Ahmed Abdel Aal</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </section></footer>
+</div>
+
+    <script type="text/javascript" src="../../../assets/js/jquery.js"></script><script type="text/javascript" src="../../../assets/js/jquery.fitvids.js"></script><script type="text/javascript" src="../../../assets/js/index.js"></script>
+</body>
+</html>

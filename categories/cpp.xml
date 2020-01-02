@@ -1,5 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Salt and Pepper (Posts about cpp)</title><link>https://wow2006.github.io/</link><description></description><atom:link href="https://wow2006.github.io/categories/cpp.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2019 &lt;a href="mailto:eng.ahmedhussein89@gmail.com"&gt;Ahmed Abdel Aal&lt;/a&gt; </copyright><lastBuildDate>Mon, 18 Nov 2019 17:45:55 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>How to use Boost program options</title><link>https://wow2006.github.io/posts/how-to-use-boost-program-options/how-to-use-boost-program-options/</link><dc:creator>Ahmed Abdel Aal</dc:creator><description>&lt;div&gt;&lt;h6&gt;Content:&lt;/h6&gt;
+<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Salt and Pepper (Posts about cpp)</title><link>https://wow2006.github.io/</link><description></description><atom:link href="https://wow2006.github.io/categories/cpp.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2020 &lt;a href="mailto:eng.ahmedhussein89@gmail.com"&gt;Ahmed Abdel Aal&lt;/a&gt; </copyright><lastBuildDate>Thu, 02 Jan 2020 15:13:05 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Save OpenGL frame to image</title><link>https://wow2006.github.io/posts/save-opengl-frame-to-image/save-opengl-frame/</link><dc:creator>Ahmed Abdel Aal</dc:creator><description>&lt;div&gt;&lt;p&gt;I want to create GIF from for OpenGL Application.&lt;/p&gt;
+&lt;p&gt;I can split this problem into two steps:
+1. Capture OpenGL frames.
+2. Convert captured frames to GIF.&lt;/p&gt;
+&lt;h5&gt;Capture OpenGL frames:&lt;/h5&gt;
+&lt;ul&gt;
+&lt;li&gt;The first idea comes to me is to take a sequence of snapshots manually.
+&lt;code&gt;Hmm... I won't capture every frame and It needs a lot of work and sync too.&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Second idea is to capture every frame using OpenGL itself. &lt;code&gt;yaaay&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;OpenGL render to default framebuffer which is created with context to display it into the screen.
+So we can use framebuffer functions to read from it.
+&lt;code&gt;glReadBuffer&lt;/code&gt; is a function used to read pixels from framebuffers.
+We can use it with default framebuffer too.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;"Talking is cheap show me code." Linus Torvalds&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;// constexpr auto g_uWidth    = 800U;&lt;/span&gt;
+&lt;span class="c1"&gt;// constexpr auto g_uHeight   = 600U;&lt;/span&gt;
+&lt;span class="c1"&gt;// constexpr auto g_uChannels = 3U;&lt;/span&gt;
+
+&lt;span class="k"&gt;auto&lt;/span&gt; &lt;span class="n"&gt;running&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;true&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+&lt;span class="k"&gt;auto&lt;/span&gt; &lt;span class="n"&gt;index&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+&lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;vector&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="kt"&gt;uint8_t&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;frame&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;g_uWidth&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;g_uHeight&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;g_uChannels&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+
+&lt;span class="k"&gt;while&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;running&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="n"&gt;processInput&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+  &lt;span class="n"&gt;update&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+  &lt;span class="n"&gt;draw&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+  &lt;span class="n"&gt;swapBuffer&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+
+  &lt;span class="k"&gt;auto&lt;/span&gt; &lt;span class="n"&gt;pData&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;static_cast&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="kt"&gt;void&lt;/span&gt;&lt;span class="o"&gt;*&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;frame&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;());&lt;/span&gt;
+  &lt;span class="c1"&gt;// Read rectange of pixels:&lt;/span&gt;
+  &lt;span class="c1"&gt;// starting point (0, 0)&lt;/span&gt;
+  &lt;span class="c1"&gt;// rectange dimention (width, height)&lt;/span&gt;
+  &lt;span class="c1"&gt;// Pixel format RGB&lt;/span&gt;
+  &lt;span class="c1"&gt;// Pixel type unsigned byte == std::uint8_t&lt;/span&gt;
+  &lt;span class="n"&gt;glReadPixels&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;g_uWidth&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;g_uHeight&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;GL_RGB&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;GL_UNSIGNED_BYTE&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;pData&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+
+  &lt;span class="c1"&gt;// save frame to hard. I am using STB library&lt;/span&gt;
+  &lt;span class="kt"&gt;char&lt;/span&gt; &lt;span class="n"&gt;imageName&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;256&lt;/span&gt;&lt;span class="p"&gt;];&lt;/span&gt;
+  &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;snprintf&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;imageName&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;256&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s"&gt;"Screenshot%02d.png"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;index&lt;/span&gt;&lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+  &lt;span class="n"&gt;stbi_write_png&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;imageName&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;g_uWidth&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;g_uHeight&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;g_uChannels&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;pData&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;g_uWidth&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;g_uChannels&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;h5&gt;Convert frames to GIF:&lt;/h5&gt;
+&lt;p&gt;I will use ImageMagick to convert saved to frames to GIF.&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;convert -loop &lt;span class="m"&gt;0&lt;/span&gt; *.png screenshot.gif
+&lt;/pre&gt;
+
+
+&lt;h5&gt;Refernce:&lt;/h5&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://www.khronos.org/opengl/wiki/Default_Framebuffer"&gt;Default Framebuffer&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://imagemagick.org/script/animate.php"&gt;ImageMagick GIF&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/div&gt;</description><category>cmake</category><category>cpp</category><category>opengl</category><guid>https://wow2006.github.io/posts/save-opengl-frame-to-image/save-opengl-frame/</guid><pubDate>Thu, 02 Jan 2020 00:02:18 GMT</pubDate></item><item><title>How to use Boost program options</title><link>https://wow2006.github.io/posts/how-to-use-boost-program-options/how-to-use-boost-program-options/</link><dc:creator>Ahmed Abdel Aal</dc:creator><description>&lt;div&gt;&lt;h6&gt;Content:&lt;/h6&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href="https://wow2006.github.io/posts/how-to-use-boost-program-options/how-to-use-boost-program-options/#introduction"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="https://wow2006.github.io/posts/how-to-use-boost-program-options/how-to-use-boost-program-options/#naive"&gt;Naive Example&lt;/a&gt;&lt;/li&gt;
