@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Salt and Pepper</title><link>https://wow2006.github.io/</link><description>An other Computer Graphics and Vision blog.</description><atom:link href="https://wow2006.github.io/rss.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2020 &lt;a href="mailto:eng.ahmedhussein89@gmail.com"&gt;Ahmed Abdel Aal&lt;/a&gt; </copyright><lastBuildDate>Sun, 01 Mar 2020 18:00:14 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Clear OpenGL Buffer</title><link>https://wow2006.github.io/posts/clear-opengl-buffer/clear-opengl-buffer/</link><dc:creator>Ahmed Abdel Aal</dc:creator><description>&lt;div&gt;&lt;p&gt;In this post, we will create a simple application which initializes OpenGL and clear buffer to red.&lt;/p&gt;
+<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Salt and Pepper</title><link>https://wow2006.github.io/</link><description>An other Computer Graphics and Vision blog.</description><atom:link href="https://wow2006.github.io/rss.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2020 &lt;a href="mailto:eng.ahmedhussein89@gmail.com"&gt;Ahmed Abdel Aal&lt;/a&gt; </copyright><lastBuildDate>Sun, 01 Mar 2020 18:06:12 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Clear OpenGL Buffer</title><link>https://wow2006.github.io/posts/clear-opengl-buffer/clear-opengl-buffer/</link><dc:creator>Ahmed Abdel Aal</dc:creator><description>&lt;div&gt;&lt;p&gt;In this post, we will create a simple application which initializes OpenGL and clear buffer to red.&lt;/p&gt;
 &lt;h6&gt;What we will learn:&lt;/h6&gt;
 &lt;ul&gt;
 &lt;li&gt;Create a Simple SDL2 Window.&lt;/li&gt;
@@ -16,7 +16,7 @@
 &lt;li&gt;&lt;a href="https://wow2006.github.io/posts/clear-opengl-buffer/clear-opengl-buffer/#clear"&gt;Clear buffer&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="https://wow2006.github.io/posts/clear-opengl-buffer/clear-opengl-buffer/#cleanup"&gt;Cleanup&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;img alt="Final Result" src="https://wow2006.github.io/images/clear-opengl-buffer.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Final Result" src="https://wow2006.github.io/images/clear-opengl-buffer/clear-opengl-buffer.png"&gt;&lt;/p&gt;
 &lt;h6&gt;Introduction: &lt;a name="introduction"&gt;&lt;/a&gt;&lt;/h6&gt;
 &lt;blockquote&gt;
 &lt;p&gt;OpenGL® is the most widely adopted 2D and 3D graphics API in the industry, bringing thousands of applications to a wide variety of computer platforms. &lt;a href="https://www.khronos.org/opengl/"&gt;source&lt;/a&gt;&lt;/p&gt;
