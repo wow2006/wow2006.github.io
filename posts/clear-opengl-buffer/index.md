@@ -9,11 +9,11 @@
 .. type: text
 -->
 
-In this post we will create simple application which initialize OpenGL and clear buffer to red.
+In this post, we will create a simple application which initializes OpenGL and clear buffer to red.
 
 ##### What we will learn:
-- Create Simple SDL2 Window.
-- Create OpenGL Context.
+- Create a Simple SDL2 Window.
+- Create an OpenGL Context.
 - Clear OpenGL buffer.
 
 ##### Content:
@@ -30,18 +30,18 @@ In this post we will create simple application which initialize OpenGL and clear
 ##### Introduction: <a name="introduction"/>
 > OpenGL® is the most widely adopted 2D and 3D graphics API in the industry, bringing thousands of applications to a wide variety of computer platforms. [source][khronos]
 
-I can say that `It is cross-platform 3D graphics API`. It will help you create application using graphics hardware.
-The main idea of computer Graphics is to convert 3D data to 2D data. I mean Convert 3D models to 2D images.
+I can say that `It is cross-platform 3D graphics API`. It will help you create an application using graphics hardware.
+The main idea of computer graphics is to convert 3D data to 2D data. I mean Convert 3D models to 2D images.
 
-We want a window to draw rendered images on. We can use native API to create a window ie. Windows API or X11 API or use cross-platform framework.
+We want a window to draw rendered images on. We can use native API to create a window ie. Windows API or X11 API or use the cross-platform framework.
 I like SDL2 which is cross-platform API. It wraps platform API calls.
 
-> Simple DirectMedia Layer is a cross-platform development library designed to provide low level access to audio, keyboard, mouse, joystick, and graphics hardware via OpenGL and Direct3D. [source][SDL2]
+> Simple DirectMedia Layer is a cross-platform development library designed to provide low-level access to audio, keyboard, mouse, joystick, and graphics hardware via OpenGL and Direct3D. [source][SDL2]
 
 #### Create SDL2 window: <a name="window"/>
 SDL2 need to be initialied to use any functions calls.
 So SDL2 is consists of many systems which one we want to initialize?!
-For now we just need to initialize Video system. [source][SDL_Systems]
+For now, we just need to initialize the Video system. [source][SDL_Systems]
 ```cpp
   if(SDL_Init(SDL_INIT_VIDEO) != 0) {
     std::cerr << "Can not initialize SDL2\n";
@@ -112,3 +112,4 @@ You can find the source code in [SourceCode][SourceCode].
 [SDL_Systems]: https://wiki.libsdl.org/SDL_Init
 [SDL_Window]:  https://wiki.libsdl.org/SDL_CreateWindow
 [SourceCode]:  https://github.com/wow2006/GraphicsDemos/blob/master/opengl/fixedPipelineOpenGLSDL.cpp
+
