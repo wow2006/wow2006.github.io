@@ -15,7 +15,7 @@
 <meta name="generator" content="Nikola (getnikola.com)">
 <link rel="alternate" type="application/rss+xml" title="RSS" href="rss.xml">
 <link rel="canonical" href="https://wow2006.github.io/">
-<!--[if lt IE 9]><script src="assets/js/html5.js"></script><![endif]--><link rel="prefetch" href="posts/save-opengl-frame-to-image/save-opengl-frame/" type="text/html">
+<!--[if lt IE 9]><script src="assets/js/html5.js"></script><![endif]--><link rel="prefetch" href="posts/clear-opengl-buffer/clear-opengl-buffer/" type="text/html">
 </head>
 <body class="nav-closed">
 
@@ -68,7 +68,123 @@
     </header><main id="content" class="content" role="main"><div class="postindex">
 
 
-<article class="post post"><header class="post-header"><h2 class="post-title"><a href="posts/save-opengl-frame-to-image/save-opengl-frame/">Save OpenGL frame to image</a></h2>
+<article class="post post"><header class="post-header"><h2 class="post-title"><a href="posts/clear-opengl-buffer/clear-opengl-buffer/">Clear OpenGL Buffer</a></h2>
+    </header><section class="post-excerpt"><div>
+<p>In this post, we will create a simple application which initializes OpenGL and clear buffer to red.</p>
+<h6>What we will learn:</h6>
+<ul>
+<li>Create a Simple SDL2 Window.</li>
+<li>Create an OpenGL Context.</li>
+<li>Clear OpenGL buffer.</li>
+</ul>
+<h6>Content:</h6>
+<ul>
+<li><a href="posts/clear-opengl-buffer/clear-opengl-buffer/#introduction">Introduction</a></li>
+<li><a href="posts/clear-opengl-buffer/clear-opengl-buffer/#window">Create SDL2 window</a></li>
+<li><a href="posts/clear-opengl-buffer/clear-opengl-buffer/#context">Create OpenGL Context</a></li>
+<li><a href="posts/clear-opengl-buffer/clear-opengl-buffer/#rendering_loop">Main rendering loop</a></li>
+<li><a href="posts/clear-opengl-buffer/clear-opengl-buffer/#event">Quit event</a></li>
+<li><a href="posts/clear-opengl-buffer/clear-opengl-buffer/#clear">Clear buffer</a></li>
+<li><a href="posts/clear-opengl-buffer/clear-opengl-buffer/#cleanup">Cleanup</a></li>
+</ul>
+<p><img alt="Final Result" src="images/clear-opengl-buffer.png"></p>
+<h6>Introduction: <a name="introduction"></a>
+</h6>
+<blockquote>
+<p>OpenGL® is the most widely adopted 2D and 3D graphics API in the industry, bringing thousands of applications to a wide variety of computer platforms. <a href="https://www.khronos.org/opengl/">source</a></p>
+</blockquote>
+<p>I can say that <code>It is cross-platform 3D graphics API</code>. It will help you create an application using graphics hardware.
+The main idea of computer graphics is to convert 3D data to 2D data. I mean Convert 3D models to 2D images.</p>
+<p>We want a window to draw rendered images on. We can use native API to create a window ie. Windows API or X11 API or use the cross-platform framework.
+I like SDL2 which is cross-platform API. It wraps platform API calls.</p>
+<blockquote>
+<p>Simple DirectMedia Layer is a cross-platform development library designed to provide low-level access to audio, keyboard, mouse, joystick, and graphics hardware via OpenGL and Direct3D. <a href="https://wiki.libsdl.org/Introduction">source</a></p>
+</blockquote>
+<h5>Create SDL2 window: <a name="window"></a>
+</h5>
+<p>SDL2 need to be initialied to use any functions calls.
+So SDL2 is consists of many systems which one we want to initialize?!
+For now, we just need to initialize the Video system. <a href="https://wiki.libsdl.org/SDL_Init">source</a></p>
+<pre class="code literal-block"><span></span>  <span class="k">if</span><span class="p">(</span><span class="n">SDL_Init</span><span class="p">(</span><span class="n">SDL_INIT_VIDEO</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">"Can not initialize SDL2</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">EXIT_FAILURE</span><span class="p">;</span>
+  <span class="p">}</span>
+</pre>
+
+
+<p>Now we can create SDL2 window. <a href="https://wiki.libsdl.org/SDL_CreateWindow">source</a></p>
+<pre class="code literal-block"><span></span>  <span class="k">const</span> <span class="k">auto</span> <span class="n">width</span>  <span class="o">=</span> <span class="mi">640U</span><span class="p">;</span>
+  <span class="k">const</span> <span class="k">auto</span> <span class="n">height</span> <span class="o">=</span> <span class="mi">480U</span><span class="p">;</span>
+  <span class="k">auto</span> <span class="n">pWindow</span> <span class="o">=</span> <span class="n">SDL_CreateWindow</span><span class="p">(</span><span class="s">"HelloWorld!"</span><span class="p">,</span> <span class="n">SDL_WINDOWPOS_UNDEFINED</span><span class="p">,</span> <span class="n">SDL_WINDOWPOS_UNDEFINED</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">SDL_WINDOW_OPENGL</span><span class="p">);</span>
+  <span class="k">if</span><span class="p">(</span><span class="n">pWindow</span> <span class="o">==</span> <span class="k">nullptr</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">"Can not create SDL2 window</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">EXIT_FAILURE</span><span class="p">;</span>
+  <span class="p">}</span>
+</pre>
+
+
+<h5>Create OpenGL Context: <a name="context"></a>
+</h5>
+<p>Now we want to create OpenGL Context.</p>
+<pre class="code literal-block"><span></span><span class="n">SDL_GLContext</span> <span class="n">context</span> <span class="o">=</span> <span class="n">SDL_GL_CreateContext</span><span class="p">(</span><span class="n">pWindow</span><span class="p">);</span>
+</pre>
+
+
+<p>Just for now we need this line.</p>
+<h5>Main rendering loop: <a name="rendering_loop"></a>
+</h5>
+<p>We need to prevent the application from quiting.</p>
+<pre class="code literal-block"><span></span><span class="kt">bool</span> <span class="n">bRunning</span> <span class="o">=</span> <span class="n">ture</span><span class="p">;</span>
+<span class="k">while</span><span class="p">(</span><span class="n">bRunning</span><span class="p">)</span> <span class="p">{</span>
+<span class="p">}</span>
+</pre>
+
+
+<p>We can not quit the application. <code>Invitiy loop</code>
+We need to check when user click quit.</p>
+<h5>Quit event: <a name="event"></a>
+</h5>
+<p>We need to pull SDL events till no event on queue or quit event.</p>
+<pre class="code literal-block"><span></span><span class="n">SDL_Event</span> <span class="n">event</span><span class="p">;</span>
+<span class="k">while</span><span class="p">(</span><span class="n">SDL_PollEvent</span><span class="p">(</span><span class="o">&amp;</span><span class="n">event</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">switch</span><span class="p">(</span><span class="n">event</span><span class="p">.</span><span class="n">type</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">case</span> <span class="nl">SDL_QUIT</span><span class="p">:</span> <span class="n">bRunning</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span> <span class="k">break</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+
+
+<h5>Clear buffer: <a name="clear"></a>
+</h5>
+<p>We need to clear OpenGL buffer.</p>
+<pre class="code literal-block"><span></span><span class="n">glClearColor</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+<span class="n">glClear</span><span class="p">(</span><span class="n">GL_COLOR_BUFFER_BIT</span><span class="p">);</span>
+<span class="n">SDL_GL_SwapWindow</span><span class="p">(</span><span class="n">pWindow</span><span class="p">);</span>
+</pre>
+
+
+<h5>Cleanup: <a name="cleanup"></a>
+</h5>
+<p>We need to delete context and SDL2 window.
+Finally, we need to quit SDL2.</p>
+<pre class="code literal-block"><span></span><span class="n">SDL_GL_DeleteContext</span><span class="p">(</span><span class="n">context</span><span class="p">);</span>
+<span class="n">SDL_DestroyWindow</span><span class="p">(</span><span class="n">pWindow</span><span class="p">);</span>
+<span class="n">SDL_Quit</span><span class="p">();</span>
+</pre>
+
+
+<p>You can find the source code in <a href="https://github.com/wow2006/GraphicsDemos/blob/master/opengl/fixedPipelineOpenGLSDL.cpp">SourceCode</a>.</p>
+</div>
+    </section><footer class="post-meta">
+                Ahmed Abdel Aal
+
+        on
+                <a href="categories/opengl/">#opengl</a>,
+                <a href="categories/sdl2/">#sdl2</a>,
+
+        <time class="post-date" datetime="2020-03-01T18:09:25+02:00">
+            2020-03-01 18:09
+        </time></footer></article><article class="post post"><header class="post-header"><h2 class="post-title"><a href="posts/save-opengl-frame-to-image/save-opengl-frame/">Save OpenGL frame to image</a></h2>
     </header><section class="post-excerpt"><div>
 <p>I want to create GIF from for OpenGL Application.</p>
 <p>I can split this problem into two steps:
@@ -143,176 +259,6 @@ We can use it with default framebuffer too.</p>
 
         <time class="post-date" datetime="2020-01-02T02:02:18+02:00">
             2020-01-02 02:02
-        </time></footer></article><article class="post post"><header class="post-header"><h2 class="post-title"><a href="posts/create-cuda-pitch-memory/">Create CUDA pitch memory</a></h2>
-    </header><section class="post-excerpt"><div>
-<p>I want to Create memory pitch.</p>
-<h5>CUDA runtime API:</h5>
-<pre class="code literal-block"><span></span><span class="n">constepxr</span> <span class="k">auto</span> <span class="n">width</span>  <span class="o">=</span> <span class="mi">2752u</span><span class="p">;</span>
-<span class="k">constexpr</span> <span class="k">auto</span> <span class="n">height</span> <span class="o">=</span> <span class="mi">2200u</span>
-<span class="kt">float</span><span class="o">*</span> <span class="n">pDeviceMemory</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
-
-<span class="k">const</span> <span class="k">auto</span> <span class="n">result</span> <span class="o">=</span> <span class="n">cudaMallocPitch</span><span class="p">(</span><span class="o">&amp;</span><span class="n">pDeviceMemory</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">pitch</span><span class="p">,</span>
-                        <span class="n">width</span> <span class="o">*</span> <span class="k">sizeof</span><span class="p">(</span><span class="kt">float</span><span class="p">),</span> <span class="n">height</span><span class="p">);</span>
-<span class="k">if</span><span class="p">(</span><span class="n">result</span> <span class="o">==</span> <span class="n">cudaSuccess</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">std</span><span class="o">::</span><span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">"Error: "</span> <span class="o">&lt;&lt;</span> <span class="p">...;</span>
-<span class="p">}</span>
-</pre>
-
-
-<h5>CUDA driver API:</h5>
-<pre class="code literal-block"><span></span><span class="n">constepxr</span> <span class="k">auto</span> <span class="n">width</span>  <span class="o">=</span> <span class="mi">2752u</span><span class="p">;</span>
-<span class="k">constexpr</span> <span class="k">auto</span> <span class="n">height</span> <span class="o">=</span> <span class="mi">2200u</span>
-<span class="kt">size_t</span> <span class="n">pitch</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-<span class="n">CUdrevice</span> <span class="n">device</span><span class="p">;</span>
-<span class="k">const</span> <span class="k">auto</span> <span class="n">result</span> <span class="o">=</span> <span class="n">cuMemAllocPitch</span><span class="p">(</span><span class="o">&amp;</span><span class="n">device</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">pitch</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="kt">float</span><span class="p">));</span>
-<span class="k">if</span> <span class="p">(</span><span class="n">result</span> <span class="o">!=</span> <span class="n">CUDA_SUCCESS</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">std</span><span class="o">::</span><span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">"Error: "</span> <span class="o">&lt;&lt;</span> <span class="p">...;</span>
-<span class="p">}</span>
-</pre>
-
-
-<p>I want set GPU memory to zero values.</p>
-<h5>CUDA runtime API:</h5>
-<pre class="code literal-block"><span></span><span class="kt">float</span>    <span class="o">*</span><span class="n">pDevice</span>    <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
-<span class="kt">size_t</span>   <span class="n">devicePitch</span> <span class="o">=</span> <span class="p">...;</span>
-<span class="kt">uint32_t</span> <span class="n">width</span>       <span class="o">=</span> <span class="p">...;</span>
-<span class="kt">uint32_t</span> <span class="n">height</span>      <span class="o">=</span> <span class="p">...;</span>
-
-<span class="k">const</span> <span class="k">auto</span> <span class="n">result</span> <span class="o">=</span> <span class="n">cudaMemset2D</span><span class="p">(</span><span class="n">pDevice</span><span class="p">,</span> <span class="n">devicePitch</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
-                                 <span class="n">width</span> <span class="o">*</span> <span class="k">sizeof</span><span class="p">(</span><span class="kt">uint32_t</span><span class="p">),</span>
-                                 <span class="n">height</span><span class="p">);</span>
-
-<span class="k">if</span><span class="p">(</span><span class="n">result</span> <span class="o">!=</span> <span class="n">CUDA_SUCCESS</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">std</span><span class="o">::</span><span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">"ERROR:"</span><span class="p">;</span>
-    <span class="n">std</span><span class="o">::</span><span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span>
-<span class="p">}</span>
-</pre>
-
-
-<h5>CUDA driver API:</h5>
-<pre class="code literal-block"><span></span><span class="c1">// TODO(Hussein): make sure</span>
-<span class="n">constepxr</span> <span class="k">auto</span> <span class="n">width</span>  <span class="o">=</span> <span class="mi">2752u</span><span class="p">;</span>
-<span class="k">constexpr</span> <span class="k">auto</span> <span class="n">height</span> <span class="o">=</span> <span class="mi">2200u</span>
-<span class="kt">size_t</span> <span class="n">pitch</span> <span class="o">=</span> <span class="p">...;</span>
-<span class="n">CUdrevice</span> <span class="n">device</span><span class="p">;</span>
-<span class="k">const</span> <span class="k">auto</span> <span class="n">result</span> <span class="o">=</span> <span class="n">cuMemsetD2D32</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="n">pitch</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span>
-                                  <span class="n">height</span><span class="p">);</span>
-<span class="k">if</span> <span class="p">(</span><span class="n">result</span> <span class="o">!=</span> <span class="n">CUDA_SUCCESS</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">std</span><span class="o">::</span><span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">"Error: "</span> <span class="o">&lt;&lt;</span> <span class="p">...;</span>
-<span class="p">}</span>
-</pre>
-</div>
-    </section><footer class="post-meta">
-                Ahmed Abdel Aal
-
-        on
-
-        <time class="post-date" datetime="2019-11-20T10:58:27+02:00">
-            2019-11-20 10:58
-        </time></footer></article><article class="post post"><header class="post-header"><h2 class="post-title"><a href="posts/singleton-design-pattern/singleton-design-pattern/">Singleton Design Pattern</a></h2>
-    </header><section class="post-excerpt"><div>
-<h5>Content:</h5>
-<ol>
-<li><a href="posts/singleton-design-pattern/singleton-design-pattern/#idea">Idea</a></li>
-<li><a href="posts/singleton-design-pattern/singleton-design-pattern/#uml">UML</a></li>
-<li><a href="posts/singleton-design-pattern/singleton-design-pattern/#simple-impl">Simple Implementation</a></li>
-<li><a href="posts/singleton-design-pattern/singleton-design-pattern/#other-impl">Other Implementation</a></li>
-<li><a href="posts/singleton-design-pattern/singleton-design-pattern/#other-impl">References</a></li>
-</ol>
-<h6>Idea:<a name="idea"></a>
-</h6>
-<p>I hate this design so I will start with it. Singleton is one of the structural patterns. It is responsible for creating just one instance of a class.</p>
-<blockquote>
-<p>Ensure a class only has one instance, and provide a global point of access to it.</p>
-<p>Gang of four</p>
-</blockquote>
-<h6>UML:<a name="uml"></a>
-</h6>
-<h6>Simple Implementation:<a name="simple-impl"></a>
-</h6>
-<p>c++98 Implementation</p>
-<pre class="code literal-block"><span></span><span class="k">class</span> <span class="nc">Singleton</span> <span class="p">{</span>
-<span class="k">public</span><span class="o">:</span>
-  <span class="k">static</span> <span class="n">Singleton</span><span class="o">*</span> <span class="n">Instance</span><span class="p">();</span>
-<span class="k">protected</span><span class="o">:</span>
-  <span class="n">Singleton</span><span class="p">();</span>
-<span class="k">private</span><span class="o">:</span>
-  <span class="k">static</span> <span class="n">Singleton</span><span class="o">*</span> <span class="n">_instance</span><span class="p">;</span>
-<span class="p">};</span>
-
-<span class="n">Singleton</span><span class="o">*</span> <span class="n">Singleton</span><span class="o">::</span><span class="n">_instance</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-
-<span class="n">Singleton</span><span class="o">::</span><span class="n">Singleton</span><span class="p">()</span> <span class="p">{}</span>
-
-<span class="n">Singleton</span><span class="o">*</span> <span class="n">Singleton</span><span class="o">::</span><span class="n">Instance</span><span class="p">()</span> <span class="p">{</span>
-  <span class="k">if</span><span class="p">(</span><span class="n">_instance</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">_instance</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Singleton</span><span class="p">;</span>
-  <span class="p">}</span>
-  <span class="k">return</span> <span class="n">_instance</span><span class="p">;</span>
-<span class="p">}</span>
-</pre>
-
-
-<p>c++11 Implementation</p>
-<pre class="code literal-block"><span></span><span class="cp">#include</span> <span class="cpf">&lt;memory&gt;</span><span class="cp"></span>
-
-<span class="k">class</span> <span class="nc">Singleton</span> <span class="p">{</span>
-<span class="k">public</span><span class="o">:</span>
-  <span class="k">static</span> <span class="n">Singleton</span><span class="o">*</span> <span class="n">Instance</span><span class="p">();</span>
-  <span class="o">~</span><span class="n">Singleton</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
-<span class="k">private</span><span class="o">:</span>
-  <span class="n">Singleton</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
-<span class="k">private</span><span class="o">:</span>
-  <span class="k">static</span> <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Singleton</span><span class="o">&gt;</span> <span class="n">_instance</span><span class="p">;</span>
-<span class="p">};</span>
-
-<span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Singleton</span><span class="o">&gt;</span> <span class="n">Singleton</span><span class="o">::</span><span class="n">_instance</span><span class="p">;</span>
-
-<span class="n">Singleton</span><span class="o">*</span> <span class="n">Singleton</span><span class="o">::</span><span class="n">Instance</span><span class="p">()</span> <span class="p">{</span>
-  <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">_instance</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">_instance</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Singleton</span><span class="o">&gt;</span><span class="p">();</span>
-  <span class="p">}</span>
-  <span class="k">return</span> <span class="n">_instance</span><span class="p">.</span><span class="n">get</span><span class="p">();</span>
-<span class="p">}</span>
-</pre>
-
-
-<h6>Other Implementation:<a name="other-impl"></a>
-</h6>
-<p>c++11 Implementation</p>
-<pre class="code literal-block"><span></span><span class="k">class</span> <span class="nc">Singleton</span> <span class="p">{</span>
-<span class="k">public</span><span class="o">:</span>
-  <span class="k">static</span> <span class="n">Singleton</span><span class="o">*</span> <span class="n">Instance</span><span class="p">();</span>
-
-<span class="k">private</span><span class="o">:</span>
-  <span class="n">Singleton</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
-
-<span class="p">};</span>
-
-<span class="n">Singleton</span><span class="o">*</span> <span class="n">Singleton</span><span class="o">::</span><span class="n">Instance</span><span class="p">()</span> <span class="p">{</span>
-  <span class="k">static</span> <span class="n">Singleton</span> <span class="n">sInstance</span><span class="p">;</span>
-  <span class="k">return</span> <span class="o">&amp;</span><span class="n">sInstance</span><span class="p">;</span>
-<span class="p">}</span>
-</pre>
-
-
-<h6>References:<a name="references"></a>
-</h6>
-<ul>
-<li>Design Patterns: Elements of Reusable Object-Oriented Software (1994)</li>
-<li>Design Patterns in Modern C++ - Dmitri Nesteruk</li>
-<li>Head First: Design Patterns</li>
-<li>Game Programming: Patterns</li>
-<li><a href="https://www.youtube.com/watch?v=B3WWsKFePiM">Ep 2 Cost of Using Statics</a></li>
-</ul>
-</div>
-    </section><footer class="post-meta">
-                Ahmed Abdel Aal
-
-        on
-
-        <time class="post-date" datetime="2019-11-19T17:33:51+02:00">
-            2019-11-19 17:33
         </time></footer></article><article class="post post"><header class="post-header"><h2 class="post-title"><a href="posts/how-to-use-boost-program-options/how-to-use-boost-program-options/">How to use Boost program options</a></h2>
     </header><section class="post-excerpt"><div>
 <h6>Content:</h6>
@@ -510,35 +456,6 @@ We can also add description for each one. We can add <code>help-module</code> an
 
         <time class="post-date" datetime="2019-08-15T18:16:40+02:00">
             2019-08-15 18:16
-        </time></footer></article><article class="post post"><header class="post-header"><h2 class="post-title"><a href="posts/visual-slam-book/visual-slam-book/">Visual SLAM Book</a></h2>
-    </header><section class="post-excerpt"><ol>
-<li>[ ] Part I:<ul>
-<li>[x] Lecture 1: preface</li>
-<li>[ ] Lecture 2: an overview of a SLAM system.</li>
-<li>[ ] Lecture 3: rigid body motion in 3D space.</li>
-<li>[ ] Lecture 4: Lie group and Lie algebra.</li>
-<li>[ ] Lecture 5: pinhole camera model and image expression in computer.</li>
-<li>[ ] Lecture 6: nonlinear optimization.</li>
-</ul>
-</li>
-<li>[ ] Part II:<ul>
-<li>[ ] Lecture 7: feature based visual odometry.</li>
-<li>[ ] Lecture 8: Lecture 8: direct (or intensity-based) method for VO.</li>
-<li>[ ] Lecture 9: a practice chapter for VO.</li>
-<li>[ ] Lecture 10: back-end optimization.</li>
-<li>[ ] Lecture 11: pose graph in the back-end optimization.</li>
-<li>[ ] Lecture 12: loop closure detection, mainly Bag-of-Word (BoW) based method.</li>
-<li>[ ] Lecture 13: map building.</li>
-<li>[ ] Lecture 14: current open source SLAM projects and future development direction.</li>
-</ul>
-</li>
-</ol></section><footer class="post-meta">
-                Ahmed Abdel Aal
-
-        on
-
-        <time class="post-date" datetime="2019-08-14T21:40:24+02:00">
-            2019-08-14 21:40
         </time></footer></article><article class="post post"><header class="post-header"><h2 class="post-title"><a href="posts/how-to-use-nikola/how-to-use-nikola/">How to use nikola?</a></h2>
     </header><section class="post-excerpt"><div>
 <h5>Content:</h5>

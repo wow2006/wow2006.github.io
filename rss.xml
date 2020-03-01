@@ -1,5 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Salt and Pepper</title><link>https://wow2006.github.io/</link><description>An other Computer Graphics and Vision blog.</description><atom:link href="https://wow2006.github.io/rss.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2020 &lt;a href="mailto:eng.ahmedhussein89@gmail.com"&gt;Ahmed Abdel Aal&lt;/a&gt; </copyright><lastBuildDate>Thu, 02 Jan 2020 15:13:05 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Save OpenGL frame to image</title><link>https://wow2006.github.io/posts/save-opengl-frame-to-image/save-opengl-frame/</link><dc:creator>Ahmed Abdel Aal</dc:creator><description>&lt;div&gt;&lt;p&gt;I want to create GIF from for OpenGL Application.&lt;/p&gt;
+<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Salt and Pepper</title><link>https://wow2006.github.io/</link><description>An other Computer Graphics and Vision blog.</description><atom:link href="https://wow2006.github.io/rss.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2020 &lt;a href="mailto:eng.ahmedhussein89@gmail.com"&gt;Ahmed Abdel Aal&lt;/a&gt; </copyright><lastBuildDate>Sun, 01 Mar 2020 18:00:14 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Clear OpenGL Buffer</title><link>https://wow2006.github.io/posts/clear-opengl-buffer/clear-opengl-buffer/</link><dc:creator>Ahmed Abdel Aal</dc:creator><description>&lt;div&gt;&lt;p&gt;In this post, we will create a simple application which initializes OpenGL and clear buffer to red.&lt;/p&gt;
+&lt;h6&gt;What we will learn:&lt;/h6&gt;
+&lt;ul&gt;
+&lt;li&gt;Create a Simple SDL2 Window.&lt;/li&gt;
+&lt;li&gt;Create an OpenGL Context.&lt;/li&gt;
+&lt;li&gt;Clear OpenGL buffer.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h6&gt;Content:&lt;/h6&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://wow2006.github.io/posts/clear-opengl-buffer/clear-opengl-buffer/#introduction"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://wow2006.github.io/posts/clear-opengl-buffer/clear-opengl-buffer/#window"&gt;Create SDL2 window&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://wow2006.github.io/posts/clear-opengl-buffer/clear-opengl-buffer/#context"&gt;Create OpenGL Context&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://wow2006.github.io/posts/clear-opengl-buffer/clear-opengl-buffer/#rendering_loop"&gt;Main rendering loop&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://wow2006.github.io/posts/clear-opengl-buffer/clear-opengl-buffer/#event"&gt;Quit event&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://wow2006.github.io/posts/clear-opengl-buffer/clear-opengl-buffer/#clear"&gt;Clear buffer&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://wow2006.github.io/posts/clear-opengl-buffer/clear-opengl-buffer/#cleanup"&gt;Cleanup&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img alt="Final Result" src="https://wow2006.github.io/images/clear-opengl-buffer.png"&gt;&lt;/p&gt;
+&lt;h6&gt;Introduction: &lt;a name="introduction"&gt;&lt;/a&gt;&lt;/h6&gt;
+&lt;blockquote&gt;
+&lt;p&gt;OpenGL® is the most widely adopted 2D and 3D graphics API in the industry, bringing thousands of applications to a wide variety of computer platforms. &lt;a href="https://www.khronos.org/opengl/"&gt;source&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;I can say that &lt;code&gt;It is cross-platform 3D graphics API&lt;/code&gt;. It will help you create an application using graphics hardware.
+The main idea of computer graphics is to convert 3D data to 2D data. I mean Convert 3D models to 2D images.&lt;/p&gt;
+&lt;p&gt;We want a window to draw rendered images on. We can use native API to create a window ie. Windows API or X11 API or use the cross-platform framework.
+I like SDL2 which is cross-platform API. It wraps platform API calls.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Simple DirectMedia Layer is a cross-platform development library designed to provide low-level access to audio, keyboard, mouse, joystick, and graphics hardware via OpenGL and Direct3D. &lt;a href="https://wiki.libsdl.org/Introduction"&gt;source&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h5&gt;Create SDL2 window: &lt;a name="window"&gt;&lt;/a&gt;&lt;/h5&gt;
+&lt;p&gt;SDL2 need to be initialied to use any functions calls.
+So SDL2 is consists of many systems which one we want to initialize?!
+For now, we just need to initialize the Video system. &lt;a href="https://wiki.libsdl.org/SDL_Init"&gt;source&lt;/a&gt;&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;  &lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;SDL_Init&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;SDL_INIT_VIDEO&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;!=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;cerr&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="s"&gt;"Can not initialize SDL2&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s"&gt;"&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;EXIT_FAILURE&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;Now we can create SDL2 window. &lt;a href="https://wiki.libsdl.org/SDL_CreateWindow"&gt;source&lt;/a&gt;&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;  &lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="k"&gt;auto&lt;/span&gt; &lt;span class="n"&gt;width&lt;/span&gt;  &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;640U&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="k"&gt;auto&lt;/span&gt; &lt;span class="n"&gt;height&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;480U&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="k"&gt;auto&lt;/span&gt; &lt;span class="n"&gt;pWindow&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;SDL_CreateWindow&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"HelloWorld!"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;SDL_WINDOWPOS_UNDEFINED&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;SDL_WINDOWPOS_UNDEFINED&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;width&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;height&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;SDL_WINDOW_OPENGL&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+  &lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pWindow&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="k"&gt;nullptr&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;cerr&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="s"&gt;"Can not create SDL2 window&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s"&gt;"&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;EXIT_FAILURE&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;h5&gt;Create OpenGL Context: &lt;a name="context"&gt;&lt;/a&gt;&lt;/h5&gt;
+&lt;p&gt;Now we want to create OpenGL Context.&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;SDL_GLContext&lt;/span&gt; &lt;span class="n"&gt;context&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;SDL_GL_CreateContext&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pWindow&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;Just for now we need this line.&lt;/p&gt;
+&lt;h5&gt;Main rendering loop: &lt;a name="rendering_loop"&gt;&lt;/a&gt;&lt;/h5&gt;
+&lt;p&gt;We need to prevent the application from quiting.&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kt"&gt;bool&lt;/span&gt; &lt;span class="n"&gt;bRunning&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;ture&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="k"&gt;while&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;bRunning&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;We can not quit the application. &lt;code&gt;Invitiy loop&lt;/code&gt;
+We need to check when user click quit.&lt;/p&gt;
+&lt;h5&gt;Quit event: &lt;a name="event"&gt;&lt;/a&gt;&lt;/h5&gt;
+&lt;p&gt;We need to pull SDL events till no event on queue or quit event.&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;SDL_Event&lt;/span&gt; &lt;span class="n"&gt;event&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="k"&gt;while&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;SDL_PollEvent&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;event&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="k"&gt;switch&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;event&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;type&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="k"&gt;case&lt;/span&gt; &lt;span class="nl"&gt;SDL_QUIT&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;bRunning&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;false&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;break&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;h5&gt;Clear buffer: &lt;a name="clear"&gt;&lt;/a&gt;&lt;/h5&gt;
+&lt;p&gt;We need to clear OpenGL buffer.&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;glClearColor&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;glClear&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;GL_COLOR_BUFFER_BIT&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;SDL_GL_SwapWindow&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pWindow&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;h5&gt;Cleanup: &lt;a name="cleanup"&gt;&lt;/a&gt;&lt;/h5&gt;
+&lt;p&gt;We need to delete context and SDL2 window.
+Finally, we need to quit SDL2.&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;SDL_GL_DeleteContext&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;context&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;SDL_DestroyWindow&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pWindow&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;SDL_Quit&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;You can find the source code in &lt;a href="https://github.com/wow2006/GraphicsDemos/blob/master/opengl/fixedPipelineOpenGLSDL.cpp"&gt;SourceCode&lt;/a&gt;.&lt;/p&gt;&lt;/div&gt;</description><category>opengl</category><category>sdl2</category><guid>https://wow2006.github.io/posts/clear-opengl-buffer/clear-opengl-buffer/</guid><pubDate>Sun, 01 Mar 2020 16:09:25 GMT</pubDate></item><item><title>Save OpenGL frame to image</title><link>https://wow2006.github.io/posts/save-opengl-frame-to-image/save-opengl-frame/</link><dc:creator>Ahmed Abdel Aal</dc:creator><description>&lt;div&gt;&lt;p&gt;I want to create GIF from for OpenGL Application.&lt;/p&gt;
 &lt;p&gt;I can split this problem into two steps:
 1. Capture OpenGL frames.
 2. Convert captured frames to GIF.&lt;/p&gt;
@@ -58,150 +154,7 @@ We can use it with default framebuffer too.&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href="https://www.khronos.org/opengl/wiki/Default_Framebuffer"&gt;Default Framebuffer&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="https://imagemagick.org/script/animate.php"&gt;ImageMagick GIF&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/div&gt;</description><category>cmake</category><category>cpp</category><category>opengl</category><guid>https://wow2006.github.io/posts/save-opengl-frame-to-image/save-opengl-frame/</guid><pubDate>Thu, 02 Jan 2020 00:02:18 GMT</pubDate></item><item><title>Create CUDA pitch memory</title><link>https://wow2006.github.io/posts/create-cuda-pitch-memory/</link><dc:creator>Ahmed Abdel Aal</dc:creator><description>&lt;div&gt;&lt;p&gt;I want to Create memory pitch.&lt;/p&gt;
-&lt;h5&gt;CUDA runtime API:&lt;/h5&gt;
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;constepxr&lt;/span&gt; &lt;span class="k"&gt;auto&lt;/span&gt; &lt;span class="n"&gt;width&lt;/span&gt;  &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;2752u&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-&lt;span class="k"&gt;constexpr&lt;/span&gt; &lt;span class="k"&gt;auto&lt;/span&gt; &lt;span class="n"&gt;height&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;2200u&lt;/span&gt;
-&lt;span class="kt"&gt;float&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;pDeviceMemory&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;nullptr&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-
-&lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="k"&gt;auto&lt;/span&gt; &lt;span class="n"&gt;result&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;cudaMallocPitch&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;pDeviceMemory&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;pitch&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-                        &lt;span class="n"&gt;width&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="k"&gt;sizeof&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;float&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;height&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
-&lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;result&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;cudaSuccess&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
-    &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;cerr&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="s"&gt;"Error: "&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="p"&gt;...;&lt;/span&gt;
-&lt;span class="p"&gt;}&lt;/span&gt;
-&lt;/pre&gt;
-
-
-&lt;h5&gt;CUDA driver API:&lt;/h5&gt;
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;constepxr&lt;/span&gt; &lt;span class="k"&gt;auto&lt;/span&gt; &lt;span class="n"&gt;width&lt;/span&gt;  &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;2752u&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-&lt;span class="k"&gt;constexpr&lt;/span&gt; &lt;span class="k"&gt;auto&lt;/span&gt; &lt;span class="n"&gt;height&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;2200u&lt;/span&gt;
-&lt;span class="kt"&gt;size_t&lt;/span&gt; &lt;span class="n"&gt;pitch&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-&lt;span class="n"&gt;CUdrevice&lt;/span&gt; &lt;span class="n"&gt;device&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-&lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="k"&gt;auto&lt;/span&gt; &lt;span class="n"&gt;result&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;cuMemAllocPitch&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;device&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;pitch&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;width&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;height&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;sizeof&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;float&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;
-&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;result&lt;/span&gt; &lt;span class="o"&gt;!=&lt;/span&gt; &lt;span class="n"&gt;CUDA_SUCCESS&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
-    &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;cerr&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="s"&gt;"Error: "&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="p"&gt;...;&lt;/span&gt;
-&lt;span class="p"&gt;}&lt;/span&gt;
-&lt;/pre&gt;
-
-
-&lt;p&gt;I want set GPU memory to zero values.&lt;/p&gt;
-&lt;h5&gt;CUDA runtime API:&lt;/h5&gt;
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kt"&gt;float&lt;/span&gt;    &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;pDevice&lt;/span&gt;    &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;nullptr&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-&lt;span class="kt"&gt;size_t&lt;/span&gt;   &lt;span class="n"&gt;devicePitch&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;...;&lt;/span&gt;
-&lt;span class="kt"&gt;uint32_t&lt;/span&gt; &lt;span class="n"&gt;width&lt;/span&gt;       &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;...;&lt;/span&gt;
-&lt;span class="kt"&gt;uint32_t&lt;/span&gt; &lt;span class="n"&gt;height&lt;/span&gt;      &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;...;&lt;/span&gt;
-
-&lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="k"&gt;auto&lt;/span&gt; &lt;span class="n"&gt;result&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;cudaMemset2D&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pDevice&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;devicePitch&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-                                 &lt;span class="n"&gt;width&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="k"&gt;sizeof&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;uint32_t&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
-                                 &lt;span class="n"&gt;height&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
-
-&lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;result&lt;/span&gt; &lt;span class="o"&gt;!=&lt;/span&gt; &lt;span class="n"&gt;CUDA_SUCCESS&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
-    &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;cerr&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="s"&gt;"ERROR:"&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-    &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;exit&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;EXIT_FAILURE&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
-&lt;span class="p"&gt;}&lt;/span&gt;
-&lt;/pre&gt;
-
-
-&lt;h5&gt;CUDA driver API:&lt;/h5&gt;
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;// TODO(Hussein): make sure&lt;/span&gt;
-&lt;span class="n"&gt;constepxr&lt;/span&gt; &lt;span class="k"&gt;auto&lt;/span&gt; &lt;span class="n"&gt;width&lt;/span&gt;  &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;2752u&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-&lt;span class="k"&gt;constexpr&lt;/span&gt; &lt;span class="k"&gt;auto&lt;/span&gt; &lt;span class="n"&gt;height&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;2200u&lt;/span&gt;
-&lt;span class="kt"&gt;size_t&lt;/span&gt; &lt;span class="n"&gt;pitch&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;...;&lt;/span&gt;
-&lt;span class="n"&gt;CUdrevice&lt;/span&gt; &lt;span class="n"&gt;device&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-&lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="k"&gt;auto&lt;/span&gt; &lt;span class="n"&gt;result&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;cuMemsetD2D32&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;device&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;pitch&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;width&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-                                  &lt;span class="n"&gt;height&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
-&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;result&lt;/span&gt; &lt;span class="o"&gt;!=&lt;/span&gt; &lt;span class="n"&gt;CUDA_SUCCESS&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
-    &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;cerr&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="s"&gt;"Error: "&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="p"&gt;...;&lt;/span&gt;
-&lt;span class="p"&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;</description><guid>https://wow2006.github.io/posts/create-cuda-pitch-memory/</guid><pubDate>Wed, 20 Nov 2019 08:58:27 GMT</pubDate></item><item><title>Singleton Design Pattern</title><link>https://wow2006.github.io/posts/singleton-design-pattern/singleton-design-pattern/</link><dc:creator>Ahmed Abdel Aal</dc:creator><description>&lt;div&gt;&lt;h5&gt;Content:&lt;/h5&gt;
-&lt;ol&gt;
-&lt;li&gt;&lt;a href="https://wow2006.github.io/posts/singleton-design-pattern/singleton-design-pattern/#idea"&gt;Idea&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="https://wow2006.github.io/posts/singleton-design-pattern/singleton-design-pattern/#uml"&gt;UML&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="https://wow2006.github.io/posts/singleton-design-pattern/singleton-design-pattern/#simple-impl"&gt;Simple Implementation&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="https://wow2006.github.io/posts/singleton-design-pattern/singleton-design-pattern/#other-impl"&gt;Other Implementation&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="https://wow2006.github.io/posts/singleton-design-pattern/singleton-design-pattern/#other-impl"&gt;References&lt;/a&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h6&gt;Idea:&lt;a name="idea"&gt;&lt;/a&gt;&lt;/h6&gt;
-&lt;p&gt;I hate this design so I will start with it. Singleton is one of the structural patterns. It is responsible for creating just one instance of a class.&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;Ensure a class only has one instance, and provide a global point of access to it.&lt;/p&gt;
-&lt;p&gt;Gang of four&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;h6&gt;UML:&lt;a name="uml"&gt;&lt;/a&gt;&lt;/h6&gt;
-&lt;h6&gt;Simple Implementation:&lt;a name="simple-impl"&gt;&lt;/a&gt;&lt;/h6&gt;
-&lt;p&gt;c++98 Implementation&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;Singleton&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
-&lt;span class="k"&gt;public&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
-  &lt;span class="k"&gt;static&lt;/span&gt; &lt;span class="n"&gt;Singleton&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;Instance&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
-&lt;span class="k"&gt;protected&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
-  &lt;span class="n"&gt;Singleton&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
-&lt;span class="k"&gt;private&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
-  &lt;span class="k"&gt;static&lt;/span&gt; &lt;span class="n"&gt;Singleton&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;_instance&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-&lt;span class="p"&gt;};&lt;/span&gt;
-
-&lt;span class="n"&gt;Singleton&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;Singleton&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;_instance&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-
-&lt;span class="n"&gt;Singleton&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;Singleton&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{}&lt;/span&gt;
-
-&lt;span class="n"&gt;Singleton&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;Singleton&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;Instance&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
-  &lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;_instance&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
-    &lt;span class="n"&gt;_instance&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="n"&gt;Singleton&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-  &lt;span class="p"&gt;}&lt;/span&gt;
-  &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;_instance&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-&lt;span class="p"&gt;}&lt;/span&gt;
-&lt;/pre&gt;
-
-
-&lt;p&gt;c++11 Implementation&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;memory&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
-
-&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;Singleton&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
-&lt;span class="k"&gt;public&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
-  &lt;span class="k"&gt;static&lt;/span&gt; &lt;span class="n"&gt;Singleton&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;Instance&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
-  &lt;span class="o"&gt;~&lt;/span&gt;&lt;span class="n"&gt;Singleton&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;default&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-&lt;span class="k"&gt;private&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
-  &lt;span class="n"&gt;Singleton&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;default&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-&lt;span class="k"&gt;private&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
-  &lt;span class="k"&gt;static&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;unique_ptr&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;Singleton&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;_instance&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-&lt;span class="p"&gt;};&lt;/span&gt;
-
-&lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;unique_ptr&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;Singleton&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;Singleton&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;_instance&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-
-&lt;span class="n"&gt;Singleton&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;Singleton&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;Instance&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
-  &lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;!&lt;/span&gt;&lt;span class="n"&gt;_instance&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
-    &lt;span class="n"&gt;_instance&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;unique_ptr&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;Singleton&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
-  &lt;span class="p"&gt;}&lt;/span&gt;
-  &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;_instance&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
-&lt;span class="p"&gt;}&lt;/span&gt;
-&lt;/pre&gt;
-
-
-&lt;h6&gt;Other Implementation:&lt;a name="other-impl"&gt;&lt;/a&gt;&lt;/h6&gt;
-&lt;p&gt;c++11 Implementation&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;Singleton&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
-&lt;span class="k"&gt;public&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
-  &lt;span class="k"&gt;static&lt;/span&gt; &lt;span class="n"&gt;Singleton&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;Instance&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
-
-&lt;span class="k"&gt;private&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
-  &lt;span class="n"&gt;Singleton&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;default&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-
-&lt;span class="p"&gt;};&lt;/span&gt;
-
-&lt;span class="n"&gt;Singleton&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;Singleton&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;Instance&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
-  &lt;span class="k"&gt;static&lt;/span&gt; &lt;span class="n"&gt;Singleton&lt;/span&gt; &lt;span class="n"&gt;sInstance&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-  &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;sInstance&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-&lt;span class="p"&gt;}&lt;/span&gt;
-&lt;/pre&gt;
-
-
-&lt;h6&gt;References:&lt;a name="references"&gt;&lt;/a&gt;&lt;/h6&gt;
-&lt;ul&gt;
-&lt;li&gt;Design Patterns: Elements of Reusable Object-Oriented Software (1994)&lt;/li&gt;
-&lt;li&gt;Design Patterns in Modern C++ - Dmitri Nesteruk&lt;/li&gt;
-&lt;li&gt;Head First: Design Patterns&lt;/li&gt;
-&lt;li&gt;Game Programming: Patterns&lt;/li&gt;
-&lt;li&gt;&lt;a href="https://www.youtube.com/watch?v=B3WWsKFePiM"&gt;Ep 2 Cost of Using Statics&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/div&gt;</description><guid>https://wow2006.github.io/posts/singleton-design-pattern/singleton-design-pattern/</guid><pubDate>Tue, 19 Nov 2019 15:33:51 GMT</pubDate></item><item><title>How to use Boost program options</title><link>https://wow2006.github.io/posts/how-to-use-boost-program-options/how-to-use-boost-program-options/</link><dc:creator>Ahmed Abdel Aal</dc:creator><description>&lt;div&gt;&lt;h6&gt;Content:&lt;/h6&gt;
+&lt;/ul&gt;&lt;/div&gt;</description><category>cmake</category><category>cpp</category><category>opengl</category><guid>https://wow2006.github.io/posts/save-opengl-frame-to-image/save-opengl-frame/</guid><pubDate>Thu, 02 Jan 2020 00:02:18 GMT</pubDate></item><item><title>How to use Boost program options</title><link>https://wow2006.github.io/posts/how-to-use-boost-program-options/how-to-use-boost-program-options/</link><dc:creator>Ahmed Abdel Aal</dc:creator><description>&lt;div&gt;&lt;h6&gt;Content:&lt;/h6&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href="https://wow2006.github.io/posts/how-to-use-boost-program-options/how-to-use-boost-program-options/#introduction"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="https://wow2006.github.io/posts/how-to-use-boost-program-options/how-to-use-boost-program-options/#naive"&gt;Naive Example&lt;/a&gt;&lt;/li&gt;
@@ -374,28 +327,7 @@ We can also add description for each one. We can add &lt;code&gt;help-module&lt;
   &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;cout&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;input&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="s"&gt;", "&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;output&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="sc"&gt;'\n'&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
   &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;EXIT_SUCCESS&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
 &lt;span class="p"&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;</description><category>boost</category><category>cpp</category><category>program-options</category><guid>https://wow2006.github.io/posts/how-to-use-boost-program-options/how-to-use-boost-program-options/</guid><pubDate>Thu, 15 Aug 2019 16:16:40 GMT</pubDate></item><item><title>Visual SLAM Book</title><link>https://wow2006.github.io/posts/visual-slam-book/visual-slam-book/</link><dc:creator>Ahmed Abdel Aal</dc:creator><description>&lt;ol&gt;
-&lt;li&gt;[ ] Part I:&lt;ul&gt;
-&lt;li&gt;[x] Lecture 1: preface&lt;/li&gt;
-&lt;li&gt;[ ] Lecture 2: an overview of a SLAM system.&lt;/li&gt;
-&lt;li&gt;[ ] Lecture 3: rigid body motion in 3D space.&lt;/li&gt;
-&lt;li&gt;[ ] Lecture 4: Lie group and Lie algebra.&lt;/li&gt;
-&lt;li&gt;[ ] Lecture 5: pinhole camera model and image expression in computer.&lt;/li&gt;
-&lt;li&gt;[ ] Lecture 6: nonlinear optimization.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;[ ] Part II:&lt;ul&gt;
-&lt;li&gt;[ ] Lecture 7: feature based visual odometry.&lt;/li&gt;
-&lt;li&gt;[ ] Lecture 8: Lecture 8: direct (or intensity-based) method for VO.&lt;/li&gt;
-&lt;li&gt;[ ] Lecture 9: a practice chapter for VO.&lt;/li&gt;
-&lt;li&gt;[ ] Lecture 10: back-end optimization.&lt;/li&gt;
-&lt;li&gt;[ ] Lecture 11: pose graph in the back-end optimization.&lt;/li&gt;
-&lt;li&gt;[ ] Lecture 12: loop closure detection, mainly Bag-of-Word (BoW) based method.&lt;/li&gt;
-&lt;li&gt;[ ] Lecture 13: map building.&lt;/li&gt;
-&lt;li&gt;[ ] Lecture 14: current open source SLAM projects and future development direction.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ol&gt;</description><guid>https://wow2006.github.io/posts/visual-slam-book/visual-slam-book/</guid><pubDate>Wed, 14 Aug 2019 19:40:24 GMT</pubDate></item><item><title>How to use nikola?</title><link>https://wow2006.github.io/posts/how-to-use-nikola/how-to-use-nikola/</link><dc:creator>Ahmed Abdel Aal</dc:creator><description>&lt;div&gt;&lt;h5&gt;Content:&lt;/h5&gt;
+&lt;/pre&gt;&lt;/div&gt;</description><category>boost</category><category>cpp</category><category>program-options</category><guid>https://wow2006.github.io/posts/how-to-use-boost-program-options/how-to-use-boost-program-options/</guid><pubDate>Thu, 15 Aug 2019 16:16:40 GMT</pubDate></item><item><title>How to use nikola?</title><link>https://wow2006.github.io/posts/how-to-use-nikola/how-to-use-nikola/</link><dc:creator>Ahmed Abdel Aal</dc:creator><description>&lt;div&gt;&lt;h5&gt;Content:&lt;/h5&gt;
 &lt;ol&gt;
 &lt;li&gt;&lt;a href="https://wow2006.github.io/posts/how-to-use-nikola/how-to-use-nikola/#new_post"&gt;Create new post&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="https://wow2006.github.io/posts/how-to-use-nikola/how-to-use-nikola/#install_theme"&gt;Install new theme&lt;/a&gt;&lt;/li&gt;
