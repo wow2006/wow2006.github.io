@@ -106,7 +106,7 @@ SDL_Quit();
 
 You can find the source code in [SourceCode][SourceCode].
 
-[FinalResult]: /images/clear-opengl-buffer.png
+[FinalResult]: /images/clear-opengl-buffer/clear-opengl-buffer.png
 [khronos]:     https://www.khronos.org/opengl/
 [SDL2]:        https://wiki.libsdl.org/Introduction
 [SDL_Systems]: https://wiki.libsdl.org/SDL_Init
