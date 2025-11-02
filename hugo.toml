@@ -27,3 +27,13 @@ theme = 'hello-friend-ng'
     identifier = "about"
     name       = "About"
     url        = "/about"
+[[menu.main]]
+  identifier = "nvidia-architectures"
+  name       = "Nvidia Architectures"
+  url        = "/nvidia-architectures"
+
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
