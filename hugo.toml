@@ -49,6 +49,10 @@ defaultContentLanguage = 'en'
   name       = "Blogs"
   url        = "/posts"
 [[menu.main]]
+  identifier = "series"
+  name       = "Series"
+  url        = "/series"
+[[menu.main]]
   identifier = "project"
   name       = "Projects"
   url        = "/projects"
@@ -65,6 +69,10 @@ defaultContentLanguage = 'en'
   identifier = "blog"
   name       = "Blogs"
   url        = "/posts"
+[[languages.en.menu.main]]
+  identifier = "series"
+  name       = "Series"
+  url        = "/series"
 [[languages.en.menu.main]]
   identifier = "project"
   name       = "Projects"
@@ -83,12 +91,16 @@ defaultContentLanguage = 'en'
   name       = "المدونات"
   url        = "/ar/posts"
 [[languages.ar.menu.main]]
+  identifier = "series"
+  name       = "السلاسل"
+  url        = "/ar/series"
+[[languages.ar.menu.main]]
   identifier = "project"
   name       = "المشاريع"
   url        = "/ar/projects"
 [[languages.ar.menu.main]]
   identifier = "about"
-  name       = "حول"
+  name       = "من نحن"
   url        = "/ar/about"
 [[languages.ar.menu.main]]
   identifier = "nvidia-architectures"
