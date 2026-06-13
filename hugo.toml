@@ -24,6 +24,7 @@ defaultContentLanguage = 'en'
     contentDir = "content/en"
     [languages.en.params]
       homeSubtitle = "An other Computer Graphics and Vision blog"
+      textAlign = "left"
       [languages.en.params.logo]
         logoText = "Home"
         logoHomeLink = "/"
@@ -36,6 +37,7 @@ defaultContentLanguage = 'en'
     rtl = true
     [languages.ar.params]
       homeSubtitle = "مدونة أخرى عن الرسومات الحاسوبية والرؤية"
+      textAlign = "right"
       [languages.ar.params.logo]
         logoText = "الرئيسية"
         logoHomeLink = "/"
