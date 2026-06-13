@@ -2,9 +2,11 @@ baseURL = 'https://wow2006.github.io/'
 languageCode = 'en-us'
 title = 'Salt and Pepper'
 theme = 'hello-friend-ng'
+defaultContentLanguage = 'en'
 
 [params]
   homeSubtitle = "An other Computer Graphics and Vision blog"
+  enableGlobalLanguageMenu = true
   [params.logo]
     logoText = "Home"
     logoHomeLink = "/"
@@ -14,24 +16,82 @@ theme = 'hello-friend-ng'
     tag      = "tags"
     series   = "series"
 
+[languages]
+  [languages.en]
+    weight = 1
+    languageName = "English"
+    title = "Salt and Pepper"
+    contentDir = "content/en"
+    [languages.en.params]
+      homeSubtitle = "An other Computer Graphics and Vision blog"
+      [languages.en.params.logo]
+        logoText = "Home"
+        logoHomeLink = "/"
+
+  [languages.ar]
+    weight = 2
+    languageName = "العربية"
+    title = "الملح والفلفل"
+    contentDir = "content/ar"
+    rtl = true
+    [languages.ar.params]
+      homeSubtitle = "مدونة أخرى عن الرسومات الحاسوبية والرؤية"
+      [languages.ar.params.logo]
+        logoText = "الرئيسية"
+        logoHomeLink = "/"
+
 [menu]
-  [[menu.main]]
-    identifier = "blog"
-    name       = "Blogs"
-    url        = "/posts"
-  [[menu.main]]
-    identifier = "project"
-    name       = "Projects"
-    url        = "/projects"
-  [[menu.main]]
-    identifier = "about"
-    name       = "About"
-    url        = "/about"
+
+[[menu.main]]
+  identifier = "blog"
+  name       = "Blogs"
+  url        = "/posts"
+[[menu.main]]
+  identifier = "project"
+  name       = "Projects"
+  url        = "/projects"
+[[menu.main]]
+  identifier = "about"
+  name       = "About"
+  url        = "/about"
 [[menu.main]]
   identifier = "nvidia-architectures"
   name       = "Nvidia Architectures"
   url        = "/nvidia-architectures"
 
+[[languages.en.menu.main]]
+  identifier = "blog"
+  name       = "Blogs"
+  url        = "/posts"
+[[languages.en.menu.main]]
+  identifier = "project"
+  name       = "Projects"
+  url        = "/projects"
+[[languages.en.menu.main]]
+  identifier = "about"
+  name       = "About"
+  url        = "/about"
+[[languages.en.menu.main]]
+  identifier = "nvidia-architectures"
+  name       = "Nvidia Architectures"
+  url        = "/nvidia-architectures"
+
+[[languages.ar.menu.main]]
+  identifier = "blog"
+  name       = "المدونات"
+  url        = "/ar/posts"
+[[languages.ar.menu.main]]
+  identifier = "project"
+  name       = "المشاريع"
+  url        = "/ar/projects"
+[[languages.ar.menu.main]]
+  identifier = "about"
+  name       = "حول"
+  url        = "/ar/about"
+[[languages.ar.menu.main]]
+  identifier = "nvidia-architectures"
+  name       = "معمارية NVIDIA"
+  url        = "/ar/nvidia-architectures"
 
 [markup]
   [markup.goldmark]
