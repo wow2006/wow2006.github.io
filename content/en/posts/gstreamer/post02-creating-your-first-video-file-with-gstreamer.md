@@ -1,5 +1,5 @@
 ---
-title: "Create a Smaller Video File with H.264 Encoding"
+title: "Part 02: Create a Smaller Video File with H.264 Encoding"
 date: 2026-06-11T22:53:50+03:00
 toc: false
 series: ["gstreamer"]

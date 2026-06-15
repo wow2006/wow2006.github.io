@@ -1,5 +1,5 @@
 ---
-title: "Part 1: Creating Your First Video File with GStreamer"
+title: "Part 01: Creating Your First Video File with GStreamer"
 date: 2026-06-08T21:34:56+03:00
 toc: false
 images:

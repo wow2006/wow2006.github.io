@@ -1,5 +1,5 @@
 ---
-title: "Part 0: Helloworld Gstreamer"
+title: "Part 00: Helloworld Gstreamer"
 date: 2026-06-05T17:54:49+03:00
 toc: false
 images:
