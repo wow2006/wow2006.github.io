@@ -4,6 +4,10 @@ title = 'Salt and Pepper'
 theme = 'hello-friend-ng'
 defaultContentLanguage = 'en'
 
+[services]
+  [services.googleAnalytics]
+    ID = 'G-57W56KNWHK'
+
 [params]
   homeSubtitle = "An other Computer Graphics and Vision blog"
   enableGlobalLanguageMenu = true
