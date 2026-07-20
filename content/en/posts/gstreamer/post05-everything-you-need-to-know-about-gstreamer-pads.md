@@ -3,6 +3,7 @@ title: "Post05: Everything You Need to Know About Gstreamer Pads"
 date: 2026-07-20T19:15:45+03:00
 toc: false
 images:
+series: ["gstreamer"]
 tags:
   - gstreamer
   - linux
