@@ -11,3 +11,9 @@ hugo.linux
 
 # Temporary lock file while building
 /.hugo_build.lock
+
+# Build output from the example programs under assets/code/. Hugo watches
+# assets/, so these also keep the watcher out of Cargo's target dir.
+/assets/code/**/target/
+/assets/code/**/*.o
+/assets/code/**/test.mkv

@@ -1,0 +1,91 @@
+{{- /*
+  Embed a source file from assets/code/, optionally just one named region of it.
+
+    {{< code file="gstreamer/post03/cpp/main.cpp" >}}
+    {{< code file="gstreamer/post03/cpp/main.cpp" region="init" >}}
+    {{< code file="gstreamer/post03/rust/src/main.rs" region="add" link="false" >}}
+
+  Regions are delimited in the source by comment lines the compiler ignores:
+
+    // #region init
+    gst_init(&argc, &argv);
+    // #endregion
+
+  Markers are stripped from every rendering, and region bodies are dedented.
+  A missing file or an unknown region name fails the build rather than
+  rendering an empty block -- silent drift is the thing this exists to prevent.
+*/ -}}
+
+{{- $file := .Get "file" -}}
+{{- $path := printf "code/%s" $file -}}
+{{- $res := and $file (resources.Get $path) -}}
+{{- $marker := `(?://|#|--)[ \t]*#` -}}
+
+{{- if not $file -}}
+  {{- errorf "code shortcode: missing required 'file' parameter at %s" .Position -}}
+{{- else if not $res -}}
+  {{- errorf "code shortcode: no such file %q (looked for assets/%s) at %s" $file $path .Position -}}
+{{- else -}}
+
+  {{- $content := $res.Content -}}
+
+  {{- $region := .Get "region" -}}
+  {{- if $region -}}
+    {{- $re := printf `(?sm)^[ \t]*%sregion[ \t]+%s[ \t]*$\n(.*?)\n[ \t]*%sendregion\b` $marker $region $marker -}}
+    {{- $found := findRESubmatch $re $content 1 -}}
+    {{- if $found -}}
+      {{- $content = index (index $found 0) 1 -}}
+    {{- else -}}
+      {{- errorf "code shortcode: region %q not found in assets/%s at %s" $region $path .Position -}}
+      {{- $content = "" -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{- $content = replaceRE (printf `(?m)^[ \t]*%s(?:end)?region\b[^\n]*\n?` $marker) "" $content -}}
+
+  {{- /* Dedent by the shallowest indent present, so a region lifted out of a
+         function body doesn't render with dead columns down the left. */ -}}
+  {{- $indent := -1 -}}
+  {{- $lines := split $content "\n" -}}
+  {{- range $lines -}}
+    {{- if ne (trim . " \t") "" -}}
+      {{- $lead := sub (len .) (len (strings.TrimLeft " \t" .)) -}}
+      {{- if or (eq $indent -1) (lt $lead $indent) -}}
+        {{- $indent = $lead -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+  {{- if gt $indent 0 -}}
+    {{- $out := slice -}}
+    {{- range $lines -}}
+      {{- $out = $out | append (cond (ge (len .) $indent) (substr . $indent) "") -}}
+    {{- end -}}
+    {{- $content = delimit $out "\n" -}}
+  {{- end -}}
+  {{- $content = trim $content "\n" -}}
+
+  {{- $lang := .Get "lang" -}}
+  {{- if not $lang -}}
+    {{- $byExt := dict
+          "c" "c" "cc" "cpp" "cpp" "cpp" "cxx" "cpp" "h" "cpp" "hpp" "cpp"
+          "rs" "rust" "toml" "toml" "sh" "bash" "bash" "bash" "py" "python"
+          "cmake" "cmake" "json" "json" "yaml" "yaml" "yml" "yaml"
+    -}}
+    {{- $lang = index $byExt (strings.TrimPrefix "." (path.Ext $file)) | default "text" -}}
+    {{- if eq (path.Base $file) "CMakeLists.txt" -}}{{- $lang = "cmake" -}}{{- end -}}
+  {{- end -}}
+
+  {{- $link := "" -}}
+  {{- if ne (.Get "link") "false" -}}
+    {{- with site.Params.codeRepo -}}
+      {{- $link = printf "%s/blob/%s/assets/%s" . (site.Params.codeBranch | default "main") $path -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{- printf `<figure class="code-file"><figcaption class="code-file-head"><span class="code-file-name">%s</span>%s</figcaption>%s</figure>`
+        (.Get "title" | default $file)
+        (cond (ne $link "") (printf `<a class="code-file-link" href="%s" target="_blank" rel="noopener">View on GitHub</a>` $link) "")
+        (string (highlight $content $lang ""))
+     | safeHTML -}}
+
+{{- end -}}
