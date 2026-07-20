@@ -1,5 +1,5 @@
 ---
-title: "Post04 Playing Video File With Gstreamer"
+title: "Post04: Playing Video File With Gstreamer"
 date: 2026-06-19T22:09:06+03:00
 toc: false
 images:
