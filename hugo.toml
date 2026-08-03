@@ -68,9 +68,19 @@ defaultContentLanguage = 'en'
   name       = "About"
   url        = "/about"
 [[menu.main]]
+  identifier = "tools"
+  name       = "Tools"
+  url        = "/tools/nvidia-architectures"
+[[menu.main]]
   identifier = "nvidia-architectures"
   name       = "Nvidia Architectures"
-  url        = "/nvidia-architectures"
+  url        = "/tools/nvidia-architectures"
+  parent     = "tools"
+[[menu.main]]
+  identifier = "frame-types-explorer"
+  name       = "Frame Types Explorer"
+  url        = "/tools/frame-types-explorer/"
+  parent     = "tools"
 
 [[languages.en.menu.main]]
   identifier = "blog"
@@ -89,9 +99,19 @@ defaultContentLanguage = 'en'
   name       = "About"
   url        = "/about"
 [[languages.en.menu.main]]
+  identifier = "tools"
+  name       = "Tools"
+  url        = "/tools/nvidia-architectures"
+[[languages.en.menu.main]]
   identifier = "nvidia-architectures"
   name       = "Nvidia Architectures"
-  url        = "/nvidia-architectures"
+  url        = "/tools/nvidia-architectures"
+  parent     = "tools"
+[[languages.en.menu.main]]
+  identifier = "frame-types-explorer"
+  name       = "Frame Types Explorer"
+  url        = "/tools/frame-types-explorer/"
+  parent     = "tools"
 
 [[languages.ar.menu.main]]
   identifier = "blog"
@@ -110,9 +130,14 @@ defaultContentLanguage = 'en'
   name       = "من نحن"
   url        = "/ar/about"
 [[languages.ar.menu.main]]
+  identifier = "tools"
+  name       = "أدوات"
+  url        = "/ar/nvidia-architectures"
+[[languages.ar.menu.main]]
   identifier = "nvidia-architectures"
   name       = "معمارية NVIDIA"
   url        = "/ar/nvidia-architectures"
+  parent     = "tools"
 
 [markup]
   [markup.goldmark]
