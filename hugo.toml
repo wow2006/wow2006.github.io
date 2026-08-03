@@ -77,9 +77,9 @@ defaultContentLanguage = 'en'
   url        = "/tools/nvidia-architectures"
   parent     = "tools"
 [[menu.main]]
-  identifier = "frame-types-explorer"
-  name       = "Frame Types Explorer"
-  url        = "/tools/frame-types-explorer/"
+  identifier = "video-compression"
+  name       = "Video Compression"
+  url        = "/tools/video-compression/"
   parent     = "tools"
 
 [[languages.en.menu.main]]
@@ -108,9 +108,9 @@ defaultContentLanguage = 'en'
   url        = "/tools/nvidia-architectures"
   parent     = "tools"
 [[languages.en.menu.main]]
-  identifier = "frame-types-explorer"
-  name       = "Frame Types Explorer"
-  url        = "/tools/frame-types-explorer/"
+  identifier = "video-compression"
+  name       = "Video Compression"
+  url        = "/tools/video-compression/"
   parent     = "tools"
 
 [[languages.ar.menu.main]]

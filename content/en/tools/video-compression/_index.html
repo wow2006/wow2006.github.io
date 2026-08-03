@@ -1,0 +1,207 @@
+---
+title: "Video Compression"
+date: 2026-08-03
+draft: false
+layout: "single"
+description: "How raw frames become a compressed bitstream — the encode path, end to end"
+---
+
+<style>
+  /* Palette follows hello-friend-ng. light-dark() picks the pair member from
+     the active color-scheme, which the theme's [data-theme] toggle pins below. */
+  .vc {
+    color-scheme: light dark;
+
+    --vc-mono: Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
+
+    --vc-panel:        light-dark(#fafafa, #1b1c1d);
+    --vc-border:       light-dark(#dcdcdc, #2b2d31);
+    --vc-border-strong:light-dark(#c2c2c2, #4e4e57);
+
+    --vc-strong:   light-dark(#111111, #f0f4f2);
+    --vc-text:     light-dark(#333333, #d6dcd9);
+    --vc-dim:      light-dark(#5a5a5a, #9aa5a1);
+    --vc-faint:    light-dark(#767676, #7f8b86);
+    --vc-faintest: light-dark(#949494, #55605c);
+
+    --vc-accent:        light-dark(#0f8f56, #62e0a1);
+    --vc-accent-border: light-dark(#b9e6cf, #223028);
+    --vc-accent-wash:   light-dark(rgba(15,143,86,.06), rgba(98,224,161,.06));
+    --vc-accent-fill:   light-dark(rgba(15,143,86,.12), rgba(98,224,161,.12));
+
+    --vc-blue:        light-dark(#2b6f9e, #7fb6d6);
+    --vc-blue-border: light-dark(#cfe0ec, #22303a);
+    --vc-blue-wash:   light-dark(rgba(43,111,158,.06), rgba(127,182,214,.06));
+
+    --vc-gray:        light-dark(#6b7671, #8d9a94);
+    --vc-gray-border: light-dark(#dcdcdc, #2a2c2b);
+    --vc-gray-wash:   light-dark(rgba(107,118,113,.06), rgba(141,154,148,.06));
+  }
+
+  :root[data-theme="light"] .vc { color-scheme: light; }
+  :root[data-theme="dark"]  .vc { color-scheme: dark; }
+
+  .vc * { box-sizing: border-box; }
+
+  .vc-eyebrow {
+    font-family: var(--vc-mono); font-size: 11px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--vc-accent); margin-bottom: 18px;
+  }
+  .vc-rule {
+    display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap;
+    border-bottom: 1px solid var(--vc-border); padding-bottom: 12px; margin-bottom: 26px;
+  }
+  .vc-rule h2 {
+    font-size: 13px; font-family: var(--vc-mono); letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--vc-accent); margin: 0; font-weight: 500;
+  }
+  .vc-rule span { font-size: 13px; color: var(--vc-faint); }
+
+  /* Three stages with an arrow between each. Collapses to one column on narrow
+     screens, where the arrows rotate to point down. */
+  .vc-flow {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr auto 1fr;
+    gap: 0 14px;
+    align-items: stretch;
+  }
+  .vc-arrow {
+    align-self: center; font-family: var(--vc-mono); font-size: 22px;
+    color: var(--vc-border-strong); line-height: 1;
+  }
+  @media (max-width: 760px) {
+    .vc-flow { grid-template-columns: 1fr; gap: 10px 0; }
+    .vc-arrow { justify-self: center; transform: rotate(90deg); }
+  }
+
+  .vc-box {
+    display: block; text-decoration: none; padding: 22px 22px 24px 22px;
+    border: 1px solid var(--vc-gray-border); border-top: 2px solid var(--vc-gray);
+    background: linear-gradient(180deg, var(--vc-gray-wash), transparent);
+  }
+  .vc-box .vc-kicker {
+    font-family: var(--vc-mono); font-size: 11px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--vc-faint); margin-bottom: 10px;
+  }
+  .vc-box h3 {
+    margin: 0 0 12px 0; font-size: 21px; font-weight: 600; letter-spacing: -0.01em;
+    color: var(--vc-strong); line-height: 1.2;
+  }
+  .vc-box p { margin: 0 0 16px 0; font-size: 14px; color: var(--vc-text); }
+  .vc-facts {
+    font-family: var(--vc-mono); font-size: 11.5px; line-height: 1.85;
+    color: var(--vc-faint); border-top: 1px dashed var(--vc-gray-border); padding-top: 12px;
+  }
+  .vc-facts b { color: var(--vc-text); font-weight: 500; }
+
+  .vc-in  { border-color: var(--vc-blue-border); border-top-color: var(--vc-blue);
+            background: linear-gradient(180deg, var(--vc-blue-wash), transparent); }
+  .vc-in .vc-kicker, .vc-in .vc-facts { border-top-color: var(--vc-blue-border); }
+  .vc-out { border-color: var(--vc-accent-border); border-top-color: var(--vc-accent);
+            background: linear-gradient(180deg, var(--vc-accent-wash), transparent); }
+  .vc-out .vc-facts { border-top-color: var(--vc-accent-border); }
+
+  /* The encoder is the only clickable stage — make that unmistakable. */
+  a.vc-box {
+    border-color: var(--vc-border-strong); border-top-color: var(--vc-strong);
+    background: var(--vc-panel); transition: background .15s, border-color .15s;
+  }
+  a.vc-box:hover, a.vc-box:focus-visible {
+    background: var(--vc-accent-fill); border-color: var(--vc-accent);
+    border-top-color: var(--vc-accent); outline: none;
+  }
+  a.vc-box .vc-cta {
+    display: block; margin-top: 14px; font-family: var(--vc-mono); font-size: 11.5px;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--vc-accent);
+  }
+  a.vc-box:hover h3, a.vc-box:focus-visible h3 { color: var(--vc-accent); }
+</style>
+
+<div class="vc" style="color: var(--vc-text); font-size: 15px; line-height: 1.6">
+
+  <div class="vc-eyebrow">Video Compression · the map</div>
+  <p style="margin: 0 0 40px 0; color: var(--vc-dim); font-size: 17px; text-wrap: pretty">
+    Every codec, on every platform, is the same three boxes. A camera or renderer hands you
+    <em style="font-style: normal; color: var(--vc-text)">raw pixels</em> — enormous, uncompressed, one full picture per frame. An
+    <em style="font-style: normal; color: var(--vc-text)">encoder</em> throws away what a viewer will not miss and what the previous frames already said. Out comes a
+    <em style="font-style: normal; color: var(--vc-text)">bitstream</em> two orders of magnitude smaller. Everything else — pixel formats, frame types,
+    rate control, latency — is detail hanging off one of those three boxes.
+  </p>
+
+  <div class="vc-rule">
+    <h2>The encode path</h2>
+    <span>click a stage to go deeper</span>
+  </div>
+
+  <div class="vc-flow">
+
+    <div class="vc-box vc-in">
+      <div class="vc-kicker">input · pixels</div>
+      <h3>Raw frames</h3>
+      <p>Uncompressed pictures, one after another. Nothing is shared between them: frame 300 costs exactly what frame 1 costs, even if the camera never moved.</p>
+      <div class="vc-facts">
+        <div>e.g. <b>NV12</b> · 8-bit 4:2:0</div>
+        <div>1920×1080 → <b>3.11 MB</b>/frame</div>
+        <div>@ 30 fps → <b>93 MB/s</b></div>
+        <div>≈ <b>746 Mbps</b></div>
+      </div>
+    </div>
+
+    <div class="vc-arrow">→</div>
+
+    <a class="vc-box" href="/tools/video-compression/frame-types-explorer/">
+      <div class="vc-kicker">transform · codec</div>
+      <h3>Encoder</h3>
+      <p>Decides, per frame, how much of it to code from scratch and how much to describe as motion away from frames it already sent. That single decision is the whole trade.</p>
+      <div class="vc-facts">
+        <div>e.g. <b>x264</b>, <b>nvh264enc</b></div>
+        <div>frame types <b>I · P · B</b></div>
+        <div>rate control <b>CBR · VBR · CQP</b></div>
+      </div>
+      <span class="vc-cta">explore I · P · B frames →</span>
+    </a>
+
+    <div class="vc-arrow">→</div>
+
+    <div class="vc-box vc-out">
+      <div class="vc-kicker">output · packets</div>
+      <h3>Bitstream</h3>
+      <p>A keyframe now and then, and between them a long list of instructions for changing it. Small, ordered for the decoder rather than for your eyes, and fragile in interesting ways.</p>
+      <div class="vc-facts">
+        <div>e.g. <b>H.264</b> · High profile</div>
+        <div><b>6 Mbps</b> → 0.75 MB/s</div>
+        <div>≈ <b>25 KB</b>/frame average</div>
+        <div>compression <b>≈ 124:1</b></div>
+      </div>
+    </div>
+
+  </div>
+
+  <p style="margin: 26px 0 0 0; font-family: var(--vc-mono); font-size: 11.5px; color: var(--vc-faintest); line-height: 1.7">
+    numbers are one worked example — 1080p30, 4:2:0, 8-bit, 6 Mbps — not a property of any codec.
+    Swap NV12 for I420 or P010, H.264 for HEVC or AV1: the shape of the diagram does not move.
+  </p>
+
+  <section style="padding: 52px 0 0 0">
+    <div class="vc-rule">
+      <h2>Where the detail lives</h2>
+      <span>each box opens into its own set of questions</span>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 30px">
+      <div>
+        <div style="font-family: var(--vc-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--vc-blue); margin-bottom: 12px">On the raw side</div>
+        <p style="margin: 0; font-size: 14px; color: var(--vc-text); text-wrap: pretty">Why encoders want YUV and not RGB. What the 2 in 4:2:0 means and why halving the chroma is nearly free. How NV12 actually sits in memory — one luma plane, one interleaved chroma plane at half height — and why that layout is what the GPU hands you.</p>
+      </div>
+      <div>
+        <div style="font-family: var(--vc-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--vc-accent); margin-bottom: 12px">Inside the encoder</div>
+        <p style="margin: 0; font-size: 14px; color: var(--vc-text); text-wrap: pretty">Frame types, GOP structure, reference frames, and why decode order stops matching display order the moment you enable B frames. <a href="/tools/video-compression/frame-types-explorer/" style="color: var(--vc-accent)">Covered in the explorer →</a></p>
+      </div>
+      <div>
+        <div style="font-family: var(--vc-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--vc-gray); margin-bottom: 12px">On the coded side</div>
+        <p style="margin: 0; font-size: 14px; color: var(--vc-text); text-wrap: pretty">NAL units, parameter sets, and what a container adds on top. Which byte you can cut a stream at, and what a lost packet destroys — that answer depends entirely on the frame type it belonged to.</p>
+      </div>
+    </div>
+  </section>
+
+</div>

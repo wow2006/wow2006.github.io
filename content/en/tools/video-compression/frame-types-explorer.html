@@ -8,22 +8,67 @@ description: "Interactive explorer for I, P and B video frames, GOP structure, a
 <script src="/tools/frame-types-explorer/support.js"></script>
 <x-dc>
 <helmet>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 <style>
+  /* Palette follows hello-friend-ng. light-dark() picks the pair member from
+     the active color-scheme, which the theme's [data-theme] toggle pins below. */
+  .frame-explorer {
+    color-scheme: light dark;
+
+    --fx-mono: Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
+
+    --fx-bg: transparent;
+    --fx-panel:        light-dark(#fafafa, #1b1c1d);
+    --fx-panel-alt:    light-dark(#eaeaea, #16181a);
+    --fx-border:       light-dark(#dcdcdc, #2b2d31);
+    --fx-border-strong:light-dark(#c2c2c2, #4e4e57);
+
+    --fx-strong:   light-dark(#111111, #f0f4f2);
+    --fx-text:     light-dark(#333333, #d6dcd9);
+    --fx-dim:      light-dark(#5a5a5a, #9aa5a1);
+    --fx-faint:    light-dark(#767676, #7f8b86);
+    --fx-faintest: light-dark(#949494, #55605c);
+
+    --fx-accent:        light-dark(#0f8f56, #62e0a1);
+    --fx-accent-border: light-dark(#b9e6cf, #223028);
+    --fx-accent-wash:   light-dark(rgba(15,143,86,.06), rgba(98,224,161,.06));
+    --fx-accent-fill:   light-dark(rgba(15,143,86,.12), rgba(98,224,161,.12));
+    --fx-on-accent:     light-dark(#ffffff, #16181a);
+
+    --fx-blue:        light-dark(#2b6f9e, #7fb6d6);
+    --fx-blue-border: light-dark(#cfe0ec, #22303a);
+    --fx-blue-wash:   light-dark(rgba(43,111,158,.06), rgba(127,182,214,.06));
+    --fx-blue-fill:   light-dark(rgba(43,111,158,.16), rgba(127,182,214,.18));
+
+    --fx-gray:        light-dark(#6b7671, #8d9a94);
+    --fx-gray-border: light-dark(#dcdcdc, #2a2c2b);
+    --fx-gray-wash:   light-dark(rgba(107,118,113,.06), rgba(141,154,148,.06));
+
+    --fx-amber:      light-dark(#a2701a, #d9a656);
+    --fx-amber-fill: light-dark(rgba(162,112,26,.22), rgba(217,166,86,.28));
+    --fx-red:        light-dark(#c0453c, #e0685f);
+    --fx-red-fill:   light-dark(rgba(192,69,60,.22), rgba(224,104,95,.25));
+
+    --fx-code:    light-dark(#1c4b36, #cfe8dc);
+    --fx-row-alt: light-dark(rgba(0,0,0,.03), rgba(255,255,255,.04));
+  }
+
+  :root[data-theme="light"] .frame-explorer { color-scheme: light; }
+  :root[data-theme="dark"]  .frame-explorer { color-scheme: dark; }
+
   .frame-explorer * { box-sizing: border-box; }
 </style>
 </helmet>
-<div class="frame-explorer" style="background: #08090a; color: #d6dcd9; font-family: Helvetica Neue, Helvetica, Arial, sans-serif; font-size: 15px; line-height: 1.6; padding: 32px; border-radius: 6px">
+<div class="frame-explorer" style="background: var(--fx-bg); color: var(--fx-text); font-family: inherit; font-size: 15px; line-height: 1.6">
 
-  <div style="max-width: 1176px; margin: 0 auto">
+  <div style="margin: 0 auto">
 
-    <header style="padding: 56px 0 32px 0; border-bottom: 1px solid #1c2321; display: flex; gap: 40px; align-items: flex-end; justify-content: space-between; flex-wrap: wrap">
+    <header style="padding: 56px 0 32px 0; border-bottom: 1px solid var(--fx-border); display: flex; gap: 40px; align-items: flex-end; justify-content: space-between; flex-wrap: wrap">
       <div style="max-width: 660px">
-        <div style="font-family: IBM Plex Mono, monospace; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: #62e0a1; margin-bottom: 18px">Video Encoding · Bench Notes 01</div>
-        <h1 style="font-size: 46px; line-height: 1.08; margin: 0 0 18px 0; font-weight: 600; letter-spacing: -0.02em; color: #f0f4f2">I, P and B frames</h1>
-        <p style="margin: 0; color: #9aa5a1; font-size: 17px; text-wrap: pretty">A compressed video is not a stack of pictures. It is one picture plus a long list of <em style="color: #d6dcd9; font-style: normal">instructions for changing it</em>. Everything else — GOP size, B-frame count, seek behaviour, latency, why a dropped packet smears green across your screen — falls out of that one idea. Turn the knobs below and watch it happen.</p>
+        <div style="font-family: var(--fx-mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--fx-accent); margin-bottom: 18px"><a href="/tools/video-compression/" style="color: var(--fx-faint); text-decoration: none">← Video Compression</a> · Bench Notes 01</div>
+        <h1 style="font-size: 46px; line-height: 1.08; margin: 0 0 18px 0; font-weight: 600; letter-spacing: -0.02em; color: var(--fx-strong)">I, P and B frames</h1>
+        <p style="margin: 0; color: var(--fx-dim); font-size: 17px; text-wrap: pretty">A compressed video is not a stack of pictures. It is one picture plus a long list of <em style="color: var(--fx-text); font-style: normal">instructions for changing it</em>. Everything else — GOP size, B-frame count, seek behaviour, latency, why a dropped packet smears green across your screen — falls out of that one idea. Turn the knobs below and watch it happen.</p>
       </div>
-      <div style="font-family: IBM Plex Mono, monospace; font-size: 11px; color: #55605c; line-height: 1.9; text-align: right">
+      <div style="font-family: var(--fx-mono); font-size: 11px; color: var(--fx-faintest); line-height: 1.9; text-align: right">
         <div>codec-agnostic model</div>
         <div>{{ fpsLabel }} · {{ totalLabel }} frames</div>
         <div>gstreamer mappings included</div>
@@ -33,81 +78,81 @@ description: "Interactive explorer for I, P and B video frames, GOP structure, a
     <section style="padding: 44px 0 8px 0">
       <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px">
 
-        <div style="border: 1px solid #223028; border-top: 2px solid #62e0a1; background: linear-gradient(180deg, rgba(98,224,161,0.05), rgba(98,224,161,0)); padding: 22px 22px 24px 22px">
+        <div style="border: 1px solid var(--fx-accent-border); border-top: 2px solid var(--fx-accent); background: linear-gradient(180deg, var(--fx-accent-wash), transparent); padding: 22px 22px 24px 22px">
           <div style="display: flex; align-items: baseline; gap: 12px; margin-bottom: 14px">
-            <span style="font-family: IBM Plex Mono, monospace; font-size: 30px; font-weight: 600; color: #62e0a1; line-height: 1">I</span>
-            <span style="font-family: IBM Plex Mono, monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #7f8b86">intra · keyframe</span>
+            <span style="font-family: var(--fx-mono); font-size: 30px; font-weight: 600; color: var(--fx-accent); line-height: 1">I</span>
+            <span style="font-family: var(--fx-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--fx-faint)">intra · keyframe</span>
           </div>
-          <p style="margin: 0 0 12px 0; font-size: 14px; color: #b9c3bf">Coded entirely from itself. No other frame is consulted, so it is the only frame you can hand a decoder cold.</p>
-          <p style="margin: 0; font-size: 13px; color: #7f8b86"><strong style="color: #9aa5a1; font-weight: 500">Analogy:</strong> the full JPEG. Expensive to store, but it is the door into the stream.</p>
-          <div style="margin-top: 16px; padding-top: 14px; border-top: 1px dashed #223028; font-family: IBM Plex Mono, monospace; font-size: 11.5px; color: #62e0a1">≈ {{ statI }} · {{ shareI }} of all bits</div>
+          <p style="margin: 0 0 12px 0; font-size: 14px; color: var(--fx-text)">Coded entirely from itself. No other frame is consulted, so it is the only frame you can hand a decoder cold.</p>
+          <p style="margin: 0; font-size: 13px; color: var(--fx-faint)"><strong style="color: var(--fx-dim); font-weight: 500">Analogy:</strong> the full JPEG. Expensive to store, but it is the door into the stream.</p>
+          <div style="margin-top: 16px; padding-top: 14px; border-top: 1px dashed var(--fx-accent-border); font-family: var(--fx-mono); font-size: 11.5px; color: var(--fx-accent)">≈ {{ statI }} · {{ shareI }} of all bits</div>
         </div>
 
-        <div style="border: 1px solid #22303a; border-top: 2px solid #7fb6d6; background: linear-gradient(180deg, rgba(127,182,214,0.05), rgba(127,182,214,0)); padding: 22px 22px 24px 22px">
+        <div style="border: 1px solid var(--fx-blue-border); border-top: 2px solid var(--fx-blue); background: linear-gradient(180deg, var(--fx-blue-wash), transparent); padding: 22px 22px 24px 22px">
           <div style="display: flex; align-items: baseline; gap: 12px; margin-bottom: 14px">
-            <span style="font-family: IBM Plex Mono, monospace; font-size: 30px; font-weight: 600; color: #7fb6d6; line-height: 1">P</span>
-            <span style="font-family: IBM Plex Mono, monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #7f8b86">predicted · forward</span>
+            <span style="font-family: var(--fx-mono); font-size: 30px; font-weight: 600; color: var(--fx-blue); line-height: 1">P</span>
+            <span style="font-family: var(--fx-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--fx-faint)">predicted · forward</span>
           </div>
-          <p style="margin: 0 0 12px 0; font-size: 14px; color: #b9c3bf">Stores only what changed since earlier frames: block motion vectors plus a small residual for what motion could not explain.</p>
-          <p style="margin: 0; font-size: 13px; color: #7f8b86"><strong style="color: #9aa5a1; font-weight: 500">Analogy:</strong> a diff against the last commit. Useless without the commit it was diffed against.</p>
-          <div style="margin-top: 16px; padding-top: 14px; border-top: 1px dashed #22303a; font-family: IBM Plex Mono, monospace; font-size: 11.5px; color: #7fb6d6">≈ {{ statP }} · {{ shareP }} of all bits</div>
+          <p style="margin: 0 0 12px 0; font-size: 14px; color: var(--fx-text)">Stores only what changed since earlier frames: block motion vectors plus a small residual for what motion could not explain.</p>
+          <p style="margin: 0; font-size: 13px; color: var(--fx-faint)"><strong style="color: var(--fx-dim); font-weight: 500">Analogy:</strong> a diff against the last commit. Useless without the commit it was diffed against.</p>
+          <div style="margin-top: 16px; padding-top: 14px; border-top: 1px dashed var(--fx-blue-border); font-family: var(--fx-mono); font-size: 11.5px; color: var(--fx-blue)">≈ {{ statP }} · {{ shareP }} of all bits</div>
         </div>
 
-        <div style="border: 1px solid #2a2c2b; border-top: 2px solid #8d9a94; background: linear-gradient(180deg, rgba(141,154,148,0.05), rgba(141,154,148,0)); padding: 22px 22px 24px 22px">
+        <div style="border: 1px solid var(--fx-gray-border); border-top: 2px solid var(--fx-gray); background: linear-gradient(180deg, var(--fx-gray-wash), transparent); padding: 22px 22px 24px 22px">
           <div style="display: flex; align-items: baseline; gap: 12px; margin-bottom: 14px">
-            <span style="font-family: IBM Plex Mono, monospace; font-size: 30px; font-weight: 600; color: #8d9a94; line-height: 1">B</span>
-            <span style="font-family: IBM Plex Mono, monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #7f8b86">bi-predicted · both ways</span>
+            <span style="font-family: var(--fx-mono); font-size: 30px; font-weight: 600; color: var(--fx-gray); line-height: 1">B</span>
+            <span style="font-family: var(--fx-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--fx-faint)">bi-predicted · both ways</span>
           </div>
-          <p style="margin: 0 0 12px 0; font-size: 14px; color: #b9c3bf">Predicts from a past <em style="font-style: normal; color: #d6dcd9">and</em> a future frame, averaging the two. Cheapest frame in the stream by a wide margin.</p>
-          <p style="margin: 0; font-size: 13px; color: #7f8b86"><strong style="color: #9aa5a1; font-weight: 500">Analogy:</strong> interpolating between two known states. To do it, the encoder must send the future first — which costs latency.</p>
-          <div style="margin-top: 16px; padding-top: 14px; border-top: 1px dashed #2a2c2b; font-family: IBM Plex Mono, monospace; font-size: 11.5px; color: #8d9a94">≈ {{ statB }} · {{ shareB }} of all bits</div>
+          <p style="margin: 0 0 12px 0; font-size: 14px; color: var(--fx-text)">Predicts from a past <em style="font-style: normal; color: var(--fx-text)">and</em> a future frame, averaging the two. Cheapest frame in the stream by a wide margin.</p>
+          <p style="margin: 0; font-size: 13px; color: var(--fx-faint)"><strong style="color: var(--fx-dim); font-weight: 500">Analogy:</strong> interpolating between two known states. To do it, the encoder must send the future first — which costs latency.</p>
+          <div style="margin-top: 16px; padding-top: 14px; border-top: 1px dashed var(--fx-gray-border); font-family: var(--fx-mono); font-size: 11.5px; color: var(--fx-gray)">≈ {{ statB }} · {{ shareB }} of all bits</div>
         </div>
 
       </div>
     </section>
 
     <section style="padding: 48px 0 0 0">
-      <div style="display: flex; align-items: baseline; gap: 16px; border-bottom: 1px solid #1c2321; padding-bottom: 12px; margin-bottom: 28px">
-        <h2 style="font-size: 13px; font-family: IBM Plex Mono, monospace; letter-spacing: 0.16em; text-transform: uppercase; color: #62e0a1; margin: 0; font-weight: 500">01 · Encoder controls</h2>
-        <span style="font-size: 13px; color: #6b7671">every panel below reacts to these</span>
+      <div style="display: flex; align-items: baseline; gap: 16px; border-bottom: 1px solid var(--fx-border); padding-bottom: 12px; margin-bottom: 28px">
+        <h2 style="font-size: 13px; font-family: var(--fx-mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--fx-accent); margin: 0; font-weight: 500">01 · Encoder controls</h2>
+        <span style="font-size: 13px; color: var(--fx-faint)">every panel below reacts to these</span>
       </div>
 
       <div style="display: grid; grid-template-columns: 1.15fr 1fr; gap: 36px; align-items: start">
 
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 26px 32px">
-          <sc-for list="{{ sliders }}" as="sl" hint-placeholder-count="4">
+          <sc-for list="{{ sliders }}" as="sl" hint-placeholder-count="5">
             <div style="opacity: {{ sl.op }}">
-              <div style="display: flex; justify-content: space-between; align-items: baseline; font-family: IBM Plex Mono, monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: #7f8b86; margin-bottom: 9px">
+              <div style="display: flex; justify-content: space-between; align-items: baseline; font-family: var(--fx-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--fx-faint); margin-bottom: 9px">
                 <span style="flex: 1; min-width: 0">{{ sl.label }}</span>
-                <span style="flex: 0 0 auto; white-space: nowrap; color: #f0f4f2; font-size: 14px; letter-spacing: 0; text-transform: none">{{ sl.display }}</span>
+                <span style="flex: 0 0 auto; white-space: nowrap; color: var(--fx-strong); font-size: 14px; letter-spacing: 0; text-transform: none">{{ sl.display }}</span>
               </div>
               <div onPointerDown="{{ sl.onDown }}" style="height: 22px; display: flex; align-items: center; cursor: ew-resize; touch-action: none; user-select: none">
-                <div data-track="1" style="position: relative; height: 3px; width: 100%; background: #1e2523">
-                  <div style="position: absolute; left: 0; top: 0; bottom: 0; background: #62e0a1; width: {{ sl.pct }}"></div>
-                  <div style="position: absolute; top: -4px; width: 11px; height: 11px; background: #08090a; border: 2px solid #62e0a1; border-radius: 50%; left: {{ sl.pct }}; transform: translateX(-50%)"></div>
+                <div data-track="1" style="position: relative; height: 3px; width: 100%; background: var(--fx-border)">
+                  <div style="position: absolute; left: 0; top: 0; bottom: 0; background: var(--fx-accent); width: {{ sl.pct }}"></div>
+                  <div style="position: absolute; top: -4px; width: 11px; height: 11px; background: var(--fx-panel); border: 2px solid var(--fx-accent); border-radius: 50%; left: {{ sl.pct }}; transform: translateX(-50%)"></div>
                 </div>
               </div>
-              <div style="font-family: IBM Plex Mono, monospace; font-size: 10.5px; color: #55605c; margin-top: 7px">{{ sl.hint }}</div>
+              <div style="font-family: var(--fx-mono); font-size: 10.5px; color: var(--fx-faintest); margin-top: 7px">{{ sl.hint }}</div>
             </div>
           </sc-for>
         </div>
 
         <div style="display: flex; flex-direction: column; gap: 18px">
           <div>
-            <div style="font-family: IBM Plex Mono, monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: #7f8b86; margin-bottom: 9px">rate control</div>
+            <div style="font-family: var(--fx-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--fx-faint); margin-bottom: 9px">rate control</div>
             <div style="display: flex; gap: 8px">
               <sc-for list="{{ rcOptions }}" as="rc" hint-placeholder-count="3">
                 <button onClick="{{ rc.onClick }}" style="{{ rc.style }}">{{ rc.label }}</button>
               </sc-for>
             </div>
-            <div style="font-family: IBM Plex Mono, monospace; font-size: 10.5px; color: #55605c; margin-top: 7px">{{ rcHint }}</div>
+            <div style="font-family: var(--fx-mono); font-size: 10.5px; color: var(--fx-faintest); margin-top: 7px">{{ rcHint }}</div>
           </div>
-          <div style="display: flex; flex-direction: column; gap: 10px; border-top: 1px solid #1c2321; padding-top: 18px">
+          <div style="display: flex; flex-direction: column; gap: 10px; border-top: 1px solid var(--fx-border); padding-top: 18px">
             <sc-for list="{{ toggles }}" as="tg" hint-placeholder-count="3">
               <button onClick="{{ tg.onClick }}" style="{{ tg.style }}">
                 <span style="{{ tg.dotStyle }}"></span>
                 <span style="flex: 1; text-align: left">{{ tg.label }}</span>
-                <span style="font-size: 10.5px; color: #6b7671; text-align: right; max-width: 210px">{{ tg.note }}</span>
+                <span style="font-size: 10.5px; color: var(--fx-faint); text-align: right; max-width: 210px">{{ tg.note }}</span>
               </button>
             </sc-for>
           </div>
@@ -116,9 +161,9 @@ description: "Interactive explorer for I, P and B video frames, GOP structure, a
     </section>
 
     <section style="padding: 52px 0 0 0">
-      <div style="display: flex; align-items: baseline; gap: 16px; border-bottom: 1px solid #1c2321; padding-bottom: 12px; margin-bottom: 10px; flex-wrap: wrap">
-        <h2 style="font-size: 13px; font-family: IBM Plex Mono, monospace; letter-spacing: 0.16em; text-transform: uppercase; color: #62e0a1; margin: 0; font-weight: 500">02 · The GOP</h2>
-        <span style="font-size: 13px; color: #6b7671; flex: 1">bar height = coded size of that frame · click any frame to inspect it</span>
+      <div style="display: flex; align-items: baseline; gap: 16px; border-bottom: 1px solid var(--fx-border); padding-bottom: 12px; margin-bottom: 10px; flex-wrap: wrap">
+        <h2 style="font-size: 13px; font-family: var(--fx-mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--fx-accent); margin: 0; font-weight: 500">02 · The GOP</h2>
+        <span style="font-size: 13px; color: var(--fx-faint); flex: 1">bar height = coded size of that frame · click any frame to inspect it</span>
         <div style="display: flex; gap: 6px">
           <sc-for list="{{ modes }}" as="m" hint-placeholder-count="3">
             <button onClick="{{ m.onClick }}" style="{{ m.style }}">{{ m.label }}</button>
@@ -126,14 +171,14 @@ description: "Interactive explorer for I, P and B video frames, GOP structure, a
         </div>
       </div>
 
-      <div style="font-size: 13.5px; color: #9aa5a1; margin: 16px 0 22px 0; min-height: 44px; max-width: 900px; text-wrap: pretty">{{ modeBlurb }}</div>
+      <div style="font-size: 13.5px; color: var(--fx-dim); margin: 16px 0 22px 0; min-height: 44px; max-width: 900px; text-wrap: pretty">{{ modeBlurb }}</div>
 
-      <div style="position: relative; border: 1px solid #1c2321; background: #0b0d0c; padding: 18px 20px 0 20px; overflow-x: auto">
+      <div style="position: relative; border: 1px solid var(--fx-border); background: var(--fx-panel); padding: 18px 20px 0 20px; overflow-x: auto">
         <div style="position: relative; height: 250px; width: {{ tlWidth }}; min-width: 100%">
 
           <sc-for list="{{ gopBands }}" as="g" hint-placeholder-count="2">
             <div style="{{ g.style }}">
-              <div style="position: absolute; top: 6px; left: 8px; font-family: IBM Plex Mono, monospace; font-size: 10px; letter-spacing: 0.1em; color: #4d5854; white-space: nowrap">{{ g.label }}</div>
+              <div style="position: absolute; top: 6px; left: 8px; font-family: var(--fx-mono); font-size: 10px; letter-spacing: 0.1em; color: var(--fx-faintest); white-space: nowrap">{{ g.label }}</div>
             </div>
           </sc-for>
 
@@ -156,34 +201,34 @@ description: "Interactive explorer for I, P and B video frames, GOP structure, a
         </div>
       </div>
 
-      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: #1c2321; border: 1px solid #1c2321; border-top: none">
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--fx-border); border: 1px solid var(--fx-border); border-top: none">
         <sc-for list="{{ readouts }}" as="r" hint-placeholder-count="4">
-          <div style="background: #0b0d0c; padding: 16px 18px">
-            <div style="font-family: IBM Plex Mono, monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #6b7671; margin-bottom: 8px">{{ r.label }}</div>
-            <div style="font-family: IBM Plex Mono, monospace; font-size: 21px; color: {{ r.color }}; line-height: 1.1">{{ r.value }}</div>
-            <div style="font-size: 11.5px; color: #55605c; margin-top: 7px; line-height: 1.45">{{ r.note }}</div>
+          <div style="background: var(--fx-panel); padding: 16px 18px">
+            <div style="font-family: var(--fx-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--fx-faint); margin-bottom: 8px">{{ r.label }}</div>
+            <div style="font-family: var(--fx-mono); font-size: 21px; color: {{ r.color }}; line-height: 1.1">{{ r.value }}</div>
+            <div style="font-size: 11.5px; color: var(--fx-faintest); margin-top: 7px; line-height: 1.45">{{ r.note }}</div>
           </div>
         </sc-for>
       </div>
     </section>
 
     <section style="padding: 52px 0 0 0">
-      <div style="display: flex; align-items: baseline; gap: 16px; border-bottom: 1px solid #1c2321; padding-bottom: 12px; margin-bottom: 26px">
-        <h2 style="font-size: 13px; font-family: IBM Plex Mono, monospace; letter-spacing: 0.16em; text-transform: uppercase; color: #62e0a1; margin: 0; font-weight: 500">03 · Decode order ≠ display order</h2>
-        <span style="font-size: 13px; color: #6b7671; flex: 1">step the decoder and watch the reorder buffer fill</span>
+      <div style="display: flex; align-items: baseline; gap: 16px; border-bottom: 1px solid var(--fx-border); padding-bottom: 12px; margin-bottom: 26px">
+        <h2 style="font-size: 13px; font-family: var(--fx-mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--fx-accent); margin: 0; font-weight: 500">03 · Decode order ≠ display order</h2>
+        <span style="font-size: 13px; color: var(--fx-faint); flex: 1">step the decoder and watch the reorder buffer fill</span>
         <button onClick="{{ togglePlay }}" style="{{ playStyle }}">{{ playLabel }}</button>
-        <button onClick="{{ stepFwd }}" style="font-family: IBM Plex Mono, monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; background: none; border: 1px solid #2a332f; color: #9aa5a1; padding: 7px 13px; cursor: pointer">step ›</button>
-        <button onClick="{{ reset }}" style="font-family: IBM Plex Mono, monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; background: none; border: 1px solid #2a332f; color: #6b7671; padding: 7px 13px; cursor: pointer">reset</button>
+        <button onClick="{{ stepFwd }}" style="font-family: var(--fx-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; background: none; border: 1px solid var(--fx-border-strong); color: var(--fx-dim); padding: 7px 13px; cursor: pointer">step ›</button>
+        <button onClick="{{ reset }}" style="font-family: var(--fx-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; background: none; border: 1px solid var(--fx-border-strong); color: var(--fx-faint); padding: 7px 13px; cursor: pointer">reset</button>
       </div>
 
       <div style="display: grid; grid-template-columns: 1fr 300px; gap: 28px; align-items: start">
-        <div style="border: 1px solid #1c2321; background: #0b0d0c; padding: 20px; overflow-x: auto">
+        <div style="border: 1px solid var(--fx-border); background: var(--fx-panel); padding: 20px; overflow-x: auto">
           <div style="display: flex; flex-direction: column; gap: 16px; min-width: 640px">
             <sc-for list="{{ orderRows }}" as="row" hint-placeholder-count="2">
               <div>
-                <div style="font-family: IBM Plex Mono, monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #6b7671; margin-bottom: 8px; display: flex; gap: 10px">
+                <div style="font-family: var(--fx-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--fx-faint); margin-bottom: 8px; display: flex; gap: 10px">
                   <span>{{ row.label }}</span>
-                  <span style="color: #3f4946">{{ row.sub }}</span>
+                  <span style="color: var(--fx-faintest)">{{ row.sub }}</span>
                 </div>
                 <div style="display: flex; gap: 3px">
                   <sc-for list="{{ row.cells }}" as="c" hint-placeholder-count="25">
@@ -192,106 +237,106 @@ description: "Interactive explorer for I, P and B video frames, GOP structure, a
                 </div>
               </div>
             </sc-for>
-            <div style="font-family: IBM Plex Mono, monospace; font-size: 11.5px; color: #6b7671; border-top: 1px solid #1c2321; padding-top: 14px; line-height: 1.7">
+            <div style="font-family: var(--fx-mono); font-size: 11.5px; color: var(--fx-faint); border-top: 1px solid var(--fx-border); padding-top: 14px; line-height: 1.7">
               <div>dts {{ dtsLabel }} → pts {{ ptsLabel }} · buffer holds {{ bufNow }} frame(s) now, {{ bufMax }} at peak</div>
-              <div style="color: #55605c">{{ latencyNote }}</div>
+              <div style="color: var(--fx-faintest)">{{ latencyNote }}</div>
             </div>
           </div>
         </div>
 
-        <div style="border: 1px solid #1c2321; background: #0b0d0c; padding: 20px">
-          <div style="font-family: IBM Plex Mono, monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #6b7671; margin-bottom: 14px">why it must be this way</div>
-          <p style="margin: 0 0 12px 0; font-size: 13.5px; color: #b9c3bf; text-wrap: pretty">A B frame leans on a frame that comes <em style="font-style: normal; color: #62e0a1">after</em> it on screen. So the encoder ships that future anchor early, and the decoder holds finished pictures back until their turn arrives.</p>
-          <p style="margin: 0 0 12px 0; font-size: 13.5px; color: #9aa5a1">That hold is why every container carries two clocks: <span style="font-family: IBM Plex Mono, monospace; color: #d6dcd9">DTS</span> for when to decode, <span style="font-family: IBM Plex Mono, monospace; color: #d6dcd9">PTS</span> for when to show.</p>
-          <p style="margin: 0; font-size: 12.5px; color: #6b7671">Set B frames to 0 and the two orders collapse into one — the configuration every low-latency conferencing pipeline ships.</p>
+        <div style="border: 1px solid var(--fx-border); background: var(--fx-panel); padding: 20px">
+          <div style="font-family: var(--fx-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--fx-faint); margin-bottom: 14px">why it must be this way</div>
+          <p style="margin: 0 0 12px 0; font-size: 13.5px; color: var(--fx-text); text-wrap: pretty">A B frame leans on a frame that comes <em style="font-style: normal; color: var(--fx-accent)">after</em> it on screen. So the encoder ships that future anchor early, and the decoder holds finished pictures back until their turn arrives.</p>
+          <p style="margin: 0 0 12px 0; font-size: 13.5px; color: var(--fx-dim)">That hold is why every container carries two clocks: <span style="font-family: var(--fx-mono); color: var(--fx-text)">DTS</span> for when to decode, <span style="font-family: var(--fx-mono); color: var(--fx-text)">PTS</span> for when to show.</p>
+          <p style="margin: 0; font-size: 12.5px; color: var(--fx-faint)">Set B frames to 0 and the two orders collapse into one — the configuration every low-latency conferencing pipeline ships.</p>
         </div>
       </div>
     </section>
 
     <section style="padding: 52px 0 0 0">
-      <div style="display: flex; align-items: baseline; gap: 16px; border-bottom: 1px solid #1c2321; padding-bottom: 12px; margin-bottom: 26px">
-        <h2 style="font-size: 13px; font-family: IBM Plex Mono, monospace; letter-spacing: 0.16em; text-transform: uppercase; color: #62e0a1; margin: 0; font-weight: 500">04 · Inside frame {{ selIdx }}</h2>
-        <span style="font-size: 13px; color: #6b7671">motion vectors and residual for the frame you selected above</span>
+      <div style="display: flex; align-items: baseline; gap: 16px; border-bottom: 1px solid var(--fx-border); padding-bottom: 12px; margin-bottom: 26px">
+        <h2 style="font-size: 13px; font-family: var(--fx-mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--fx-accent); margin: 0; font-weight: 500">04 · Inside frame {{ selIdx }}</h2>
+        <span style="font-size: 13px; color: var(--fx-faint)">motion vectors and residual for the frame you selected above</span>
       </div>
 
       <div style="display: grid; grid-template-columns: repeat(3, 1fr) 300px; gap: 20px; align-items: start">
         <div>
-          <div style="font-family: IBM Plex Mono, monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #6b7671; margin-bottom: 10px">reference {{ refLabel }}</div>
-          <canvas data-canvas="ref" width="512" height="288" style="width: 100%; display: block; border: 1px solid #1c2321; background: #0d100f"></canvas>
+          <div style="font-family: var(--fx-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--fx-faint); margin-bottom: 10px">reference {{ refLabel }}</div>
+          <canvas data-canvas="ref" width="512" height="288" style="width: 100%; display: block; border: 1px solid var(--fx-border); background: var(--fx-panel)"></canvas>
         </div>
         <div>
-          <div style="font-family: IBM Plex Mono, monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #62e0a1; margin-bottom: 10px">frame {{ selIdx }} · {{ selType }} · source</div>
-          <canvas data-canvas="cur" width="512" height="288" style="width: 100%; display: block; border: 1px solid #223028; background: #0d100f"></canvas>
+          <div style="font-family: var(--fx-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--fx-accent); margin-bottom: 10px">frame {{ selIdx }} · {{ selType }} · source</div>
+          <canvas data-canvas="cur" width="512" height="288" style="width: 100%; display: block; border: 1px solid var(--fx-accent-border); background: var(--fx-panel)"></canvas>
         </div>
         <div>
-          <div style="font-family: IBM Plex Mono, monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #6b7671; margin-bottom: 10px">{{ resTitle }}</div>
-          <canvas data-canvas="res" width="512" height="288" style="width: 100%; display: block; border: 1px solid #1c2321; background: #0d100f"></canvas>
+          <div style="font-family: var(--fx-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--fx-faint); margin-bottom: 10px">{{ resTitle }}</div>
+          <canvas data-canvas="res" width="512" height="288" style="width: 100%; display: block; border: 1px solid var(--fx-border); background: var(--fx-panel)"></canvas>
         </div>
-        <div style="border-left: 1px solid #1c2321; padding-left: 20px">
-          <div style="font-family: IBM Plex Mono, monospace; font-size: 21px; color: #f0f4f2; line-height: 1.1">{{ selSize }}</div>
-          <div style="font-family: IBM Plex Mono, monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #6b7671; margin: 8px 0 16px 0">coded size</div>
-          <p style="margin: 0 0 12px 0; font-size: 13px; color: #b9c3bf; text-wrap: pretty">{{ inspectorText }}</p>
-          <div style="font-family: IBM Plex Mono, monospace; font-size: 11.5px; color: #6b7671; line-height: 1.8; border-top: 1px dashed #223028; padding-top: 12px">
-            <div>refs: <span style="color: #d6dcd9">{{ selRefs }}</span></div>
-            <div>coded intra: <span style="color: #d6dcd9">{{ selIntra }}</span></div>
-            <div>referenced by: <span style="color: #d6dcd9">{{ selDeps }}</span></div>
+        <div style="border-left: 1px solid var(--fx-border); padding-left: 20px">
+          <div style="font-family: var(--fx-mono); font-size: 21px; color: var(--fx-strong); line-height: 1.1">{{ selSize }}</div>
+          <div style="font-family: var(--fx-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--fx-faint); margin: 8px 0 16px 0">coded size</div>
+          <p style="margin: 0 0 12px 0; font-size: 13px; color: var(--fx-text); text-wrap: pretty">{{ inspectorText }}</p>
+          <div style="font-family: var(--fx-mono); font-size: 11.5px; color: var(--fx-faint); line-height: 1.8; border-top: 1px dashed var(--fx-accent-border); padding-top: 12px">
+            <div>refs: <span style="color: var(--fx-text)">{{ selRefs }}</span></div>
+            <div>coded intra: <span style="color: var(--fx-text)">{{ selIntra }}</span></div>
+            <div>referenced by: <span style="color: var(--fx-text)">{{ selDeps }}</span></div>
           </div>
         </div>
       </div>
-      <div style="font-family: IBM Plex Mono, monospace; font-size: 11px; color: #55605c; margin-top: 14px; display: flex; gap: 22px; flex-wrap: wrap">
-        <span><span style="color: #62e0a1">→</span> motion vector per 32px block</span>
-        <span><span style="color: #62e0a1">▩</span> bright residual = motion could not explain it, so those coefficients cost bits</span>
+      <div style="font-family: var(--fx-mono); font-size: 11px; color: var(--fx-faintest); margin-top: 14px; display: flex; gap: 22px; flex-wrap: wrap">
+        <span><span style="color: var(--fx-accent)">→</span> motion vector per 32px block</span>
+        <span><span style="color: var(--fx-accent)">▩</span> bright residual = motion could not explain it, so those coefficients cost bits</span>
         <span>synthetic scene · a real scene cut happens at frame {{ cutFrame }}</span>
       </div>
     </section>
 
     <section style="padding: 52px 0 0 0">
-      <div style="display: flex; align-items: baseline; gap: 16px; border-bottom: 1px solid #1c2321; padding-bottom: 12px; margin-bottom: 26px">
-        <h2 style="font-size: 13px; font-family: IBM Plex Mono, monospace; letter-spacing: 0.16em; text-transform: uppercase; color: #62e0a1; margin: 0; font-weight: 500">05 · The same settings, as a pipeline</h2>
-        <span style="font-size: 13px; color: #6b7671">these strings track the controls above — copy and run</span>
+      <div style="display: flex; align-items: baseline; gap: 16px; border-bottom: 1px solid var(--fx-border); padding-bottom: 12px; margin-bottom: 26px">
+        <h2 style="font-size: 13px; font-family: var(--fx-mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--fx-accent); margin: 0; font-weight: 500">05 · The same settings, as a pipeline</h2>
+        <span style="font-size: 13px; color: var(--fx-faint)">these strings track the controls above — copy and run</span>
       </div>
 
       <div style="display: flex; flex-direction: column; gap: 14px">
         <sc-for list="{{ pipelines }}" as="p" hint-placeholder-count="2">
-          <div style="border: 1px solid #1c2321; background: #0b0d0c">
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid #1c2321">
-              <span style="font-family: IBM Plex Mono, monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #9aa5a1">{{ p.name }}</span>
+          <div style="border: 1px solid var(--fx-border); background: var(--fx-panel)">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--fx-border)">
+              <span style="font-family: var(--fx-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--fx-dim)">{{ p.name }}</span>
               <button onClick="{{ p.onCopy }}" style="{{ p.btnStyle }}">{{ p.btnLabel }}</button>
             </div>
-            <pre style="margin: 0; padding: 16px; font-family: IBM Plex Mono, monospace; font-size: 12.5px; line-height: 1.9; color: #cfe8dc; white-space: pre-wrap; word-break: break-word">{{ p.cmd }}</pre>
+            <pre style="margin: 0; padding: 16px; font-family: var(--fx-mono); font-size: 12.5px; line-height: 1.9; color: var(--fx-code); white-space: pre-wrap; word-break: break-word">{{ p.cmd }}</pre>
           </div>
         </sc-for>
       </div>
 
-      <div style="margin-top: 22px; border: 1px solid #1c2321">
-        <div style="display: grid; grid-template-columns: 1.1fr 1fr 1fr 1.5fr; gap: 1px; background: #1c2321">
-          <div style="background: #10130f; padding: 11px 16px; font-family: IBM Plex Mono, monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #6b7671">concept</div>
-          <div style="background: #10130f; padding: 11px 16px; font-family: IBM Plex Mono, monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #6b7671">x264enc</div>
-          <div style="background: #10130f; padding: 11px 16px; font-family: IBM Plex Mono, monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #6b7671">nvh264enc</div>
-          <div style="background: #10130f; padding: 11px 16px; font-family: IBM Plex Mono, monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #6b7671">what it costs you</div>
+      <div style="margin-top: 22px; border: 1px solid var(--fx-border)">
+        <div style="display: grid; grid-template-columns: 1.1fr 1fr 1fr 1.5fr; gap: 1px; background: var(--fx-border)">
+          <div style="background: var(--fx-panel-alt); padding: 11px 16px; font-family: var(--fx-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--fx-faint)">concept</div>
+          <div style="background: var(--fx-panel-alt); padding: 11px 16px; font-family: var(--fx-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--fx-faint)">x264enc</div>
+          <div style="background: var(--fx-panel-alt); padding: 11px 16px; font-family: var(--fx-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--fx-faint)">nvh264enc</div>
+          <div style="background: var(--fx-panel-alt); padding: 11px 16px; font-family: var(--fx-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--fx-faint)">what it costs you</div>
           <sc-for list="{{ propRows }}" as="r" hint-placeholder-count="6">
-            <div style="background: #0b0d0c; padding: 13px 16px; font-size: 13px; color: #d6dcd9">{{ r.concept }}</div>
-            <div style="background: #0b0d0c; padding: 13px 16px; font-family: IBM Plex Mono, monospace; font-size: 12px; color: #62e0a1">{{ r.sw }}</div>
-            <div style="background: #0b0d0c; padding: 13px 16px; font-family: IBM Plex Mono, monospace; font-size: 12px; color: #7fb6d6">{{ r.nv }}</div>
-            <div style="background: #0b0d0c; padding: 13px 16px; font-size: 12.5px; color: #8b9691">{{ r.cost }}</div>
+            <div style="background: var(--fx-panel); padding: 13px 16px; font-size: 13px; color: var(--fx-text)">{{ r.concept }}</div>
+            <div style="background: var(--fx-panel); padding: 13px 16px; font-family: var(--fx-mono); font-size: 12px; color: var(--fx-accent)">{{ r.sw }}</div>
+            <div style="background: var(--fx-panel); padding: 13px 16px; font-family: var(--fx-mono); font-size: 12px; color: var(--fx-blue)">{{ r.nv }}</div>
+            <div style="background: var(--fx-panel); padding: 13px 16px; font-size: 12.5px; color: var(--fx-dim)">{{ r.cost }}</div>
           </sc-for>
         </div>
       </div>
     </section>
 
     <section style="padding: 52px 0 0 0">
-      <div style="border-top: 1px solid #1c2321; padding-top: 34px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 34px">
+      <div style="border-top: 1px solid var(--fx-border); padding-top: 34px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 34px">
         <div>
-          <div style="font-family: IBM Plex Mono, monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #62e0a1; margin-bottom: 12px">Take one</div>
-          <p style="margin: 0; font-size: 14px; color: #b9c3bf; text-wrap: pretty">GOP size is a trade between bitrate and entry points. Long GOP is efficient and cheap; it also means a player joining mid-stream waits, and a lost frame stays broken until the next I.</p>
+          <div style="font-family: var(--fx-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--fx-accent); margin-bottom: 12px">Take one</div>
+          <p style="margin: 0; font-size: 14px; color: var(--fx-text); text-wrap: pretty">GOP size is a trade between bitrate and entry points. Long GOP is efficient and cheap; it also means a player joining mid-stream waits, and a lost frame stays broken until the next I.</p>
         </div>
         <div>
-          <div style="font-family: IBM Plex Mono, monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #62e0a1; margin-bottom: 12px">Take two</div>
-          <p style="margin: 0; font-size: 14px; color: #b9c3bf; text-wrap: pretty">B frames buy you bitrate with latency. Great for VOD and streaming ladders, wrong for conferencing, remote desktop, or anything a human steers in real time.</p>
+          <div style="font-family: var(--fx-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--fx-accent); margin-bottom: 12px">Take two</div>
+          <p style="margin: 0; font-size: 14px; color: var(--fx-text); text-wrap: pretty">B frames buy you bitrate with latency. Great for VOD and streaming ladders, wrong for conferencing, remote desktop, or anything a human steers in real time.</p>
         </div>
         <div>
-          <div style="font-family: IBM Plex Mono, monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #62e0a1; margin-bottom: 12px">Take three</div>
-          <p style="margin: 0; font-size: 14px; color: #b9c3bf; text-wrap: pretty">Frame type decides what a dropped packet destroys. Lose a B and nobody notices; lose an anchor and everything leaning on it smears until the next refresh.</p>
+          <div style="font-family: var(--fx-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--fx-accent); margin-bottom: 12px">Take three</div>
+          <p style="margin: 0; font-size: 14px; color: var(--fx-text); text-wrap: pretty">Frame type decides what a dropped packet destroys. Lose a B and nobody notices; lose an anchor and everything leaning on it smears until the next refresh.</p>
         </div>
       </div>
     </section>
@@ -300,11 +345,12 @@ description: "Interactive explorer for I, P and B video frames, GOP structure, a
 </div>
 
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;totalFrames&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:25,&quot;min&quot;:13,&quot;max&quot;:33,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Sequence&quot;},&quot;fps&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;30&quot;,&quot;options&quot;:[&quot;24&quot;,&quot;30&quot;,&quot;60&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Sequence&quot;},&quot;startMode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;deps&quot;,&quot;options&quot;:[&quot;deps&quot;,&quot;seek&quot;,&quot;drop&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Sequence&quot;}}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;totalFrames&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:25,&quot;min&quot;:8,&quot;max&quot;:60,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Sequence&quot;},&quot;fps&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;30&quot;,&quot;options&quot;:[&quot;24&quot;,&quot;30&quot;,&quot;60&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Sequence&quot;},&quot;startMode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;deps&quot;,&quot;options&quot;:[&quot;deps&quot;,&quot;seek&quot;,&quot;drop&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Sequence&quot;}}">
 class Component extends DCLogic {
   constructor(p) {
     super(p);
     this.state = {
+      total: p.totalFrames || 25,
       gop: 12, bframes: 2, refs: 2, bitrate: 6000,
       closed: true, intraRefresh: false, sceneCut: true,
       rc: 'vbr', mode: this.props.startMode || 'deps',
@@ -312,7 +358,7 @@ class Component extends DCLogic {
     };
   }
 
-  get total() { return this.props.totalFrames || 25; }
+  get total() { return this.state.total; }
   get fps() { return Number(this.props.fps || 30); }
   get cutFrame() { return Math.min(17, this.total - 4); }
 
@@ -518,7 +564,7 @@ class Component extends DCLogic {
     rx.clearRect(0, 0, 512, 288);
     if (refIdx === null) {
       rx.fillStyle = '#0d100f'; rx.fillRect(0, 0, 512, 288);
-      rx.fillStyle = '#7f8b86'; rx.font = '500 26px IBM Plex Mono, monospace';
+      rx.fillStyle = '#7f8b86'; rx.font = '500 26px Consolas, monospace';
       rx.fillText('no reference', 22, 140);
       rx.fillStyle = '#55605c';
       rx.fillText('DPB flushed', 22, 176);
@@ -536,7 +582,7 @@ class Component extends DCLogic {
       sx.strokeStyle = 'rgba(98,224,161,0.45)';
       for (let x = 0; x <= 512; x += 32) { sx.beginPath(); sx.moveTo(x, 0); sx.lineTo(x, 288); sx.stroke(); }
       for (let y = 0; y <= 288; y += 32) { sx.beginPath(); sx.moveTo(0, y); sx.lineTo(512, y); sx.stroke(); }
-      sx.fillStyle = '#62e0a1'; sx.font = '500 13px IBM Plex Mono, monospace';
+      sx.fillStyle = '#62e0a1'; sx.font = '500 13px Consolas, monospace';
       sx.fillText('every block coded intra', 14, 274);
       return;
     }
@@ -606,7 +652,7 @@ class Component extends DCLogic {
     this.selIdx = sel;
     const f = frames[sel];
 
-    const CI = '#62e0a1', CP = '#7fb6d6', CB = '#8d9a94', AMB = '#d9a656', RED = '#e0685f';
+    const CI = 'var(--fx-accent)', CP = 'var(--fx-blue)', CB = 'var(--fx-gray)', AMB = 'var(--fx-amber)', RED = 'var(--fx-red)';
     const col = t => t === 'I' ? CI : t === 'P' ? CP : CB;
 
     // stats
@@ -618,6 +664,7 @@ class Component extends DCLogic {
 
     // sliders
     const sliders = [
+      { key: 'total', label: 'frames in sequence', display: total + ' frames', hint: (total / this.fps).toFixed(2) + 's of video · scene cut lands at frame ' + this.cutFrame, min: 8, max: 60, intg: true, op: 1 },
       { key: 'gop', label: 'GOP size / key-int-max', display: s.intraRefresh ? '—' : s.gop + ' frames', hint: s.intraRefresh ? 'ignored while intra-refresh is on' : (s.gop / this.fps).toFixed(2) + 's between entry points', min: 1, max: 30, intg: true, op: s.intraRefresh ? 0.4 : 1 },
       { key: 'bframes', label: 'B frames between anchors', display: String(s.bframes), hint: s.bframes === 0 ? 'decode order = display order' : 'adds ' + (s.bframes / this.fps * 1000).toFixed(0) + 'ms of encoder delay', min: 0, max: 4, intg: true, op: s.intraRefresh ? 0.4 : 1 },
       { key: 'refs', label: 'reference frames', display: String(s.refs), hint: 'DPB depth · more refs = better prediction, more memory', min: 1, max: 5, intg: true, op: 1 },
@@ -629,9 +676,9 @@ class Component extends DCLogic {
     }));
 
     const btn = (on, c) => ({
-      fontFamily: 'IBM Plex Mono, monospace', fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase',
-      padding: '8px 14px', cursor: 'pointer', background: on ? 'rgba(98,224,161,0.12)' : 'none',
-      border: '1px solid ' + (on ? (c || CI) : '#2a332f'), color: on ? (c || CI) : '#8b9691'
+      fontFamily: 'var(--fx-mono)', fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase',
+      padding: '8px 14px', cursor: 'pointer', background: on ? 'var(--fx-accent-fill)' : 'none',
+      border: '1px solid ' + (on ? (c || CI) : 'var(--fx-border-strong)'), color: on ? (c || CI) : 'var(--fx-dim)'
     });
 
     const rcOptions = [['cbr', 'CBR'], ['vbr', 'VBR'], ['cqp', 'CQP']].map(([k, l]) => ({
@@ -650,11 +697,11 @@ class Component extends DCLogic {
       label: t.label, note: t.note, onClick: t.onClick,
       style: {
         display: 'flex', alignItems: 'center', gap: '12px', width: '100%', textAlign: 'left', cursor: 'pointer',
-        background: t.on ? 'rgba(98,224,161,0.06)' : 'none', border: '1px solid ' + (t.on ? '#2c4438' : '#202724'),
-        padding: '11px 13px', fontFamily: 'IBM Plex Mono, monospace', fontSize: '12px',
-        color: t.on ? '#e6efea' : '#8b9691', lineHeight: 1.45
+        background: t.on ? 'var(--fx-accent-wash)' : 'none', border: '1px solid ' + (t.on ? 'var(--fx-accent-border)' : 'var(--fx-border)'),
+        padding: '11px 13px', fontFamily: 'var(--fx-mono)', fontSize: '12px',
+        color: t.on ? 'var(--fx-strong)' : 'var(--fx-dim)', lineHeight: 1.45
       },
-      dotStyle: { width: '8px', height: '8px', flex: '0 0 8px', borderRadius: '50%', background: t.on ? CI : 'transparent', border: '1px solid ' + (t.on ? CI : '#3a433f') }
+      dotStyle: { width: '8px', height: '8px', flex: '0 0 8px', borderRadius: '50%', background: t.on ? CI : 'transparent', border: '1px solid ' + (t.on ? CI : 'var(--fx-border-strong)') }
     }));
 
     const modes = [['deps', 'dependencies'], ['seek', 'seek'], ['drop', 'packet loss']].map(([k, l]) => ({
@@ -701,18 +748,18 @@ class Component extends DCLogic {
         barWrap: { height: BARH + 'px', display: 'flex', alignItems: 'flex-end' },
         bar: {
           width: '100%', height: h + 'px',
-          background: dropped ? 'rgba(224,104,95,0.25)' : state === 'bad' ? 'rgba(217,166,86,0.28)' : c,
+          background: dropped ? 'var(--fx-red-fill)' : state === 'bad' ? 'var(--fx-amber-fill)' : c,
           opacity: state === 'idle' ? 0.55 : 1,
           border: dropped ? '1px solid ' + RED : state === 'bad' ? '1px solid ' + AMB : 'none',
-          outline: state === 'sel' ? '1px solid #f0f4f2' : 'none', outlineOffset: '2px'
+          outline: state === 'sel' ? '1px solid var(--fx-strong)' : 'none', outlineOffset: '2px'
         },
         letter: {
-          fontFamily: 'IBM Plex Mono, monospace', fontSize: '15px', fontWeight: 600, textAlign: 'center',
+          fontFamily: 'var(--fx-mono)', fontSize: '15px', fontWeight: 600, textAlign: 'center',
           marginTop: '9px', color: dropped ? RED : state === 'bad' ? AMB : c,
           textDecoration: dropped ? 'line-through' : 'none'
         },
-        idxStyle: { fontFamily: 'IBM Plex Mono, monospace', fontSize: '10px', textAlign: 'center', color: x.i === sel ? '#f0f4f2' : '#4d5854', marginTop: '2px' },
-        flagStyle: { fontFamily: 'IBM Plex Mono, monospace', fontSize: '8.5px', letterSpacing: '0.06em', textAlign: 'center', color: x.sceneCut ? AMB : '#3f4946', marginTop: '3px', height: '11px' }
+        idxStyle: { fontFamily: 'var(--fx-mono)', fontSize: '10px', textAlign: 'center', color: x.i === sel ? 'var(--fx-strong)' : 'var(--fx-faintest)', marginTop: '2px' },
+        flagStyle: { fontFamily: 'var(--fx-mono)', fontSize: '8.5px', letterSpacing: '0.06em', textAlign: 'center', color: x.sceneCut ? AMB : 'var(--fx-faintest)', marginTop: '3px', height: '11px' }
       };
     });
 
@@ -728,8 +775,8 @@ class Component extends DCLogic {
       style: {
         position: 'absolute', left: (xOf(b.from) - 3) + 'px', width: ((b.to - b.from + 1) * PITCH) + 'px',
         top: '0px', height: (TOPARC + BARH + 56) + 'px',
-        background: k % 2 ? 'rgba(255,255,255,0.022)' : 'transparent',
-        borderLeft: '1px solid ' + (b.from === 0 ? 'transparent' : '#232b28')
+        background: k % 2 ? 'var(--fx-row-alt)' : 'transparent',
+        borderLeft: '1px solid ' + (b.from === 0 ? 'transparent' : 'var(--fx-border)')
       }
     }));
 
@@ -750,10 +797,10 @@ class Component extends DCLogic {
     });
 
     const readouts = [
-      { label: 'stream bitrate', value: Math.round(m.actualKbps) + ' kbps', color: '#f0f4f2', note: this.kb(m.bytes) + ' for ' + (total / this.fps).toFixed(2) + 's at ' + this.fps + 'fps' },
+      { label: 'stream bitrate', value: Math.round(m.actualKbps) + ' kbps', color: 'var(--fx-strong)', note: this.kb(m.bytes) + ' for ' + (total / this.fps).toFixed(2) + 's at ' + this.fps + 'fps' },
       { label: 'random access points', value: String(frames.filter(x => x.idr).length), color: CI, note: s.intraRefresh ? 'only the first frame is a true IDR; recovery comes from refresh columns' : 'a player can join or seek cleanly only here' },
       { label: 'worst-case seek cost', value: (s.intraRefresh ? total : Math.max.apply(null, frames.map(x => this.closure(frames, x.i, 'up').size + 1))) + ' frames', color: AMB, note: 'frames decoded but discarded before the target appears' },
-      { label: 'reorder buffer', value: m.maxBuf + ' frames', color: m.maxBuf ? CP : '#f0f4f2', note: m.maxBuf ? '+' + (m.maxBuf / this.fps * 1000).toFixed(0) + 'ms of unavoidable display latency' : 'zero added latency — no B frames in the stream' }
+      { label: 'reorder buffer', value: m.maxBuf + ' frames', color: m.maxBuf ? CP : 'var(--fx-strong)', note: m.maxBuf ? '+' + (m.maxBuf / this.fps * 1000).toFixed(0) + 'ms of unavoidable display latency' : 'zero added latency — no B frames in the stream' }
     ];
 
     // order rows
@@ -762,10 +809,10 @@ class Component extends DCLogic {
       text: txt,
       style: {
         width: '30px', height: '30px', flex: '0 0 30px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontFamily: 'IBM Plex Mono, monospace', fontSize: '11px',
-        background: kind === 'now' ? CI : kind === 'held' ? 'rgba(127,182,214,0.18)' : kind === 'done' ? 'rgba(255,255,255,0.05)' : 'transparent',
-        color: kind === 'now' ? '#08090a' : kind === 'held' ? CP : kind === 'done' ? '#8b9691' : '#333b38',
-        border: '1px solid ' + (kind === 'now' ? CI : kind === 'held' ? 'rgba(127,182,214,0.4)' : '#1c2321'),
+        fontFamily: 'var(--fx-mono)', fontSize: '11px',
+        background: kind === 'now' ? CI : kind === 'held' ? 'var(--fx-blue-fill)' : kind === 'done' ? 'var(--fx-row-alt)' : 'transparent',
+        color: kind === 'now' ? 'var(--fx-on-accent)' : kind === 'held' ? CP : kind === 'done' ? 'var(--fx-dim)' : 'var(--fx-border-strong)',
+        border: '1px solid ' + (kind === 'now' ? CI : kind === 'held' ? 'var(--fx-blue)' : 'var(--fx-border)'),
         fontWeight: kind === 'now' ? 600 : 400
       }
     });

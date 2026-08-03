@@ -7,6 +7,8 @@ series: ["gstreamer"]
 tags:
   - gstreamer
   - linux
+  - cpp
+  - rust
 ---
 
 In the previous post, we created an MKV video file containing H.264 encoded video using `gst-launch-1.0`.
@@ -15,32 +17,48 @@ While `gst-launch-1.0` is an excellent tool for experimenting with pipelines and
 
 ## Prerequisites
 
-If you have followed the previous posts in this series, most of the required packages should already be installed.
+If you have followed the previous posts in this series, the runtime packages should already be installed. Calling the API from our own program needs two more things on top of that.
+
+The first is the development headers, which is what `pkg-config` reads when we compile. The second is the plugins our pipeline actually asks for: `x264enc` lives in `plugins-ugly` and `h264parse` lives in `plugins-bad`. Post 00 described both of those as optional, and for `gst-launch-1.0` experiments they are, but this pipeline will not run without them. If an element is missing, `gst_element_factory_make` simply returns `NULL` and the program stops at `Failed to create elements`.
 
 ### C++
 
 {{< tabs >}}
 {{< tab "Ubuntu" >}}
 ```bash
-sudo apt-get install -y gcc pkg-config curl
+sudo apt-get install -y gcc pkg-config curl \
+    libgstreamer1.0-dev \
+    libgstreamer-plugins-base1.0-dev \
+    gstreamer1.0-plugins-bad \
+    gstreamer1.0-plugins-ugly
 ```
 {{< /tab >}}
 {{< tab "Fedora" >}}
 ```bash
-sudo dnf install -y gcc pkgconf-pkg-config curl
+sudo dnf install -y gcc pkgconf-pkg-config curl \
+    gstreamer1-devel \
+    gstreamer1-plugins-base-devel \
+    gstreamer1-plugins-bad-free \
+    gstreamer1-plugins-ugly
 ```
 {{< /tab >}}
 {{< tab "Arch" >}}
 ```bash
-sudo pacman -S --needed gcc pkgconf curl
+sudo pacman -S --needed gcc pkgconf curl \
+    gstreamer \
+    gst-plugins-base \
+    gst-plugins-bad \
+    gst-plugins-ugly
 ```
 {{< /tab >}}
 {{< /tabs >}}
 
 ### Rust
 
+The Rust bindings link against the same GStreamer development packages listed above, so install those first.
+
 ```bash
-sudo apt-get install rustc cargo
+sudo apt-get install -y rustc cargo
 ```
 
 ## Project source code
@@ -53,86 +71,9 @@ cd gstreamer-cpp
 code main.cpp
 ```
 
-You can write the following in `mainmain.rs`
+You can write the following in `main.cpp`
 
-```cpp
-#include <gst/gst.h>
-
-int main(int argc, char *argv[]) {
-    gst_init(&argc, &argv);
-
-    GstElement *pipeline = gst_pipeline_new("test-pipeline");
-    GstElement *src = gst_element_factory_make("videotestsrc", "src");
-    GstElement *capsfilter = gst_element_factory_make("capsfilter", "capsfilter");
-    GstElement *enc = gst_element_factory_make("x264enc", "enc");
-    GstElement *parse = gst_element_factory_make("h264parse", "parse");
-    GstElement *mux = gst_element_factory_make("matroskamux", "mux");
-    GstElement *sink = gst_element_factory_make("filesink", "sink");
-
-    if (!pipeline || !src || !capsfilter || !enc || !parse || !mux || !sink) {
-        g_printerr("Failed to create elements\n");
-        return -1;
-    }
-
-    g_object_set(src, "num-buffers", 90, nullptr);
-    g_object_set(sink, "location", "test.mkv", nullptr);
-
-    GstCaps *caps = gst_caps_new_simple("video/x-raw",
-        "width", G_TYPE_INT, 1280,
-        "height", G_TYPE_INT, 720,
-        "framerate", GST_TYPE_FRACTION, 30, 1,
-        nullptr);
-    g_object_set(capsfilter, "caps", caps, nullptr);
-    gst_caps_unref(caps);
-
-    gst_bin_add_many(GST_BIN(pipeline), src, capsfilter, enc, parse, mux, sink, nullptr);
-
-    if (!gst_element_link_many(src, capsfilter, enc, parse, mux, sink, nullptr)) {
-        g_printerr("Failed to link elements\n");
-        gst_object_unref(pipeline);
-        return -1;
-    }
-
-    GstStateChangeReturn ret = gst_element_set_state(pipeline, GST_STATE_PLAYING);
-    if (ret == GST_STATE_CHANGE_FAILURE) {
-        g_printerr("Failed to set pipeline to PLAYING\n");
-        gst_object_unref(pipeline);
-        return -1;
-    }
-
-    GstBus *bus = gst_element_get_bus(pipeline);
-    GstMessage *msg = gst_bus_timed_pop_filtered(bus, GST_CLOCK_TIME_NONE,
-        (GstMessageType)(GST_MESSAGE_ERROR | GST_MESSAGE_EOS));
-
-    if (msg != nullptr) {
-        GError *err;
-        gchar *debug_info;
-        switch (GST_MESSAGE_TYPE(msg)) {
-            case GST_MESSAGE_ERROR:
-                gst_message_parse_error(msg, &err, &debug_info);
-                g_printerr("Error: %s\n", err->message);
-                g_clear_error(&err);
-                g_free(debug_info);
-                break;
-            case GST_MESSAGE_EOS:
-                g_print("End of stream\n");
-                break;
-            default:
-                break;
-        }
-        gst_message_unref(msg);
-    }
-
-    // -e flag behavior: send EOS before stopping
-    gst_element_send_event(pipeline, gst_event_new_eos());
-
-    gst_object_unref(bus);
-    gst_element_set_state(pipeline, GST_STATE_NULL);
-    gst_object_unref(pipeline);
-
-    return 0;
-}
-```
+{{< code file="gstreamer/post03/cpp/main.cpp" >}}
 
 Now you run the code using
 
@@ -151,88 +92,11 @@ code src/main.rs
 
 You can write the following in `src/main.rs`
 
-```rust
-use gst::prelude::*;
-use gstreamer as gst;
+{{< code file="gstreamer/post03/rust/src/main.rs" >}}
 
-fn main() {
-    gst::init().unwrap();
+`cargo add gstreamer` writes the dependency for you, so your `Cargo.toml` should look like this:
 
-    let pipeline = gst::Pipeline::new();
-
-    let src = gst::ElementFactory::make("videotestsrc")
-        .property("num-buffers", 90)
-        .build()
-        .expect("Failed to create videotestsrc");
-
-    let capsfilter = gst::ElementFactory::make("capsfilter")
-        .property(
-            "caps",
-            gst::Caps::builder("video/x-raw")
-                .field("width", 1280)
-                .field("height", 720)
-                .field("framerate", gst::Fraction::new(30, 1))
-                .build(),
-        )
-        .build()
-        .expect("Failed to create capsfilter");
-
-    let enc = gst::ElementFactory::make("x264enc")
-        .build()
-        .expect("Failed to create x264enc");
-
-    let parse = gst::ElementFactory::make("h264parse")
-        .build()
-        .expect("Failed to create h264parse");
-
-    let mux = gst::ElementFactory::make("matroskamux")
-        .build()
-        .expect("Failed to create matroskamux");
-
-    let sink = gst::ElementFactory::make("filesink")
-        .property("location", "test.mkv")
-        .build()
-        .expect("Failed to create filesink");
-
-    pipeline
-        .add_many([&src, &capsfilter, &enc, &parse, &mux, &sink])
-        .unwrap();
-
-    gst::Element::link_many([&src, &capsfilter, &enc, &parse, &mux, &sink])
-        .expect("Failed to link elements");
-
-    pipeline
-        .set_state(gst::State::Playing)
-        .expect("Unable to set pipeline to Playing");
-
-    let bus = pipeline.bus().unwrap();
-
-    for msg in bus.iter_timed(gst::ClockTime::NONE) {
-        use gst::MessageView;
-
-        match msg.view() {
-            MessageView::Eos(..) => {
-                println!("End of stream");
-                break;
-            }
-            MessageView::Error(err) => {
-                eprintln!(
-                    "Error from {:?}: {} ({:?})",
-                    err.src().map(|s| s.path_string()),
-                    err.error(),
-                    err.debug()
-                );
-                break;
-            }
-            _ => (),
-        }
-    }
-
-    pipeline
-        .set_state(gst::State::Null)
-        .expect("Unable to set pipeline to Null");
-}
-```
+{{< code file="gstreamer/post03/rust/Cargo.toml" >}}
 
 Now you run the code using
 
@@ -248,14 +112,10 @@ The first thing every GStreamer application must do is initialize the library by
 
 {{< tabs >}}
 {{< tab "C++" >}}
-```cpp
-gst_init(&argc, &argv);
-```
+{{< code file="gstreamer/post03/cpp/main.cpp" region="init" link="false" >}}
 {{< /tab >}}
 {{< tab "Rust" >}}
-```rust
-gst::init().unwrap();
-```
+{{< code file="gstreamer/post03/rust/src/main.rs" region="init" link="false" >}}
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -271,14 +131,10 @@ A pipeline can be created using:
 
 {{< tabs >}}
 {{< tab "C++" >}}
-```cpp
-auto* pipeline = gst_pipeline_new("pipeline");
-```
+{{< code file="gstreamer/post03/cpp/main.cpp" region="pipeline" link="false" >}}
 {{< /tab >}}
 {{< tab "Rust" >}}
-```rust
-let pipeline = gst::Pipeline::new();
-```
+{{< code file="gstreamer/post03/rust/src/main.rs" region="pipeline" link="false" >}}
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -290,22 +146,10 @@ Once the elements are created, they must be added to the pipeline.
 
 {{< tabs >}}
 {{< tab "C++" >}}
-```cpp
-gst_bin_add_many(
-    GST_BIN(pipeline),
-    source,
-    encoder,
-    muxer,
-    sink,
-    nullptr);
-```
+{{< code file="gstreamer/post03/cpp/main.cpp" region="add" link="false" >}}
 {{< /tab >}}
 {{< tab "Rust" >}}
-```rust
-pipeline
-    .add_many([&src, &capsfilter, &enc, &parse, &mux, &sink])
-    .unwrap();
-```
+{{< code file="gstreamer/post03/rust/src/main.rs" region="add" link="false" >}}
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -313,24 +157,14 @@ At this point, the pipeline owns and manages these elements, but it still does n
 
 ## Linking Elements
 
-To connect elements together, we use `gst_element_link_many`.
+To connect elements together, we use `gst_element_link_many`. It returns whether the whole chain was linked successfully, so it is worth checking rather than ignoring.
 
 {{< tabs >}}
 {{< tab "C++" >}}
-```cpp
-gst_element_link_many(
-    source,
-    encoder,
-    muxer,
-    sink,
-    nullptr);
-```
+{{< code file="gstreamer/post03/cpp/main.cpp" region="link" link="false" >}}
 {{< /tab >}}
 {{< tab "Rust" >}}
-```rust
-gst::Element::link_many([&src, &capsfilter, &enc, &parse, &mux, &sink])
-    .expect("Failed to link elements");
-```
+{{< code file="gstreamer/post03/rust/src/main.rs" region="link" link="false" >}}
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -340,29 +174,20 @@ This function links the pads between elements, allowing data to flow from one el
 
 Many elements expose configurable properties that control their behavior.
 
-For example, the `videotestsrc` element provides a `pattern` property that changes the generated test pattern.
+Our program uses two of them. The `num-buffers` property on `videotestsrc` tells the source to produce exactly 90 frames and then stop, which at 30 frames per second gives us a three second video. The `location` property on `filesink` decides where the file is written.
 
 {{< tabs >}}
 {{< tab "C++" >}}
-```cpp
-g_object_set(
-    source,
-    "pattern",
-    1,
-    nullptr);
-```
+{{< code file="gstreamer/post03/cpp/main.cpp" region="properties" link="false" >}}
 {{< /tab >}}
 {{< tab "Rust" >}}
-```rust
-let src = gst::ElementFactory::make("videotestsrc")
-    .property("num-buffers", 90)
-    .build()
-    .expect("Failed to create videotestsrc");
-```
+{{< code file="gstreamer/post03/rust/src/main.rs" region="properties" link="false" >}}
 {{< /tab >}}
 {{< /tabs >}}
 
-The `g_object_set` function is used because most GStreamer elements are built on top of the GObject type system.
+Notice the difference in style between the two. In C++ we build the element first and configure it afterwards with `g_object_set`, which works because most GStreamer elements are built on top of the GObject type system. The Rust bindings instead let us set properties on the builder before the element is created, so `filesink` receives its `location` at construction time rather than in a separate step.
+
+`videotestsrc` has many more properties than the one we use here. `pattern`, for example, changes the generated test pattern, and it is worth experimenting with.
 
 ## Starting the Pipeline
 
@@ -370,18 +195,10 @@ After creating, configuring, and linking all elements, we can start the pipeline
 
 {{< tabs >}}
 {{< tab "C++" >}}
-```cpp
-gst_element_set_state(
-    pipeline,
-    GST_STATE_PLAYING);
-```
+{{< code file="gstreamer/post03/cpp/main.cpp" region="play" link="false" >}}
 {{< /tab >}}
 {{< tab "Rust" >}}
-```rust
-pipeline
-    .set_state(gst::State::Playing)
-    .expect("Unable to set pipeline to Playing");
-```
+{{< code file="gstreamer/post03/rust/src/main.rs" region="play" link="false" >}}
 {{< /tab >}}
 {{< /tabs >}}
 
