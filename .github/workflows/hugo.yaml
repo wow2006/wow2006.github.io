@@ -53,6 +53,13 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
       - name: Build MyProductivity
+        env:
+          BUN_PUBLIC_FIREBASE_API_KEY: ${{ vars.BUN_PUBLIC_FIREBASE_API_KEY }}
+          BUN_PUBLIC_FIREBASE_AUTH_DOMAIN: ${{ vars.BUN_PUBLIC_FIREBASE_AUTH_DOMAIN }}
+          BUN_PUBLIC_FIREBASE_PROJECT_ID: ${{ vars.BUN_PUBLIC_FIREBASE_PROJECT_ID }}
+          BUN_PUBLIC_FIREBASE_STORAGE_BUCKET: ${{ vars.BUN_PUBLIC_FIREBASE_STORAGE_BUCKET }}
+          BUN_PUBLIC_FIREBASE_SENDER_ID: ${{ vars.BUN_PUBLIC_FIREBASE_SENDER_ID }}
+          BUN_PUBLIC_FIREBASE_APP_ID: ${{ vars.BUN_PUBLIC_FIREBASE_APP_ID }}
         run: |
           cd MyProductivity
           bun install
