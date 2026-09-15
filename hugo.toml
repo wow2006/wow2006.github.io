@@ -81,6 +81,11 @@ defaultContentLanguage = 'en'
   name       = "Video Compression"
   url        = "/tools/video-compression/"
   parent     = "tools"
+[[menu.main]]
+  identifier = "myproductivity"
+  name       = "MyProductivity"
+  url        = "/myproductivity/"
+  parent     = "tools"
 
 [[languages.en.menu.main]]
   identifier = "blog"
@@ -111,6 +116,11 @@ defaultContentLanguage = 'en'
   identifier = "video-compression"
   name       = "Video Compression"
   url        = "/tools/video-compression/"
+  parent     = "tools"
+[[languages.en.menu.main]]
+  identifier = "myproductivity"
+  name       = "MyProductivity"
+  url        = "/myproductivity/"
   parent     = "tools"
 
 [[languages.ar.menu.main]]

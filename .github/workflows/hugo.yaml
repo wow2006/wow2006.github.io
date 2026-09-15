@@ -50,6 +50,16 @@ jobs:
         uses: actions/configure-pages@v5
       - name: Install Node.js dependencies
         run: "[[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci || true"
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+      - name: Build MyProductivity
+        run: |
+          cd MyProductivity
+          bun install
+          bun run build
+          cd ..
+          mkdir -p static/myproductivity
+          cp -r MyProductivity/dist/* static/myproductivity/
       - name: Build with Hugo
         env:
           HUGO_CACHEDIR: ${{ runner.temp }}/hugo_cache
