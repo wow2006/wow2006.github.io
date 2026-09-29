@@ -11,6 +11,7 @@ defaultContentLanguage = 'en'
 [params]
   homeSubtitle = "An other Computer Graphics and Vision blog"
   enableGlobalLanguageMenu = true
+  EnableReadingTime = true
   # Where the {{< code >}} shortcode points its "View on GitHub" links.
   codeRepo = "https://github.com/wow2006/wow2006.github.io"
   codeBranch = "main"
