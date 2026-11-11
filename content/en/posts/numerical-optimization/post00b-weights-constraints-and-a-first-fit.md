@@ -55,7 +55,7 @@ When all measurements are equally good, \(\Omega_i = I\) (the identity matrix) a
 
 ![Two bell curves centred on zero: a tall narrow one for sigma = 1 cm and a short wide one for sigma = 5 cm, with the weight 1/sigma^2 in the legend](/images/numerical-optimization/post00/covariance_1d.png)
 
-*The narrow sensor (blue) has variance 1 and weight 1. The wide sensor (orange) has variance 25 and weight 1/25, so its residuals count 25 times less.*
+*The narrow sensor (blue) has variance 1 and weight 1. The wide sensor (orange) has variance 25 and weight 1/25, so its squared residuals count 25 times less.*
 
 That is the whole idea for one number. When a measurement has *several* numbers (for example an \(x\) and a \(y\) position), noise in one can be linked to noise in the other, so we need a table. For two numbers it is a \(2 \times 2\) matrix:
 
@@ -122,6 +122,16 @@ The pink segments are the residuals. Least squares picks the line that makes the
 ![The line-fit example with labels: black dots are the observations z_i, the blue line is the model h_i(x) = a t_i + b, a box gives the variables x = (a, b), and the residuals r_i = h_i(x) - z_i are drawn as springs, one highlighted, with the cost F as their total energy](/images/numerical-optimization/post00/vocabulary_annotated.png)
 
 *The same fit with every word labelled: if each residual is a spring that stores ½ r_i² of energy, the least-squares line is where the springs leave it at rest, at the smallest total energy F.*
+
+Try it yourself below. Move the line and watch its cost against the best line and the true line. Then add a faulty reading, and see how a weight of 1/25 (section 4) stops one bad sensor from pulling the fit.
+
+<details><summary style="cursor:pointer;margin:.5em 0">Interactive: move the line, add a faulty reading, watch the cost</summary>
+
+<iframe src="/tools/line-fit-explorer/?lang=en" title="Interactive line-fit explorer: move the line, compare its cost with the best and the true line, and change how much each measurement is trusted" style="width:100%;height:700px;border:0" loading="lazy"></iframe>
+
+<p><a href="/tools/line-fit-explorer/?lang=en">Open the interactive line-fit explorer in its own page</a>.</p>
+
+</details>
 
 One result may surprise you: the best line has a **lower** cost than the true line (2.1610 vs 2.2048). This is not a bug. The best line fits *this particular* noise as well as possible, and the true line does not care about our noise. With more data, the best line gets closer to the true one, but it fits the data it has, not the truth.
 

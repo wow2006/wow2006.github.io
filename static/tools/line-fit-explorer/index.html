@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Interactive line-fit explorer</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --panel: light-dark(#fff, #1b1c1d);
+      --panel-alt: light-dark(#f5f6f7, #242629);
+      --border: light-dark(#d8dce0, #3b3e42);
+      --text: light-dark(#25292d, #e6e9eb);
+      --muted: light-dark(#626a72, #a5adb5);
+      --blue: light-dark(#0072b2, #70b9e8);
+      --green: light-dark(#009e73, #4fd1a8);
+      --pink: light-dark(#cc79a7, #e99bc8);
+      --grid: light-dark(#e4e7ea, #36393d);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: transparent;
+      color: var(--text);
+      font: 15px/1.5 system-ui, sans-serif;
+    }
+
+    .explorer {
+      display: grid;
+      grid-template-columns: minmax(205px, 260px) minmax(0, 1fr);
+      gap: 18px;
+      padding: 20px;
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--blue);
+      background: var(--panel);
+    }
+
+    header, .results, .status, .notes { grid-column: 1 / -1; }
+    header h2 { margin: 0 0 4px; font-size: 1.25rem; }
+    header p, .notes { margin: 0; color: var(--muted); }
+
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding: 16px;
+      border: 1px solid var(--border);
+      background: var(--panel-alt);
+    }
+
+    .control label {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+
+    output, .metric strong { font-variant-numeric: tabular-nums; }
+    input[type="range"] { width: 100%; accent-color: var(--blue); }
+
+    .buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+    button {
+      min-height: 38px;
+      padding: 7px 10px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--panel);
+      color: var(--text);
+      font: inherit;
+      cursor: pointer;
+    }
+    button:hover { border-color: var(--blue); }
+    button[aria-pressed="true"] { border-color: var(--blue); background: var(--panel-alt); font-weight: 600; }
+    button:focus-visible, input:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+    .chart {
+      min-width: 0;
+      padding: 8px;
+      border: 1px solid var(--border);
+    }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px 14px;
+      padding: 4px 8px 0;
+      color: var(--muted);
+      font-size: .85rem;
+    }
+    .key { display: inline-flex; align-items: center; gap: 6px; }
+    .sw { display: inline-block; width: 20px; }
+    .sw.yours { border-top: 3px solid var(--blue); }
+    .sw.best { border-top: 3px dashed var(--green); }
+    .sw.truth { border-top: 2px dotted var(--muted); }
+    .sw.residual { width: 0; height: 14px; border-left: 2px solid var(--pink); }
+    .sw.trusted, .sw.noisy { width: 11px; height: 11px; border-radius: 50%; border: 2px solid var(--text); }
+    .sw.trusted { background: var(--text); }
+
+    /* The plot stays left-to-right in Arabic: it is a graph, not text. */
+    svg { display: block; width: 100%; height: auto; direction: ltr; }
+    svg text { fill: var(--muted); font: 22px system-ui, sans-serif; }
+    .gridline { stroke: var(--grid); stroke-width: 1; }
+    .axis { stroke: var(--muted); stroke-width: 1.5; }
+    .yours { stroke: var(--blue); stroke-width: 3.5; }
+    .best { stroke: var(--green); stroke-width: 3; stroke-dasharray: 10 7; }
+    .truth { stroke: var(--muted); stroke-width: 2.5; stroke-dasharray: 2 6; stroke-linecap: round; }
+    .residual { stroke: var(--pink); stroke-width: 2.5; }
+    .residual.noisy { stroke-dasharray: 5 4; opacity: .55; }
+    .pt { cursor: pointer; outline: none; }
+    .pt .hit { fill: transparent; }
+    .pt .dot { fill: var(--text); stroke: var(--panel); stroke-width: 2.5; }
+    .pt.noisy .dot { fill: var(--panel); stroke: var(--text); stroke-width: 3; }
+    .pt:hover .dot, .pt:focus-visible .dot { stroke: var(--blue); stroke-width: 4; }
+
+    .results {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .metric {
+      min-width: 0;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      background: var(--panel-alt);
+    }
+    .metric span { display: block; color: var(--muted); font-size: .82rem; }
+    .metric strong { display: block; margin-top: 2px; font-size: 1.05rem; }
+    .metric.mine { border-color: var(--blue); }
+    .status { margin: 0; padding: 10px 12px; border-inline-start: 3px solid var(--green); background: var(--panel-alt); }
+    .notes { font-size: .9rem; }
+    .notes p { margin: 0 0 8px; }
+    .notes ol { margin: 0; padding-inline-start: 22px; }
+    .notes li { margin-bottom: 4px; }
+
+    @media (max-width: 650px) {
+      .explorer { grid-template-columns: minmax(0, 1fr); gap: 12px; padding: 14px; }
+      header, .results, .status, .notes { grid-column: 1; }
+      .controls { gap: 10px; }
+      .results { gap: 6px; }
+      .metric { padding: 8px; }
+      .chart { padding: 4px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="explorer" id="explorer">
+    <header>
+      <h2 data-i18n="title">Change the line, watch the residuals</h2>
+      <p data-i18n="intro">Move the slope and intercept. The 20 measurements stay fixed; click any point to change how much you trust it.</p>
+    </header>
+
+    <section class="controls" data-i18n-label="controlsLabel" aria-label="Line parameters">
+      <div class="control">
+        <label for="slope"><span data-i18n="slope">Slope a</span><output id="slope-value" for="slope">0.797</output></label>
+        <input id="slope" type="range" min="-0.5" max="2" step="0.001" value="0.797">
+      </div>
+      <div class="control">
+        <label for="intercept"><span data-i18n="intercept">Intercept b</span><output id="intercept-value" for="intercept">1.583</output></label>
+        <input id="intercept" type="range" min="-2" max="5" step="0.001" value="1.583">
+      </div>
+      <div class="buttons">
+        <button id="best" type="button" data-i18n="best">Jump to best fit</button>
+        <button id="truth" type="button" data-i18n="truth">Show true line</button>
+        <button id="faulty" type="button" aria-pressed="false" data-i18n="faultyAdd">Add a faulty reading</button>
+      </div>
+    </section>
+
+    <section class="chart">
+      <div class="legend">
+        <span class="key"><i class="sw yours"></i><span data-i18n="keyYours">your line</span></span>
+        <span class="key"><i class="sw best"></i><span data-i18n="keyBest">best fit</span></span>
+        <span class="key"><i class="sw truth"></i><span data-i18n="keyTrue">true line</span></span>
+        <span class="key"><i class="sw residual"></i><span data-i18n="keyResidual">residual rᵢ</span></span>
+        <span class="key"><i class="sw trusted"></i><span data-i18n="keyTrusted">trusted (σ = 1)</span></span>
+        <span class="key"><i class="sw noisy"></i><span data-i18n="keyNoisy">noisy (σ = 5)</span></span>
+      </div>
+      <svg id="plot" viewBox="0 0 680 420" role="group" data-i18n-label="plotLabel" aria-label="Measurements, your line, the best fit and the true line"></svg>
+    </section>
+
+    <section class="results">
+      <div class="metric mine"><span data-i18n="cost">Your cost F(x)</span><strong id="cost-value">—</strong></div>
+      <div class="metric"><span data-i18n="bestCost">Best possible F</span><strong id="best-cost-value">—</strong></div>
+      <div class="metric"><span data-i18n="trueCost">F of the true line</span><strong id="true-cost-value">—</strong></div>
+    </section>
+    <p class="status" id="status" aria-live="polite"></p>
+
+    <section class="notes">
+      <p data-i18n="explanation">Each pink segment is the residual rᵢ = hᵢ(x) − zᵢ, with hᵢ(x) = a tᵢ + b. The cost is F(x) = ½ Σ (rᵢ/σᵢ)². A trusted point has σᵢ = 1 (weight 1); a noisy one has σᵢ = 5 (weight 1/25), so the same residual's square counts 25 times less.</p>
+      <ol>
+        <li data-i18n="step1">Move the sliders to make F(x) as small as you can. You cannot go below the dashed best line: it is the minimum.</li>
+        <li data-i18n="step2">Press “Show true line”. Its cost (2.2048) is higher than the best (2.1610): the best line fits this noise, not the truth.</li>
+        <li data-i18n="step3">Press “Add a faulty reading”. One bad point drags the best line toward it.</li>
+        <li data-i18n="step4">Click that point to mark it as noisy (σ = 5, weight 1/25). Its squared residual counts 25 times less, and the best line comes back.</li>
+      </ol>
+    </section>
+  </main>
+  <script src="explorer.js"></script>
+</body>
+</html>
