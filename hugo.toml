@@ -42,7 +42,7 @@ defaultContentLanguage = 'en'
     languageName = "العربية"
     title = "الملح والفلفل"
     contentDir = "content/ar"
-    rtl = true
+    languageDirection = "rtl"
     [languages.ar.params]
       homeSubtitle = "مدونة أخرى عن الرسومات الحاسوبية والرؤية"
       textAlign = "right"
