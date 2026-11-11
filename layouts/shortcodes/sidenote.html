@@ -1,0 +1,13 @@
+{{- /*
+  A short margin note for readers who are new to the math notation.
+
+    ... the state \(x\){{< sidenote >}}\(x\) is just a list of numbers.{{< /sidenote >}} ...
+
+  Renders as two inline <span>s, so it is valid inside a paragraph. The text is
+  rendered as inline Markdown with the page's settings, so \( \) math works
+  (through the passthrough render hook). Styling lives in static/css/sidenote.css,
+  which layouts/partials/extra-head.html loads on pages that use this shortcode:
+  in the right margin on wide screens, an indented shaded note on narrow ones.
+*/ -}}
+<span class="sidenote-ref" aria-hidden="true"></span><span class="sidenote" role="note">{{ .Page.RenderString (dict "display" "inline") (trim .Inner " \n") }}</span>
+{{- /* no trailing newline */ -}}

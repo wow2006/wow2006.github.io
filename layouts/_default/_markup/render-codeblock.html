@@ -1,0 +1,15 @@
+{{- /* Fenced code blocks of 4+ lines start collapsed; shorter ones render open.
+       An optional title comes from the fence attributes: ```bash {title="Build"}
+       Line count ignores one trailing newline (same rule as shortcodes/code.html).
+       Mermaid keeps the theme's own render-codeblock-mermaid.html hook
+       (language-specific hooks win). */ -}}
+{{- $n := len (split (strings.TrimSuffix "\n" .Inner) "\n") -}}
+{{- $title := .Attributes.title -}}
+{{- if lt $n 4 -}}
+{{ with $title }}<div style="font-size:.85em;opacity:.75;margin:.5em 0 -.25em">{{ . }}</div>
+{{ end }}{{ transform.Highlight (print .Inner "\n") .Type .Options }}
+{{ else -}}
+<details><summary style="cursor:pointer;margin:.5em 0">{{ with $title }}{{ T "codeSummaryTitled" (dict "Title" . "Name" $.Type "Count" $n) }}{{ else }}{{ T "codeSummary" (dict "Name" .Type "Count" $n) }}{{ end }}</summary>
+{{ transform.Highlight (print .Inner "\n") .Type .Options }}
+</details>
+{{ end -}}

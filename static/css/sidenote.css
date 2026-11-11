@@ -1,0 +1,76 @@
+/* Sidenotes, see layouts/shortcodes/sidenote.html.
+   Narrow screens: an indented, lightly shaded note inside the text.
+   Wide screens: floated into the right margin next to its line (left on
+   right-to-left pages, see the end of this file).
+   The theme's post column is 800px wide with 20px padding (border-box),
+   so the text ends 380px right of centre; a 200px note with a 30px gap
+   needs a viewport of about 2 * 610 + scrollbar, hence 1260px. */
+
+.post-content { counter-reset: sidenote; }
+
+.sidenote-ref { counter-increment: sidenote; }
+
+.sidenote-ref::after,
+.sidenote::before {
+  content: counter(sidenote);
+  font-size: 0.7em;
+  vertical-align: super;
+  line-height: 0;
+  opacity: 0.7;
+}
+
+.sidenote-ref::after { margin-left: 0.1em; }
+/* Back-to-back notes: on narrow screens the marker of the 2nd note would sit
+   alone between two boxes, so drop it (each box still shows its number). */
+.sidenote + .sidenote-ref::after { content: none; }
+.sidenote::before { margin-right: 0.3em; }
+
+.sidenote {
+  display: block;
+  margin: 0.4em 0 0.6em 1.5em;
+  padding: 0.35em 0.7em;
+  font-size: 0.85em;
+  line-height: 1.45;
+  text-align: left;
+  background: rgba(127, 127, 127, 0.1);
+  border-left: 3px solid rgba(127, 127, 127, 0.45);
+  border-radius: 0 4px 4px 0;
+}
+
+@media (min-width: 1260px) {
+  .sidenote + .sidenote-ref::after { content: "," counter(sidenote); }
+  .sidenote {
+    float: right;
+    clear: right;
+    width: 200px;
+    /* width + margin-right < 0 keeps the float out of the text column,
+       so code blocks and display math next to it do not shrink. */
+    margin: 0.2em -230px 0.8em 0;
+    padding: 0;
+    font-size: 0.78em;
+    background: none;
+    border: none;
+    opacity: 0.85;
+  }
+}
+
+/* Right-to-left pages (Arabic): the same note, mirrored. */
+[dir="rtl"] .sidenote-ref::after { margin: 0 0.1em 0 0; }
+[dir="rtl"] .sidenote::before { margin: 0 0 0 0.3em; }
+
+[dir="rtl"] .sidenote {
+  margin: 0.4em 1.5em 0.6em 0;
+  text-align: right;
+  border-left: none;
+  border-right: 3px solid rgba(127, 127, 127, 0.45);
+  border-radius: 4px 0 0 4px;
+}
+
+@media (min-width: 1260px) {
+  [dir="rtl"] .sidenote {
+    float: left;
+    clear: left;
+    margin: 0.2em 0 0.8em -230px;
+    border: none;
+  }
+}

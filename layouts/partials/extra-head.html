@@ -1,0 +1,18 @@
+{{- if .Params.math }}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" crossorigin="anonymous">
+{{- end }}
+{{- if .HasShortcode "sidenote" }}
+<link rel="stylesheet" href="{{ "css/sidenote.css" | relURL }}">
+{{- end }}
+{{- if .HasShortcode "quiz" }}
+<link rel="stylesheet" href="{{ "css/quiz.css" | relURL }}">
+<script defer src="{{ "js/quiz.js" | relURL }}"></script>
+{{- end }}
+<style>
+  /* Right-to-left pages (Arabic): formulas and code stay left-to-right. */
+  .katex { direction: ltr; unicode-bidi: isolate; }
+  pre, .code-file { direction: ltr; text-align: left; }
+  .code-file-link { unicode-bidi: plaintext; } /* "عرض على GitHub" reads right to left */
+  /* SVG figures with a transparent background vanish on the dark theme. */
+  img[src$=".svg"] { background: #fff; padding: 8px; border-radius: 6px; }
+</style>

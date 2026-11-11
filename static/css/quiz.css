@@ -1,0 +1,33 @@
+/* End-of-post quiz, see layouts/shortcodes/quiz.html. Colors are translucent
+   so they work on both the light and the dark theme. */
+.quiz-q {
+  margin: 1.2em 0;
+  padding: 0.6em 1em 0.8em;
+  border: 1px solid rgba(127, 127, 127, 0.35);
+  border-radius: 6px;
+}
+.quiz-q legend { padding: 0 0.3em; font-weight: bold; }
+
+.quiz-q button {
+  display: block;
+  width: 100%;
+  margin: 0.4em 0;
+  padding: 0.45em 0.8em;
+  font: inherit;
+  color: inherit;
+  text-align: start;
+  background: rgba(127, 127, 127, 0.08);
+  border: 2px solid rgba(127, 127, 127, 0.3);
+  border-radius: 4px;
+  cursor: pointer;
+}
+.quiz-q button:hover:not(:disabled) { border-color: rgba(127, 127, 127, 0.7); }
+.quiz-q button:disabled { cursor: default; }
+.quiz-q button:disabled:not(.quiz-right):not(.quiz-wrong) { opacity: 0.55; }
+.quiz-q .quiz-right { border-color: #2e9e4f; background: rgba(46, 158, 79, 0.15); }
+.quiz-q .quiz-wrong { border-color: #d0453a; background: rgba(208, 69, 58, 0.15); }
+.quiz-q .quiz-right::before { content: "✓ "; }
+.quiz-q .quiz-wrong::before { content: "✗ "; }
+
+.quiz-explain { margin-top: 0.6em; font-size: 0.95em; }
+.quiz-score { font-weight: bold; }
