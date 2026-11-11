@@ -1,0 +1,75 @@
+# Arabic strings: site keys plus Arabic versions of the theme's keys (the theme has no ar.toml).
+# U+2068/U+2069 isolate the (left-to-right) file name, so the "(N ...)" after it
+# is not pulled into its run and mirrored.
+# Plural forms follow CLDR for Arabic: one, two, few (3-10), many (11-99), other.
+[codeSummary]
+zero  = "عرض الشيفرة{{ with .Name }}: \u2068{{ . }}\u2069{{ end }} ({{ .Count }} سطر)"
+one   = "عرض الشيفرة{{ with .Name }}: \u2068{{ . }}\u2069{{ end }} (سطر واحد)"
+two   = "عرض الشيفرة{{ with .Name }}: \u2068{{ . }}\u2069{{ end }} (سطران)"
+few   = "عرض الشيفرة{{ with .Name }}: \u2068{{ . }}\u2069{{ end }} ({{ .Count }} أسطر)"
+many  = "عرض الشيفرة{{ with .Name }}: \u2068{{ . }}\u2069{{ end }} ({{ .Count }} سطرًا)"
+other = "عرض الشيفرة{{ with .Name }}: \u2068{{ . }}\u2069{{ end }} ({{ .Count }} سطر)"
+
+# Same label for a titled block; the title and the language name are both isolated.
+[codeSummaryTitled]
+zero  = "عرض الشيفرة: \u2068{{ .Title }}\u2069 (\u2068{{ .Name }}\u2069، {{ .Count }} سطر)"
+one   = "عرض الشيفرة: \u2068{{ .Title }}\u2069 (\u2068{{ .Name }}\u2069، سطر واحد)"
+two   = "عرض الشيفرة: \u2068{{ .Title }}\u2069 (\u2068{{ .Name }}\u2069، سطران)"
+few   = "عرض الشيفرة: \u2068{{ .Title }}\u2069 (\u2068{{ .Name }}\u2069، {{ .Count }} أسطر)"
+many  = "عرض الشيفرة: \u2068{{ .Title }}\u2069 (\u2068{{ .Name }}\u2069، {{ .Count }} سطرًا)"
+other = "عرض الشيفرة: \u2068{{ .Title }}\u2069 (\u2068{{ .Name }}\u2069، {{ .Count }} سطر)"
+
+[viewOnGitHub]
+other = "عرض على GitHub"
+
+# End-of-post quiz (layouts/shortcodes/quiz.html); %r and %n are filled in by static/js/quiz.js.
+[quizTitle]
+other = "اختبر فهمك"
+[quizRight]
+other = "إجابة صحيحة."
+[quizWrong]
+other = "ليس تمامًا."
+[quizScore]
+other = "أجبت إجابة صحيحة عن %r من %n."
+
+# Theme keys (themes/hello-friend-ng/i18n/en.toml).
+[translations]
+other = "الترجمات"
+
+[postAvailable]
+other = "متاح أيضًا باللغة"
+
+[archives]
+other = "الأرشيف"
+
+[home]
+other = "الرئيسية"
+
+[notFound]
+other = "عذرًا، الصفحة غير موجودة…"
+
+[readingTime]
+zero  = "{{ .Count }} دقيقة"
+one   = "دقيقة واحدة"
+two   = "دقيقتان"
+few   = "{{ .Count }} دقائق"
+many  = "{{ .Count }} دقيقةً"
+other = "{{ .Count }} دقيقة"
+
+[tableOfContents]
+other = "المحتويات"
+
+[wordCount]
+zero  = "{{ .Count }} كلمة"
+one   = "كلمة واحدة"
+two   = "كلمتان"
+few   = "{{ .Count }} كلمات"
+many  = "{{ .Count }} كلمةً"
+other = "{{ .Count }} كلمة"
+
+[lastModified]
+other = "آخر تحديث"
+
+[pagination]
+newerPosts = "مقالات أحدث"
+olderPosts = "مقالات أقدم"

@@ -4,6 +4,7 @@
     {{< code file="gstreamer/post03/cpp/main.cpp" >}}
     {{< code file="gstreamer/post03/cpp/main.cpp" region="init" >}}
     {{< code file="gstreamer/post03/rust/src/main.rs" region="add" link="false" >}}
+    {{< code file="optimization/post03/gauss_newton.py" region="gn" title="Gauss-Newton step" >}}
 
   Regions are delimited in the source by comment lines the compiler ignores:
 
@@ -67,7 +68,7 @@
   {{- $lang := .Get "lang" -}}
   {{- if not $lang -}}
     {{- $byExt := dict
-          "c" "c" "cc" "cpp" "cpp" "cpp" "cxx" "cpp" "h" "cpp" "hpp" "cpp"
+          "c" "c" "cu" "cpp" "cc" "cpp" "cpp" "cpp" "cxx" "cpp" "h" "cpp" "hpp" "cpp"
           "rs" "rust" "toml" "toml" "sh" "bash" "bash" "bash" "py" "python"
           "cmake" "cmake" "json" "json" "yaml" "yaml" "yml" "yaml"
     -}}
@@ -82,10 +83,26 @@
     {{- end -}}
   {{- end -}}
 
-  {{- printf `<figure class="code-file"><figcaption class="code-file-head"><span class="code-file-name">%s</span>%s</figcaption>%s</figure>`
-        (.Get "title" | default $file)
-        (cond (ne $link "") (printf `<a class="code-file-link" href="%s" target="_blank" rel="noopener">View on GitHub</a>` $link) "")
+  {{- /* Blocks of 4+ lines start collapsed; a title (if given) labels the summary,
+         or sits above a short open block. The caption always shows the file name.
+         Line count ignores one trailing newline (same rule as render-codeblock.html). */ -}}
+  {{- $title := .Get "title" | default "" | htmlEscape -}}
+  {{- $n := len (split (strings.TrimSuffix "\n" $content) "\n") -}}
+  {{- $figure := printf `<figure class="code-file"><figcaption class="code-file-head"><span class="code-file-name">%s</span>%s</figcaption>%s</figure>`
+        $file
+        (cond (ne $link "") (printf `<a class="code-file-link" href="%s" target="_blank" rel="noopener">%s</a>` $link (T "viewOnGitHub")) "")
         (string (highlight $content $lang ""))
-     | safeHTML -}}
+  -}}
+  {{- if lt $n 4 -}}
+    {{- with $title -}}
+      {{- $figure = printf `<div style="font-size:.85em;opacity:.75;margin:.5em 0 -.25em">%s</div>%s` . $figure -}}
+    {{- end -}}
+    {{- $figure | safeHTML -}}
+  {{- else -}}
+    {{- printf `<details><summary style="cursor:pointer;margin:.5em 0">%s</summary>%s</details>`
+          (cond (ne $title "") (T "codeSummaryTitled" (dict "Title" $title "Name" $lang "Count" $n)) (T "codeSummary" (dict "Name" $file "Count" $n)))
+          $figure
+       | safeHTML -}}
+  {{- end -}}
 
 {{- end -}}
