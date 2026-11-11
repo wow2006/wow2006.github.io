@@ -1,0 +1,19 @@
+{{- if and (eq .Section "posts") (not (eq .Params.comments false)) }}
+<div id="comments">
+  <script src="https://giscus.app/client.js"
+          data-repo="wow2006/wow2006.github.io"
+          data-repo-id="REPO_ID_HERE"
+          data-category="Comments"
+          data-category-id="CATEGORY_ID_HERE"
+          data-mapping="pathname"
+          data-strict="0"
+          data-reactions-enabled="1"
+          data-emit-metadata="0"
+          data-input-position="bottom"
+          data-theme="preferred_color_scheme"
+          data-lang="{{ .Site.Language.Lang }}"
+          crossorigin="anonymous"
+          async>
+  </script>
+</div>
+{{- end }}
