@@ -1,0 +1,25 @@
+# Site strings, merged with the theme's i18n/en.toml.
+# codeSummary: the <summary> label of collapsed code blocks
+# (layouts/shortcodes/code.html, layouts/_default/_markup/render-codeblock.html).
+[codeSummary]
+one   = "Show code{{ with .Name }}: {{ . }}{{ end }} ({{ .Count }} line)"
+other = "Show code{{ with .Name }}: {{ . }}{{ end }} ({{ .Count }} lines)"
+
+[viewOnGitHub]
+other = "View on GitHub"
+
+# codeSummaryTitled: the same label for a block with a title
+# (shortcode title="...", or a fence attribute ```bash {title="..."}); .Name is the language.
+[codeSummaryTitled]
+one   = "Show code: {{ .Title }} ({{ .Name }}, {{ .Count }} line)"
+other = "Show code: {{ .Title }} ({{ .Name }}, {{ .Count }} lines)"
+
+# End-of-post quiz (layouts/shortcodes/quiz.html); %r and %n are filled in by static/js/quiz.js.
+[quizTitle]
+other = "Check Your Understanding"
+[quizRight]
+other = "Correct."
+[quizWrong]
+other = "Not quite."
+[quizScore]
+other = "You answered %r of %n correctly."
