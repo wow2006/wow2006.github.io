@@ -73,3 +73,7 @@ other = "آخر تحديث"
 [pagination]
 newerPosts = "مقالات أحدث"
 olderPosts = "مقالات أقدم"
+
+# Floating buddy (static/js/buddy.js): label of the sprite button.
+[buddyToggle]
+other = "المرشد: انقر لينام أو ليستيقظ"

@@ -1,0 +1,13 @@
+{{- /*
+  Marks an important block; the floating buddy (static/js/buddy.js) points at
+  it and says the text when it scrolls to the middle of the screen.
+
+    {{< point "This line is the whole trick." >}}
+    The update is \( x \leftarrow x - \alpha \nabla f(x) \).
+    {{< /point >}}
+
+  The inner text is rendered as Markdown, so math and nested shortcodes work.
+*/ -}}
+<div class="buddy-target" data-say="{{ .Get 0 }}">
+{{ .Page.RenderString (dict "display" "block") (trim .Inner "\n") }}
+</div>

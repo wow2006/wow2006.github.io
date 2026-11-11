@@ -1,0 +1,61 @@
+/* Floating buddy, see static/js/buddy.js. Sprite cells are 180x243, 17 frames. */
+.buddy {
+  --h: 120px;
+  position: fixed;
+  bottom: 12px;
+  inset-inline-start: 12px;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  pointer-events: none; /* only the sprite and the bubble catch clicks */
+}
+.buddy-me {
+  pointer-events: auto;
+  width: calc(var(--h) * 180 / 243);
+  height: var(--h);
+  padding: 0;
+  border: 0;
+  background: transparent no-repeat 0 0 / 1700% 100%;
+  cursor: pointer;
+}
+.buddy-flip { transform: scaleX(-1); }
+.buddy-asleep .buddy-me { opacity: .55; }
+.buddy-say {
+  pointer-events: auto;
+  position: relative;
+  max-width: 220px;
+  margin: 0 0 8px;
+  padding: 8px 12px;
+  border: 2px solid #23395b;
+  border-radius: 10px;
+  background: #fffbe6;
+  color: #222;
+  font-size: .85rem;
+  line-height: 1.35;
+  box-shadow: 3px 3px 0 #23395b;
+}
+.buddy-say::after { /* tail toward the buddy */
+  content: "";
+  position: absolute;
+  bottom: -9px;
+  inset-inline-start: 28px;
+  border: 8px solid transparent;
+  border-top-color: #23395b;
+  border-bottom: 0;
+}
+.buddy-lit {
+  outline: 3px dashed #f5b301;
+  outline-offset: 6px;
+  border-radius: 4px;
+}
+.buddy-enter { animation: buddy-walk-in 1.6s linear; }
+@keyframes buddy-walk-in { from { translate: -160px; } }
+[dir="rtl"] .buddy-enter { animation-name: buddy-walk-in-rtl; }
+@keyframes buddy-walk-in-rtl { from { translate: 160px; } }
+
+@media (max-width: 700px) {
+  .buddy { --h: 72px; bottom: 6px; inset-inline-start: 6px; }
+  .buddy-say { max-width: 170px; font-size: .8rem; }
+}
+@media print { .buddy { display: none; } }

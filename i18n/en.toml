@@ -23,3 +23,7 @@ other = "Correct."
 other = "Not quite."
 [quizScore]
 other = "You answered %r of %n correctly."
+
+# Floating buddy (static/js/buddy.js): label of the sprite button.
+[buddyToggle]
+other = "Guide: click to put to sleep or wake up"

@@ -8,6 +8,10 @@
 <link rel="stylesheet" href="{{ "css/quiz.css" | relURL }}">
 <script defer src="{{ "js/quiz.js" | relURL }}"></script>
 {{- end }}
+{{- if and .IsPage (eq .Section "posts") (ne .Params.buddy false) }}
+<link rel="stylesheet" href="{{ "css/buddy.css" | relURL }}">
+<script defer src="{{ "js/buddy.js" | relURL }}" data-sprite="{{ "buddy/sprite.webp" | relURL }}" data-label="{{ i18n "buddyToggle" }}"></script>
+{{- end }}
 <style>
   /* Right-to-left pages (Arabic): formulas and code stay left-to-right. */
   .katex { direction: ltr; unicode-bidi: isolate; }
