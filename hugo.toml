@@ -154,3 +154,10 @@ defaultContentLanguage = 'en'
   [markup.goldmark]
     [markup.goldmark.renderer]
       unsafe = true
+    # Pass LaTeX through untouched; layouts/_default/_markup/render-passthrough.html
+    # renders it to HTML at build time with KaTeX (transform.ToMath).
+    [markup.goldmark.extensions.passthrough]
+      enable = true
+      [markup.goldmark.extensions.passthrough.delimiters]
+        block  = [['\[', '\]'], ['$$', '$$']]
+        inline = [['\(', '\)']]

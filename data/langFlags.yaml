@@ -1,0 +1,2 @@
+# Merged over the theme's data/langFlags.yaml, which has no Arabic entry.
+ar: sa  # flag-icons code; the theme ships fi-sa and fi-eg, not fi-arab

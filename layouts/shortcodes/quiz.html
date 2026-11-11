@@ -1,0 +1,35 @@
+{{- /*
+  A self-check quiz for the end of a post. Questions are YAML inside the shortcode:
+
+    {{< quiz >}}
+    - q: "What does an inclusive scan of `3 1 4` give?"
+      options: ["`0 3 4`", "`3 4 8`", "`8 8 8`"]
+      answer: 1            # index into options, from 0
+      explain: "Each output includes its own element. `0 3 4` is the *exclusive* scan."
+    {{< /quiz >}}
+
+  q, options and explain are inline Markdown (math and `code` work); explain is optional.
+  A bad answer index fails the build. Each first answer is sent to Google Analytics as a
+  `quiz_answer` event (static/js/quiz.js); CSS and JS load from layouts/partials/extra-head.html.
+*/ -}}
+{{- $page := .Page -}}
+{{- $qs := transform.Unmarshal (dict "format" "yaml") (trim .Inner "\n") -}}
+<details class="quiz" id="quiz"
+  data-right="{{ i18n "quizRight" }}" data-wrong="{{ i18n "quizWrong" }}" data-score="{{ i18n "quizScore" }}">
+<summary><h2 style="display:inline;cursor:pointer">{{ i18n "quizTitle" }}</h2></summary>
+{{- range $i, $q := $qs }}
+  {{- $n := add $i 1 }}
+  {{- if not (and $q.q $q.options) }}{{ errorf "%s: quiz question %d needs q and options" $page.File.Path $n }}{{ end }}
+  {{- if or (not (isset $q "answer")) (lt (int $q.answer) 0) (ge (int $q.answer) (len $q.options)) }}
+    {{- errorf "%s: quiz question %d: answer must be an index from 0 to %d" $page.File.Path $n (sub (len $q.options) 1) }}
+  {{- end }}
+<fieldset class="quiz-q" data-id="{{ $n }}" data-answer="{{ $q.answer }}">
+  <legend>{{ $n }}. {{ $page.RenderString (dict "display" "inline") $q.q }}</legend>
+  {{- range $j, $o := $q.options }}
+  <button type="button" value="{{ $j }}">{{ $page.RenderString (dict "display" "inline") (string $o) }}</button>
+  {{- end }}
+  <div class="quiz-explain" hidden aria-live="polite"><strong class="quiz-verdict"></strong> {{ with $q.explain }}{{ $page.RenderString (dict "display" "inline") . }}{{ end }}</div>
+</fieldset>
+{{- end }}
+<p class="quiz-score" hidden aria-live="polite"></p>
+</details>

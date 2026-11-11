@@ -1,0 +1,11 @@
+{{- /* Render \( \), \[ \] and $$ $$ math to HTML at build time with KaTeX.
+       Needs the KaTeX stylesheet, which layouts/partials/extra-head.html adds
+       to pages with `math: true` in their front matter. */ -}}
+{{- $opts := dict "output" "htmlAndMathml" "displayMode" (eq .Type "block") -}}
+{{- with try (transform.ToMath .Inner $opts) -}}
+  {{- with .Err -}}
+    {{- errorf "KaTeX could not render %q at %s: %s" $.Inner $.Position . -}}
+  {{- else -}}
+    {{- .Value -}}
+  {{- end -}}
+{{- end -}}
