@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Linearization explorer</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .part { padding-top: 6px; border-top: 1px solid var(--border); }
+    @media (max-width: 650px) { .pair { grid-template-columns: minmax(0, 1fr); } }
+  </style>
+</head>
+<body>
+  <main class="explorer" id="explorer">
+    <header>
+      <h2>Linearize, then solve</h2>
+      <p>Near a point, a residual looks like a straight line: r(x + δ) ≈ r(x) + J δ. Part 1 shows how good that is; part 2 uses it to take a step.</p>
+    </header>
+
+    <!-- Part 1: the tangent and its error. -->
+    <div class="wide part">
+      <h3>1. Zoom in: a curve looks like its tangent</h3>
+      <p class="notes">We stand at p = (1, 10) and step a distance δ in the direction (0.6, −0.8), as in the post's script. Left: the residual of beacon 3 along that line, its tangent (the linear model), and the gap between them. Right: the gap for all four residuals, ‖r(p + δ) − (r(p) + J δ)‖, on log scales.</p>
+    </div>
+    <section class="controls wide" aria-label="Step size">
+      <div class="control">
+        <label for="step"><span>Step size |δ|</span><output id="step-value" for="step">1</output></label>
+        <input id="step" type="range" min="-3" max="1" step="0.01" value="0">
+      </div>
+    </section>
+    <div class="wide pair">
+      <section class="chart">
+        <div class="legend">
+          <span class="key"><i class="sw line" style="--c: var(--text)"></i>r₃ along the line</span>
+          <span class="key"><i class="sw dash" style="--c: var(--blue)"></i>tangent (linear model)</span>
+          <span class="key"><i class="sw line" style="--c: var(--orange)"></i>gap</span>
+        </div>
+        <svg id="curve" viewBox="0 0 600 420" role="img" aria-label="Residual of beacon 3 along the step direction, its tangent, and the gap at the chosen step"></svg>
+      </section>
+      <section class="chart">
+        <div class="legend">
+          <span class="key"><i class="sw line" style="--c: var(--orange)"></i>gap, all 4 residuals</span>
+          <span class="key"><i class="sw dot" style="--c: var(--text)"></i>the post's table</span>
+          <span class="key"><i class="sw dash" style="--c: var(--muted)"></i>slope 2: gap ∝ |δ|²</span>
+        </div>
+        <svg id="loglog" viewBox="0 0 600 420" role="img" aria-label="Linearization error against step size on log scales, with a slope-2 guide"></svg>
+      </section>
+    </div>
+    <section class="results">
+      <div class="metric"><span>Step |δ|</span><strong id="m-step">—</strong></div>
+      <div class="metric"><span>Gap for r₃</span><strong id="m-gap3">—</strong></div>
+      <div class="metric"><span>Gap, all residuals</span><strong id="m-gap">—</strong></div>
+      <div class="metric"><span>Gap / |δ|²</span><strong id="m-ratio">—</strong></div>
+    </section>
+
+    <!-- Part 2: the linear model of the cost, and the step it suggests. -->
+    <div class="wide part">
+      <h3>2. Use the model: one step to its minimum</h3>
+      <p class="notes">Put the linear model into the cost: F(x + δ) ≈ ½‖r(x) + J δ‖². That is a linear least-squares problem in δ, so its contours are exact ellipses (dashed) and its minimum is one solve away. The blue arrow jumps there.</p>
+    </div>
+    <section class="controls" aria-label="Guess">
+      <div class="buttons">
+        <button id="take" type="button">Take the step</button>
+      </div>
+      <div class="buttons" role="group" aria-label="Start points">
+        <button id="far" type="button">Start far: (−2, 8)</button>
+        <button id="near" type="button">Start near: (5.5, 6.5)</button>
+      </div>
+      <p class="notes" id="iter">Step 0</p>
+    </section>
+    <section class="chart">
+      <div class="legend">
+        <span class="key"><i class="sw heat"></i>real cost F, low → high</span>
+        <span class="key"><i class="sw dot" style="--c: var(--blue)"></i>your guess x (drag it)</span>
+        <span class="key"><i class="sw dash" style="--c: var(--blue)"></i>linear model's contours</span>
+        <span class="key"><i class="sw line" style="--c: var(--blue)"></i>step to the model's minimum</span>
+        <span class="key"><i class="sw dot" style="--c: var(--green)"></i>real minimum</span>
+      </div>
+      <svg id="map" viewBox="0 0 600 600" role="group" aria-label="Map of the real cost with the linear model's contours around your guess and the step to the model's minimum"></svg>
+    </section>
+    <section class="results">
+      <div class="metric"><span>Real F(x) now</span><strong id="f-now">—</strong></div>
+      <div class="metric"><span>Model promises F(x + δ)</span><strong id="f-model">—</strong></div>
+      <div class="metric"><span>Real F(x + δ)</span><strong id="f-real">—</strong></div>
+      <div class="metric"><span>Step length |δ|</span><strong id="f-step">—</strong></div>
+    </section>
+    <p class="status" id="status" aria-live="polite"></p>
+
+    <section class="notes">
+      <ol>
+        <li>Part 1: shrink |δ| by 10 (one notch of 1 on the log scale). The gap shrinks by 100: the dots fall on the slope-2 line. That is what “first order” means.</li>
+        <li>Part 2: from the far start, the model's ellipses are straight, but the real valley is curved. The model promises a lower cost, but the real cost goes <em>up</em>. Press “Take the step” and watch it recover anyway.</li>
+        <li>Press “Start near”. Close to the minimum, the ellipses hug the real contours, and two or three steps land on the star. Repeating this is Gauss-Newton (post 03); fixing the far-start overshoot is Levenberg-Marquardt (post 04).</li>
+      </ol>
+    </section>
+  </main>
+  <script src="common.js"></script>
+  <script src="linearization.js"></script>
+</body>
+</html>

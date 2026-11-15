@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Range-only localization explorer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="explorer" id="explorer">
+    <header>
+      <h2>Find the robot from its distances to beacons</h2>
+      <p>Drag the robot and the beacons. Each pink circle is one measured distance; the shading is the cost F, from low to high as in the legend; the green star is where least squares puts the robot.</p>
+    </header>
+
+    <section class="controls" aria-label="Problem settings">
+      <div class="control">
+        <label for="sigma"><span>Range noise σ</span><output id="sigma-value" for="sigma">0.30 m</output></label>
+        <input id="sigma" type="range" min="0" max="1" step="0.05" value="0.3">
+      </div>
+      <div class="buttons">
+        <button id="redraw" type="button">New noise draw</button>
+      </div>
+      <div class="buttons" role="group" aria-label="Number of beacons">
+        <button id="four" type="button" aria-pressed="true">4 beacons</button>
+        <button id="two" type="button" aria-pressed="false">2 beacons</button>
+      </div>
+      <div class="buttons" role="group" aria-label="Where the beacons are">
+        <button id="corner" type="button">Beacons in a corner</button>
+        <button id="around" type="button">Beacons all around</button>
+      </div>
+      <label class="check"><input id="jac" type="checkbox"> Show the rows of J</label>
+    </section>
+
+    <section class="chart">
+      <div class="legend">
+        <span class="key"><i class="sw tri" style="--c: var(--muted)"></i>beacon</span>
+        <span class="key"><i class="sw ring" style="--c: var(--text)"></i>true robot (the solver does not know it)</span>
+        <span class="key"><i class="sw ring" style="--c: var(--pink)"></i>measured range</span>
+        <span class="key"><i class="sw dot" style="--c: var(--green)"></i>least-squares minimum</span>
+        <span class="key"><i class="sw heat"></i>cost F, low → high</span>
+        <span class="key jac-key" hidden><i class="sw line" style="--c: var(--blue)"></i>row i of J</span>
+        <span class="key jac-key" hidden><i class="sw dash" style="--c: var(--orange)"></i>flat direction</span>
+      </div>
+      <svg id="map" viewBox="0 0 600 600" role="group" aria-label="Map of the room with beacons, range circles, the cost and its minimum"></svg>
+    </section>
+
+    <section class="results">
+      <div class="metric"><span>Minimum p̂</span><strong id="est">—</strong></div>
+      <div class="metric"><span>Error |p̂ − p_true|</span><strong id="err">—</strong></div>
+      <div class="metric"><span>Cost F(p̂)</span><strong id="cost">—</strong></div>
+      <div class="metric"><span>κ(JᵀJ) at p̂</span><strong id="kappa">—</strong></div>
+    </section>
+    <p class="status" id="status" aria-live="polite"></p>
+
+    <section class="notes">
+      <p>The cost is F(p) = ½ Σ (|p − bᵢ| − zᵢ)². Row i of the Jacobian J is the unit vector from beacon i to p: it says which way to move to grow that distance fastest.</p>
+      <ol>
+        <li>Look at the pale band around the star: a long, curved valley. The beacons all sit in one direction, so moving toward them changes every distance, but moving sideways, along the circles, changes almost none.</li>
+        <li>Tick “Show the rows of J”. The blue arrows point almost the same way. The dashed orange line is the direction they do not see: the floor of the valley. κ(JᵀJ) says how much flatter it is.</li>
+        <li>Press “Beacons all around”. The arrows now point every way, the valley becomes a round bowl, and κ drops close to 1.</li>
+        <li>Press “2 beacons”. Two circles cross at two points, so there are two stars: two perfect answers, and the cost cannot tell them apart.</li>
+        <li>Raise the noise. The circles stop meeting in one point, and the star moves away from the true robot.</li>
+      </ol>
+    </section>
+  </main>
+  <script src="common.js"></script>
+  <script src="playground.js"></script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+/* Shared by the two range-only tools of post 01b. Same look as the line-fit explorer. */
+:root {
+  color-scheme: light dark;
+  --panel: light-dark(#fff, #1b1c1d);
+  --panel-alt: light-dark(#f5f6f7, #242629);
+  --border: light-dark(#d8dce0, #3b3e42);
+  --text: light-dark(#25292d, #e6e9eb);
+  --muted: light-dark(#626a72, #a5adb5);
+  --blue: light-dark(#0072b2, #70b9e8);
+  --green: light-dark(#009e73, #4fd1a8);
+  --pink: light-dark(#cc79a7, #e99bc8);
+  --orange: light-dark(#d55e00, #f0a35e);
+  --grid: light-dark(#e4e7ea, #36393d);
+  /* Cost heatmap: one hue, from the panel color (low cost) to this (high cost). */
+  --heat: light-dark(#97a3ae, #66717c);
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; background: transparent; color: var(--text); font: 15px/1.5 system-ui, sans-serif; }
+
+.explorer {
+  display: grid;
+  grid-template-columns: minmax(205px, 260px) minmax(0, 1fr);
+  gap: 18px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--blue);
+  background: var(--panel);
+}
+header, .results, .status, .notes, .wide { grid-column: 1 / -1; }
+header h2 { margin: 0 0 4px; font-size: 1.25rem; }
+header p, .notes { margin: 0; color: var(--muted); }
+h3 { margin: 0 0 6px; font-size: 1rem; }
+
+.controls { display: flex; flex-direction: column; gap: 14px; padding: 16px; border: 1px solid var(--border); background: var(--panel-alt); }
+.control label { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 5px; font-weight: 600; }
+.check { display: flex; gap: 8px; align-items: center; font-weight: 600; }
+output, .metric strong { font-variant-numeric: tabular-nums; }
+input[type="range"] { width: 100%; accent-color: var(--blue); }
+input[type="checkbox"] { accent-color: var(--blue); width: 18px; height: 18px; }
+
+.buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+button { min-height: 38px; padding: 7px 10px; border: 1px solid var(--border); border-radius: 4px; background: var(--panel); color: var(--text); font: inherit; cursor: pointer; }
+button:hover { border-color: var(--blue); }
+button[aria-pressed="true"] { border-color: var(--blue); background: var(--panel-alt); font-weight: 600; }
+button:focus-visible, input:focus-visible, .handle:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+.chart { min-width: 0; padding: 8px; border: 1px solid var(--border); }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; padding: 4px 8px 0; color: var(--muted); font-size: .85rem; }
+.key { display: inline-flex; align-items: center; gap: 6px; }
+.sw { display: inline-block; width: 20px; }
+.sw.line { border-top: 3px solid var(--c); }
+.sw.dash { border-top: 3px dashed var(--c); }
+.sw.dot { width: 12px; height: 12px; border-radius: 50%; background: var(--c); }
+.sw.ring { width: 12px; height: 12px; border-radius: 50%; border: 2.5px solid var(--c); }
+.sw.tri { width: 0; height: 0; border: 7px solid transparent; border-bottom: 12px solid var(--c); border-top: 0; }
+.sw.heat { width: 34px; height: 12px; background: linear-gradient(90deg, var(--panel), var(--heat)); border: 1px solid var(--border); }
+
+/* Plots stay left-to-right: they are graphs, not text. */
+svg { display: block; width: 100%; height: auto; direction: ltr; touch-action: none; }
+svg text { fill: var(--muted); font: 18px system-ui, sans-serif; }
+svg text.label { fill: var(--text); font-weight: 600; paint-order: stroke; stroke: var(--panel); stroke-width: 4px; }
+.gridline { stroke: var(--grid); stroke-width: 1; }
+.axis { stroke: var(--muted); stroke-width: 1.5; }
+.handle { cursor: grab; outline: none; }
+.handle .hit { fill: transparent; }
+.handle:hover .mark, .handle:focus-visible .mark { stroke-width: 4; }
+.arrow-blue { stroke: var(--blue); stroke-width: 3.5; }
+.arrow-orange { stroke: var(--orange); stroke-width: 3; stroke-dasharray: 8 5; }
+.circle { fill: none; stroke: var(--pink); stroke-width: 2.5; }
+.minimum { fill: var(--green); stroke: var(--panel); stroke-width: 2; }
+
+.results { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.metric { min-width: 0; padding: 10px 12px; border: 1px solid var(--border); background: var(--panel-alt); }
+.metric span { display: block; color: var(--muted); font-size: .82rem; }
+.metric strong { display: block; margin-top: 2px; font-size: 1.05rem; }
+.status { margin: 0; padding: 10px 12px; border-inline-start: 3px solid var(--green); background: var(--panel-alt); }
+.status.warn { border-inline-start-color: var(--orange); }
+.notes { font-size: .9rem; }
+.notes p { margin: 0 0 8px; }
+.notes ol { margin: 0; padding-inline-start: 22px; }
+.notes li { margin-bottom: 4px; }
+
+@media (max-width: 650px) {
+  .explorer { grid-template-columns: minmax(0, 1fr); gap: 12px; padding: 14px; }
+  header, .results, .status, .notes, .wide { grid-column: 1; }
+  .controls { gap: 10px; }
+  .results { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+  .metric { padding: 8px; }
+  .chart { padding: 4px; }
+}
