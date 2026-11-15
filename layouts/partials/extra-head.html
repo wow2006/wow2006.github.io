@@ -19,4 +19,8 @@
   .code-file-link { unicode-bidi: plaintext; } /* "عرض على GitHub" reads right to left */
   /* SVG figures with a transparent background vanish on the dark theme. */
   img[src$=".svg"] { background: #fff; padding: 8px; border-radius: 6px; }
+  /* Collapsed code blocks: make the toggle stand out. */
+  details > summary { color: #fff; background: #e8590c; padding: .4em .8em; border-radius: 4px; font-weight: 600; width: fit-content; }
+  details[open] > summary { background: #868e96; }
+  details > summary h2 { color: inherit; margin: 0; }
 </style>
