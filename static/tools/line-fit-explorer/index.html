@@ -134,9 +134,28 @@
     .notes ol { margin: 0; padding-inline-start: 22px; }
     .notes li { margin-bottom: 4px; }
 
+    /* Bowl view (post 01a): the cost over (a, b) next to the line plot. */
+    .bowl { display: none; min-width: 0; padding: 8px; border: 1px solid var(--border); }
+    .bowl-view { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .bowl-view .bowl { display: block; }
+    .bowl-view .controls { grid-column: 1 / -1; flex-direction: row; flex-wrap: wrap; align-items: end; }
+    .bowl-view .control { flex: 1 1 200px; }
+    .bowl-view .results { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .metric.gradient { display: none; }
+    .bowl-view .metric.gradient { display: block; }
+    .sw.contour { border-top: 2px solid var(--muted); }
+    .sw.downhill { border-top: 3px solid var(--pink); }
+    .contour { fill: none; stroke: var(--muted); stroke-width: 1.5; opacity: .6; }
+    .downhill { stroke: var(--pink); stroke-width: 4; }
+    #arrowhead path { fill: var(--pink); }
+    .me { fill: var(--blue); stroke: var(--panel); stroke-width: 2.5; cursor: grab; }
+    .bottom { fill: var(--green); stroke: var(--panel); stroke-width: 2; }
+    #bowl { touch-action: none; }
+
     @media (max-width: 650px) {
       .explorer { grid-template-columns: minmax(0, 1fr); gap: 12px; padding: 14px; }
-      header, .results, .status, .notes { grid-column: 1; }
+      header, .results, .status, .notes, .bowl-view .controls { grid-column: 1; }
+      .bowl-view .results { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .controls { gap: 10px; }
       .results { gap: 6px; }
       .metric { padding: 8px; }
@@ -179,10 +198,21 @@
       <svg id="plot" viewBox="0 0 680 420" role="group" data-i18n-label="plotLabel" aria-label="Measurements, your line, the best fit and the true line"></svg>
     </section>
 
+    <section class="bowl">
+      <div class="legend">
+        <span class="key"><i class="sw yours"></i><span data-i18n="keyYourPoint">your (a, b)</span></span>
+        <span class="key"><i class="sw best"></i><span data-i18n="keyBottom">bottom of the bowl</span></span>
+        <span class="key"><i class="sw contour"></i><span data-i18n="keyContour">equal cost</span></span>
+        <span class="key"><i class="sw downhill"></i><span data-i18n="keyDownhill">downhill, −∇F</span></span>
+      </div>
+      <svg id="bowl" viewBox="0 0 680 420" role="group" data-i18n-label="bowlLabel" aria-label="The cost F over slope and intercept"></svg>
+    </section>
+
     <section class="results">
       <div class="metric mine"><span data-i18n="cost">Your cost F(x)</span><strong id="cost-value">—</strong></div>
       <div class="metric"><span data-i18n="bestCost">Best possible F</span><strong id="best-cost-value">—</strong></div>
       <div class="metric"><span data-i18n="trueCost">F of the true line</span><strong id="true-cost-value">—</strong></div>
+      <div class="metric gradient"><span data-i18n="gradient">Slope of the bowl ∇F</span><strong id="gradient-value">—</strong></div>
     </section>
     <p class="status" id="status" aria-live="polite"></p>
 
