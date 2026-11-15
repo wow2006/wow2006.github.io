@@ -157,7 +157,7 @@ We will use these symbols in every post:{{< sidenote >}}\(J = \partial r / \part
 | \(r_i(x) = h_i(x) - z_i\) | residual (predicted minus measured); stacked: \(r(x) \in \mathbb{R}^m\) |
 | \(\Omega_i = \Sigma_i^{-1}\) | information matrix (inverse covariance) |
 | \(F(x) = \frac{1}{2}\sum_i r_i^\top \Omega_i r_i\) | cost; \(= \frac{1}{2}\lVert r \rVert^2\) when \(\Omega = I\) |
-| \(J = \partial r / \partial x\) | Jacobian, an \(m \times n\) matrix (post 01) |
+| \(J = \partial r / \partial x\) | Jacobian, an \(m \times n\) matrix (post 01b) |
 | \(g = J^\top \Omega r\) | gradient of \(F\) (post 02) |
 | \(H = J^\top \Omega J\) | Gauss-Newton approximation of the Hessian (post 03) |
 | \(x \leftarrow x + \delta\) | update step; for poses \(x \leftarrow x \boxplus \delta\), with angle wrapping (post 05) |
@@ -208,4 +208,4 @@ We will use these symbols in every post:{{< sidenote >}}\(J = \partial r / \part
 {{< /quiz >}}
 
 **Previous:** [Post 00a: The Least-Squares Problem, Words and Cost](../post00a-the-least-squares-problem/)
-**Next:** [Post 01: Linear vs Nonlinear Least Squares](../post01-linear-vs-nonlinear-least-squares/)
+**Next:** [Post 01a: Linear Least Squares and the Normal Equations](../post01a-linear-least-squares/)

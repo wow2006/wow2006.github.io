@@ -1,7 +1,7 @@
 ---
 title: "Post 05: A 2D Pose-Graph Benchmark: GD vs GN vs LM"
 date: 2026-11-10T14:00:00+03:00
-weight: 7
+weight: 8
 draft: true
 toc: false
 images:
@@ -294,7 +294,7 @@ Here the picture changes, and it is not a simple "LM wins":
 * **But stopping is not the same as succeeding.** Where the good answer has a cost of 220 to 240, LM often stops at 383, 517, 719 or even 3108. It has found a **local minimum**: a wrong solution where some loops are "folded" the wrong way, and no small change can lower the cost. Damping makes the search safe, not global.
 * **Neither method is reliably better.** At 10° and 15° on seed 3, GN found the good answer and LM did not. At 15°/seed 4 and 20°/seed 3, LM ended lower than GN. On seed 4, both failed from 8° up.
 
-The lesson matches post 01's two-beacon picture: when the initial guess is far enough off, especially in heading, the cost has many valleys, and *any* local method can land in the wrong one. Real systems attack this with a better initial guess, not a better local optimizer: for example, by first solving for the headings alone, or with chordal or other convex relaxations of the rotations, and with robust cost functions that limit the pull of bad loop closures.
+The lesson matches post 01b's two-beacon picture: when the initial guess is far enough off, especially in heading, the cost has many valleys, and *any* local method can land in the wrong one. Real systems attack this with a better initial guess, not a better local optimizer: for example, by first solving for the headings alone, or with chordal or other convex relaxations of the rotations, and with robust cost functions that limit the pull of bad loop closures.
 
 ## 12. Honest Caveats
 

@@ -1,7 +1,7 @@
 ---
 title: "Post 03: Gauss-Newton"
 date: 2026-11-10T12:00:00+03:00
-weight: 5
+weight: 6
 draft: true
 toc: false
 images:
@@ -47,7 +47,7 @@ $$
 
 where \(\nabla^2 F\) is the **Hessian**, the \(n \times n\) matrix of second derivatives. It describes the curvature: how fast the slope itself changes.{{< sidenote >}}\(\delta\) (delta) is the step we are about to take, a small change of \(x\). \(\approx\) means "approximately equal".{{< /sidenote >}}{{< sidenote >}}\(g\) is the gradient: the slope of the cost, pointing uphill. \(g^\top \delta\) multiplies matching entries of \(g\) and \(\delta\) and adds them up.{{< /sidenote >}}{{< sidenote >}}The \(\frac{1}{2}\) is part of Taylor's formula: the slope of \(\delta^2\) is \(2\delta\), and the \(\frac{1}{2}\) cancels that 2.{{< /sidenote >}}{{< sidenote >}}An \(n \times n\) matrix is a square table of numbers, with one row and one column per unknown.{{< /sidenote >}}
 
-This model is a quadratic bowl in \(\delta\), and from post 01 we know how to find the bottom of a bowl: set its gradient to zero. That gives \(g + \nabla^2 F\, \delta = 0\), or:
+This model is a quadratic bowl in \(\delta\), and from post 01a we know how to find the bottom of a bowl: set its gradient to zero. That gives \(g + \nabla^2 F\, \delta = 0\), or:
 
 $$
 \nabla^2 F(x)\, \delta = -g .
@@ -121,7 +121,7 @@ Why is dropping \(S\) a good idea? Three reasons:
 
 ## 4. Derivation 2: Linearize, Then Solve
 
-Now the second route, which we already prepared at the end of post 01. Replace each residual by its linear model:
+Now the second route, which we already prepared at the end of post 01b. Replace each residual by its linear model:
 
 $$
 r(x + \delta) \approx r(x) + J\delta .
@@ -133,7 +133,7 @@ $$
 F(x + \delta) \approx \frac{1}{2} \lVert J\delta + r \rVert^2 ,
 $$
 
-which is a *linear* least-squares problem in \(\delta\), of the form \(\lVert A\delta - b \rVert^2\) with \(A = J\) and \(b = -r\). The normal equations \(A^\top A \delta = A^\top b\) from post 01 give:
+which is a *linear* least-squares problem in \(\delta\), of the form \(\lVert A\delta - b \rVert^2\) with \(A = J\) and \(b = -r\). The normal equations \(A^\top A \delta = A^\top b\) from post 01a give:
 
 $$
 J^\top J\, \delta = -J^\top r .
@@ -142,7 +142,7 @@ $$
 The same equation. This second view is the more useful one in practice:
 
 * GN does not approximate \(F\) directly. It approximates the **residuals** linearly, and then solves the resulting least-squares problem *exactly*.
-* So each GN iteration is just a linear least-squares solve. We can use Cholesky on \(J^\top J\), or QR on \(J\) when the conditioning is bad, exactly like in post 01.
+* So each GN iteration is just a linear least-squares solve. We can use Cholesky on \(J^\top J\), or QR on \(J\) when the conditioning is bad, exactly like in post 01a.
 * The approximation is good when the residual functions are close to linear over the length of the step. It does not care whether the residuals are *small*. But derivation 1 shows that it *does* care, through \(S\), and section 7 will make this precise.
 
 ## 5. The Algorithm
@@ -202,7 +202,7 @@ Pure GN has no safety net. Here are the ways it breaks.
 
 **1. \(J^\top J\) is singular or nearly singular.** Then \(H\delta = -g\) has no unique solution, or a huge one. This happens when the measurements do not pin down all the variables. Examples: too few beacons; a robot sitting exactly on a beacon (the unit vector is undefined); and, in every pose graph, the freedom to move the whole map (post 05). A nearly singular \(J^\top J\) is worse than an exactly singular one, because the solver does not complain. It just returns an enormous step.
 
-**2. Overshoot from a far start.** The linear model is only good for small steps (post 01 showed its error grows like \(\lVert\delta\rVert^2\)). Far from the minimum, GN may take a step that the linear model loves and the real cost hates. We saw it in case A: the cost went from 7.60 to 33.46 in the first step. Here GN was lucky and recovered. Nothing guarantees that.
+**2. Overshoot from a far start.** The linear model is only good for small steps (post 01b showed its error grows like \(\lVert\delta\rVert^2\)). Far from the minimum, GN may take a step that the linear model loves and the real cost hates. We saw it in case A: the cost went from 7.60 to 33.46 in the first step. Here GN was lucky and recovered. Nothing guarantees that.
 
 **3. Large residuals.** This is the subtle one. Suppose one beacon's signal bounces off a wall, so its range is 4 m too long (case B). Nothing else changes: same beacons, same start. Now the best fit cannot explain all four ranges, so the residuals at the minimum are large, and \(S\) is not small any more:
 
@@ -220,7 +220,7 @@ Why? \(\lVert S \rVert = 0.105\) looks small next to the large eigenvalue of \(J
 
 This is not a strange corner case. Bad geometry (a weak direction) plus one bad measurement (a large residual) is everyday robotics.
 
-**4. Wrong basin.** Even when GN converges, it converges to the minimum of the basin it lands in. With the two-beacon problem of post 01, starting below the beacons leads to the mirror solution. This is true for every local method, not just GN.
+**4. Wrong basin.** Even when GN converges, it converges to the minimum of the basin it lands in. With the two-beacon problem of post 01b, starting below the beacons leads to the mirror solution. This is true for every local method, not just GN.
 
 All four failures come from the same root: GN trusts its linear model fully, everywhere, no matter how far the step goes. The fix is to trust it *only within a region where it has proved itself*, and to fall back toward gradient descent where it has not. That is Levenberg-Marquardt, next.
 

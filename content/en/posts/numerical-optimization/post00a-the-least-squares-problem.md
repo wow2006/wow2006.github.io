@@ -15,7 +15,7 @@ tags:
 
 A robot drives around and measures things: how far it moved, how far away a beacon is, which way it turned. Every measurement is a little bit wrong. From all these wrong numbers, we want one good answer: where the robot really is, and where it has been. Almost every method that does this, from fitting a line in a spreadsheet to SLAM (Simultaneous Localization and Mapping) in a self-driving car, is the same idea: **least squares**.
 
-This series builds that idea from the ground up. We start with the words and the cost function (this post), solve the easy linear case in one shot (post 01), then build three iterative methods for the hard nonlinear case: Gradient Descent (post 02), Gauss-Newton (post 03) and Levenberg-Marquardt (post 04). In post 05, we run all three on a 2D pose graph with 400 robot poses and compare them on speed and accuracy.
+This series builds that idea from the ground up. We start with the words and the cost function (this post), solve the easy linear case in one shot (post 01a), see why the nonlinear case has no formula (post 01b), then build three iterative methods for the hard nonlinear case: Gradient Descent (post 02), Gauss-Newton (post 03) and Levenberg-Marquardt (post 04). In post 05, we run all three on a 2D pose graph with 400 robot poses and compare them on speed and accuracy.
 
 All code is plain Python with NumPy, SciPy and Matplotlib. Every number in the series comes from running these scripts.
 

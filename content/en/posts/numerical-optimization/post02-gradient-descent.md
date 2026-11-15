@@ -1,7 +1,7 @@
 ---
 title: "Post 02: Gradient Descent"
 date: 2026-11-10T11:00:00+03:00
-weight: 4
+weight: 5
 draft: true
 toc: false
 images:
@@ -14,7 +14,7 @@ tags:
   - slam
 ---
 
-At the end of [post 01](../post01-linear-vs-nonlinear-least-squares/), we saw that nonlinear least squares has no formula for the answer. We have to search: start somewhere, and improve step by step. The simplest search there is: look at which way is downhill, and take a step that way. That is **gradient descent** (GD). In this post, we derive it for least squares, add a line search so it never makes things worse, and watch it zig-zag down the curved valley of our range-only problem. Then we see exactly why it is slow.
+At the end of [post 01b](../post01b-nonlinear-least-squares/), we saw that nonlinear least squares has no formula for the answer. We have to search: start somewhere, and improve step by step. The simplest search there is: look at which way is downhill, and take a step that way. That is **gradient descent** (GD). In this post, we derive it for least squares, add a line search so it never makes things worse, and watch it zig-zag down the curved valley of our range-only problem. Then we see exactly why it is slow.
 
 ## What We Will Learn
 
@@ -59,7 +59,7 @@ $$
 
 With an information matrix, the cost is \(\frac{1}{2} \sum_i r_i^\top \Omega_i r_i\), and the same steps give \(g = J^\top \Omega\, r\) (where \(\Omega\) is block-diagonal with the \(\Omega_i\) on its diagonal). In code, we usually *whiten* the problem instead: multiply each residual and its Jacobian rows by \(\Omega_i^{1/2}\). Then \(\Omega\) disappears and every formula looks like the \(\Omega = I\) case. We will do that in post 05.
 
-Notice what we need: only the residuals and the Jacobian. We already have both from post 01. For our range-only problem, the gradient is one line:
+Notice what we need: only the residuals and the Jacobian. We already have both from post 01b. For our range-only problem, the gradient is one line:
 
 {{< code file="optimization/post02/gradient_descent.py" region="gradient" >}}
 
@@ -114,7 +114,7 @@ Stopping rules: we stop when the gradient is tiny (\(\lVert g \rVert_\infty < 10
 
 ## 4. GD on the Range-Only Problem
 
-We use the same four beacons and the same noisy ranges as in post 01, and start at \((-2, 8)\), far from the minimum at \((6.66, 5.34)\):
+We use the same four beacons and the same noisy ranges as in post 01b, and start at \((-2, 8)\), far from the minimum at \((6.66, 5.34)\):
 
 ```text {title="Output: gradient descent run"}
 start [-2.  8.], F = 7.5966
@@ -168,7 +168,7 @@ The prediction and the measurement agree well. The valley is 29 times steeper ac
 
 The beacon geometry causes this. All four beacons are on one side, so the ranges pin down the *distance* to them well, but the *direction* poorly. Bad geometry means a high condition number, and a high condition number means slow GD.
 
-**A second test: the line fit.** The condition number of the line fit was 223 in post 01. A well-known trick reduces it: center the input, \(t \to t - \bar{t}\).{{< sidenote >}}\(\bar t\) ("t bar") is the average of all the \(t_i\). Subtracting it slides the data so that it is centered on zero.{{< /sidenote >}} This does not change the problem (the fitted line is the same, only the intercept is measured at \(\bar t\) instead of at 0), but it makes the two columns of \(A\) uncorrelated:
+**A second test: the line fit.** The condition number of the line fit was 223 in post 01a. A well-known trick reduces it: center the input, \(t \to t - \bar{t}\).{{< sidenote >}}\(\bar t\) ("t bar") is the average of all the \(t_i\). Subtracting it slides the data so that it is centered on zero.{{< /sidenote >}} This does not change the problem (the fitted line is the same, only the intercept is measured at \(\bar t\) instead of at 0), but it makes the two columns of \(A\) uncorrelated:
 
 {{< code file="optimization/post02/gradient_descent.py" region="kappa" title="Raw vs centered line fit" >}}
 
@@ -197,5 +197,5 @@ python3 gradient_descent.py .
 * GD converges *linearly*: the cost gap shrinks by about the same factor each step, roughly \(((\kappa-1)/(\kappa+1))^2\). We predicted 0.871 and measured 0.865.
 * In a narrow valley (high condition number), GD zig-zags across instead of walking along. Our 2-variable problem needed 258 iterations; centering the line-fit data cut GD's iterations from 1601 to 67.
 
-**Previous:** [Post 01: Linear vs Nonlinear Least Squares](../post01-linear-vs-nonlinear-least-squares/)
+**Previous:** [Post 01b: Nonlinear Least Squares and Linearization](../post01b-nonlinear-least-squares/)
 **Next:** [Post 03: Gauss-Newton](../post03-gauss-newton/)

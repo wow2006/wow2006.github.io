@@ -1,7 +1,7 @@
 ---
 title: "Post 04: Levenberg-Marquardt"
 date: 2026-11-10T13:00:00+03:00
-weight: 6
+weight: 7
 draft: true
 toc: false
 images:
@@ -48,7 +48,7 @@ $$
 L(\delta) = \frac{1}{2} \lVert r + J\delta \rVert^2 .
 $$
 
-The trouble is that \(L\) is only a good model for *small* \(\delta\) (post 01: its error grows like \(\lVert\delta\rVert^2\)). GN ignores this and happily takes a 10 m step if the model says so.
+The trouble is that \(L\) is only a good model for *small* \(\delta\) (post 01b: its error grows like \(\lVert\delta\rVert^2\)). GN ignores this and happily takes a 10 m step if the model says so.
 
 Levenberg's idea (1944) was simple: keep the model, but add a cost for long steps:{{< sidenote >}}\(\min_\delta\) means "find the \(\delta\) that makes this as small as possible".{{< /sidenote >}}
 
@@ -208,7 +208,7 @@ case B (bad range): LM 28 iterations (25 accepted), x = [7.4584 5.9917], F = 6.2
 
 LM converges to the same minimum as SciPy. Near that minimum, GN's local rate was 1.039 (post 03): pure GN steps make the error slightly *bigger* each time. LM's gain ratio sees the cost go up, raises \(\lambda\), and the damped steps converge. The extra 15 iterations compared with the clean case are the cost of fighting a large-residual problem; but the answer is correct, and the cost never increased on the way.
 
-One thing LM does *not* fix: wrong basins. Like GN and GD, it finds the minimum of the valley it starts in. With two beacons (post 01), starting below them still leads to the mirror solution. Damping makes the search safe, not global.
+One thing LM does *not* fix: wrong basins. Like GN and GD, it finds the minimum of the valley it starts in. With two beacons (post 01b), starting below them still leads to the mirror solution. Damping makes the search safe, not global.
 
 ## 10. The Full Program
 

@@ -157,7 +157,7 @@ python3 line_fit.py .
 | \(r_i(x) = h_i(x) - z_i\) | الباقي (المتوقَّع ناقص المَقيس)؛ وبعد الرصّ: \(r(x) \in \mathbb{R}^m\) |
 | \(\Omega_i = \Sigma_i^{-1}\) | مصفوفة المعلومات (معكوس مصفوفة التغاير) |
 | \(F(x) = \frac{1}{2}\sum_i r_i^\top \Omega_i r_i\) | التكلفة؛ \(= \frac{1}{2}\lVert r \rVert^2\) عندما يكون \(\Omega = I\) |
-| \(J = \partial r / \partial x\) | المصفوفة اليعقوبية {{< en >}}(Jacobian){{< /en >}}، وهي مصفوفة \(m \times n\) (المقال 01) |
+| \(J = \partial r / \partial x\) | المصفوفة اليعقوبية {{< en >}}(Jacobian){{< /en >}}، وهي مصفوفة \(m \times n\) (المقال 01b) |
 | \(g = J^\top \Omega r\) | تدرّج الدالة \(F\) (المقال 02) |
 | \(H = J^\top \Omega J\) | تقريب غاوس-نيوتن للمصفوفة الهيسية ({{< en >}}Hessian{{< /en >}}؛ المقال 03) |
 | \(x \leftarrow x + \delta\) | خطوة التحديث؛ وللوضعيات \(x \leftarrow x \boxplus \delta\)، مع التفاف الزاوية ({{< en >}}angle wrapping{{< /en >}}؛ المقال 05) |
@@ -208,4 +208,4 @@ python3 line_fit.py .
 {{< /quiz >}}
 
 **السابق:** [المقال 00أ: مسألة المربعات الصغرى، المصطلحات والتكلفة](/ar/posts/numerical-optimization/post00a-the-least-squares-problem/)
-**التالي:** [المقال 01: المربعات الصغرى الخطية وغير الخطية](/posts/numerical-optimization/post01-linear-vs-nonlinear-least-squares/) (بالإنجليزية)
+**التالي:** [المقال 01أ: المربعات الصغرى الخطية والمعادلات الناظمية](/ar/posts/numerical-optimization/post01a-linear-least-squares/)
