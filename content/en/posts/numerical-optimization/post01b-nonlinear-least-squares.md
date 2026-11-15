@@ -1,7 +1,7 @@
 ---
-title: "Post 01: Linear vs Nonlinear Least Squares"
-date: 2026-11-10T10:00:00+03:00
-weight: 3
+title: "Post 01b: Nonlinear Least Squares and Linearization"
+date: 2026-11-10T10:30:00+03:00
+weight: 4
 draft: true
 toc: false
 images:
@@ -13,108 +13,22 @@ tags:
   - python
   - slam
 ---
-
-In [post 00a](../post00a-the-least-squares-problem/) and [post 00b](../post00b-weights-constraints-and-a-first-fit/), we defined the cost \(F(x) = \frac{1}{2}\lVert r(x) \rVert^2\) and fitted a line, but we let NumPy find the answer for us.{{< sidenote >}}Reminder from post 00: \(x\) is the list of unknowns we want to find, \(r(x)\) the list of residuals (predicted minus measured), and \(F\) the cost: one number that says how bad a guess is.{{< /sidenote >}}{{< sidenote >}}\(\lVert r \rVert\) is the length of the list \(r\), so \(\lVert r \rVert^2\) means "square every residual and add them up". The \(\frac{1}{2}\) only makes derivatives tidier; it does not move the minimum.{{< /sidenote >}} In this post, we find it ourselves. When the residuals are *linear* in \(x\), there is a formula that gives the exact answer in one step. When they are *nonlinear*, there is no such formula, and we need a new tool: linearization. That tool is the bridge to every method in the rest of the series.
+This is part two of post 01. In [post 01a](../post01a-linear-least-squares/), we solved linear least squares, \(r(x) = Ax - b\), in one step with the normal equations \(A^\top A x = A^\top b\). Here the residuals become *nonlinear* in \(x\), that formula is gone, and we need a new tool: linearization. That tool is the bridge to every method in the rest of the series.
 
 ## What We Will Learn
 
-* What makes a least-squares problem linear or nonlinear.
-* How to derive the normal equations \(A^\top A x = A^\top b\), and why we solve them with Cholesky or QR instead of a matrix inverse.{{< sidenote >}}\(A^\top\) ("A transpose") is the table \(A\) turned on its side: its rows become columns.{{< /sidenote >}}
-* What a condition number is, and why \(A^\top A\) squares it.
 * A nonlinear robotics example: finding a robot from noisy distances to beacons.
+* Why nonlinear least squares has no formula, and what its cost looks like.
 * The Jacobian, and the first-order Taylor approximation \(r(x + \delta) \approx r(x) + J\delta\).{{< sidenote >}}The Jacobian \(J\) is a table of slopes: how much each residual changes when we nudge each unknown.{{< /sidenote >}}{{< sidenote >}}\(\delta\) (delta) is a small step, a change we add to \(x\). \(\approx\) means "approximately equal".{{< /sidenote >}}
 
 ## Table of Contents
 
-1. Linear Least Squares.
-2. The Normal Equations.
-3. Solving Them Well: Cholesky, QR and Conditioning.
 4. A Nonlinear Problem: Range-Only Localization.
 5. Why There Is No Formula.
 6. Pictures: a Bowl vs a Curved Valley.
 7. The Bridge: Linearize, Then Solve.
-8. The Full Program.
 
 ---
-
-## 1. Linear Least Squares
-
-A problem is **linear least squares** when every residual is a linear function of the state. Then we can write all of them at once with one matrix:
-
-$$
-r(x) = A x - b,
-$$
-
-where \(A\) is an \(m \times n\) matrix and \(b\) is a vector of \(m\) numbers.{{< sidenote >}}An \(m \times n\) matrix is a table of numbers with \(m\) rows and \(n\) columns: here, one row per measurement and one column per unknown.{{< /sidenote >}} Both are known and fixed.
-
-The line fit from post 00 is linear. Its residual is \(r_i = a\, t_i + b_{\text{line}} - z_i\), and the state is \(x = (a, b_{\text{line}})\).{{< sidenote >}}The small \(i\) is a counter, like a seat number: \(r_1\) belongs to the first point, \(r_2\) to the second, and so on.{{< /sidenote >}} (Sorry for the two \(b\)'s: in this section, \(b\) without a label is the vector on the right side, and the intercept is \(b_{\text{line}}\).) Row \(i\) of \(A\) is \([\,t_i,\ 1\,]\), and the vector \(b\) is just the measurements \(z\):
-
-$$
-A = \begin{bmatrix} t_1 & 1 \\ t_2 & 1 \\ \vdots & \vdots \\ t_m & 1 \end{bmatrix}, \qquad
-b = \begin{bmatrix} z_1 \\ z_2 \\ \vdots \\ z_m \end{bmatrix}.
-$$
-
-Note that "linear" is about \(x\), not about the data. We could fit a parabola \(a t^2 + b_{\text{line}} t + c\) and it would still be linear least squares, because the unknowns \(a, b_{\text{line}}, c\) appear only multiplied by known numbers.
-
-## 2. The Normal Equations
-
-Let us write out the cost:
-
-$$
-F(x) = \frac{1}{2}(Ax - b)^\top (Ax - b) = \frac{1}{2} x^\top A^\top A\, x - b^\top A\, x + \frac{1}{2} b^\top b .
-$$
-
-This is a **quadratic** function of \(x\): it has a squared term, a linear term, and a constant. In one dimension, that is a parabola. In two dimensions, it is a bowl.
-
-At the bottom of a smooth bowl, the slope is zero in every direction. The slope of \(F\) is its gradient, the vector of partial derivatives.{{< sidenote >}}We write the gradient as \(\nabla F\) ("nabla F"). For each unknown, it says how fast the cost rises if we nudge that one; all together, it points uphill.{{< /sidenote >}} Taking the derivative of each term:
-
-$$
-\nabla F(x) = A^\top A\, x - A^\top b .
-$$
-
-Setting it to zero gives the **normal equations**:
-
-$$
-\boxed{A^\top A\, x = A^\top b}
-$$
-
-This is an ordinary \(n \times n\) linear system. Solve it, and we have the exact minimum. No iterations, no starting guess.
-
-Is it really a minimum and not a maximum? The second derivative of \(F\) (the *Hessian*) is \(A^\top A\). For any vector \(v\), \(v^\top A^\top A v = \lVert A v \rVert^2 \ge 0\), so the bowl always opens upward. If the columns of \(A\) are independent, it is strictly positive, and the minimum is unique.
-
-The name "normal" comes from geometry. At the solution, the residual \(Ax - b\) is perpendicular (normal) to every column of \(A\): that is exactly what \(A^\top (Ax - b) = 0\) says. For the line fit, the column of ones gives \(\sum_i r_i = 0\), which is the check we used in post 00.{{< sidenote >}}\(\sum_i\) (a capital Greek sigma) just means "add them all up": \(\sum_i r_i = r_1 + r_2 + \dots + r_m\).{{< /sidenote >}}
-
-## 3. Solving Them Well: Cholesky, QR and Conditioning
-
-The formula \(x = (A^\top A)^{-1} A^\top b\) is correct on paper, but we should never compute the inverse in code.{{< sidenote >}}\(^{-1}\) means inverse. For a number, it is "one over": \(4^{-1} = 1/4\). For a matrix, it is the matrix that undoes it, the matrix version of dividing.{{< /sidenote >}} It is slower and less accurate than solving the system directly. There are two standard ways.
-
-**Cholesky.** \(A^\top A\) is symmetric and positive definite, so it can be factored as \(A^\top A = L L^\top\), where \(L\) is lower-triangular. Then we solve two triangular systems, which is cheap. This is the fastest method, and it is what large solvers (g2o, Ceres, GTSAM) use, in a sparse form.
-
-**QR.** Factor \(A\) itself as \(A = QR\), where \(Q\) has orthonormal columns and \(R\) is upper-triangular. Then \(\lVert Ax - b \rVert = \lVert Rx - Q^\top b \rVert\) (plus a part that does not depend on \(x\)), and the solution is \(R x = Q^\top b\). QR never builds \(A^\top A\). This matters because of conditioning.
-
-**Conditioning.** The **condition number** \(\kappa\) of a matrix is the ratio of its largest to its smallest stretching factor (singular value). It tells us how much small errors in the input, like rounding, can grow in the output. A rule of thumb: with \(\kappa = 10^k\), we can lose about \(k\) digits of accuracy. And here is the catch:
-
-$$
-\kappa(A^\top A) = \kappa(A)^2 .
-$$
-
-Forming \(A^\top A\) squares the condition number. If \(\kappa(A) = 10^6\), Cholesky on the normal equations can lose 12 of the 16 digits a double has, while QR loses about 6. For well-conditioned problems, Cholesky is fine and faster. For badly conditioned ones, QR (or SVD) is safer.
-
-Here is the line fit, solved both ways:
-
-{{< code file="optimization/post01/linear_vs_nonlinear.py" region="linear" title="Line fit via Cholesky and QR" >}}
-
-Output:
-
-```text {title="Output: Cholesky vs QR"}
-line fit, Cholesky : [0.796935 1.583263]
-line fit, QR       : [0.796935 1.583263]
-numpy lstsq        : [0.796935 1.583263]
-cond(A)      = 14.9
-cond(A^T A)  = 223.2   (= cond(A)^2 = 223.2)
-```
-
-All three agree, and the script `assert`s that they match to \(10^{-10}\). The condition number of \(A^\top A\) is exactly the square of the condition number of \(A\). Here 223 is harmless, but remember this number: in post 02, it will decide how slow gradient descent is.
 
 ## 4. A Nonlinear Problem: Range-Only Localization
 
@@ -168,6 +82,16 @@ The best way to feel the difference is to draw \(F\) as a contour map, like a hi
 
 **(c) Nonlinear, only 2 beacons.** Two circles cross at two points, so there are two positions that fit both ranges perfectly: \((6.81, 5.26)\) and its mirror image \((6.81, -5.26)\). The cost has **two minima**, and which one we find depends on where we start. A linear problem can never do this: a bowl has one bottom.
 
+Try it yourself: drag the robot and the beacons, switch between 4 and 2 beacons, and show the rows of the Jacobian (section 7) to see why the valley is flat sideways.
+
+<details><summary style="cursor:pointer;margin:.5em 0">Interactive: range-only localization, live</summary>
+
+<iframe src="/tools/range-only-explorer/" title="Interactive range-only localization: drag the robot and beacons, and watch the range circles, the cost and its minima" style="width:100%;height:1250px;border:0" loading="lazy"></iframe>
+
+<p><a href="/tools/range-only-explorer/">Open the range-only explorer in its own page</a>.</p>
+
+</details>
+
 In short, nonlinear least squares can have curved valleys, flat regions, and several minima. Our methods will only promise to find a *local* minimum, the bottom of the valley we start in. A good starting guess matters.
 
 ![The Rosenbrock function: a long, curved, banana-shaped valley, with the paths of two coordinate-descent methods](/images/numerical-optimization/post01/rosenbrock_2d.png)
@@ -178,7 +102,7 @@ In short, nonlinear least squares can have curved valleys, flat regions, and sev
 
 ## 7. The Bridge: Linearize, Then Solve
 
-We cannot solve the nonlinear problem directly, but we *can* solve linear ones (section 2). So here is the plan: near the current guess \(x\), pretend the problem is linear.
+We cannot solve the nonlinear problem directly, but we *can* solve linear ones ([post 01a](../post01a-linear-least-squares/)). So here is the plan: near the current guess \(x\), pretend the problem is linear.
 
 The **Jacobian** \(J\) is the matrix of all first derivatives of the residuals:
 
@@ -208,6 +132,10 @@ The right side is **linear** in \(\delta\). How good is it? The script measures 
 
 Each time the step gets 10 times smaller, the error gets 100 times smaller. The error shrinks like \(\lVert\delta\rVert^2\), which is what "first-order" means: the linear model is very good for small steps, and worse for big ones.
 
+![(a) The residual of beacon 1 along a straight line through the current guess, with its tangent: they agree near the guess and drift apart further away, the gap shaded. (b) The linearization error against the step size on log-log axes: a straight line of slope 2 through the four printed values](/images/numerical-optimization/post01/linearization.png)
+
+*(a) Walking along one direction from the current guess, the true residual (blue) bends, while the linear model (dashed) is its tangent and stays straight. Close to the guess they agree; a few meters away they are far apart. (b) The same gap, for the whole residual vector, on log-log axes: a straight line of slope 2, through the four numbers printed above.*
+
 Now put the linear model into the cost:
 
 $$
@@ -216,20 +144,69 @@ $$
 
 Look closely: this is a **linear least-squares problem in \(\delta\)**, with \(A = J\) and \(b = -r(x)\). We already know how to solve it in one shot. So we can: linearize at \(x\), solve for the best \(\delta\), move to \(x + \delta\), linearize again, and repeat. That is the Gauss-Newton method of post 03. Before that, post 02 looks at the simplest idea of all: just walk downhill.
 
-## 8. The Full Program
+Both halves of this section, live: shrink the step and watch the gap fall like \(\lVert\delta\rVert^2\), then let the linear model choose a step, and see it overshoot from a far start.
 
-{{< code file="optimization/post01/linear_vs_nonlinear.py" title="Full linear vs nonlinear program" >}}
+<details><summary style="cursor:pointer;margin:.5em 0">Interactive: linearize, then solve</summary>
 
-```bash
-python3 linear_vs_nonlinear.py .
-```
+<iframe src="/tools/range-only-explorer/linearization.html" title="Interactive linearization: the tangent and its error, then the linear model's contours and the step to its minimum" style="width:100%;height:1750px;border:0" loading="lazy"></iframe>
+
+<p><a href="/tools/range-only-explorer/linearization.html">Open the linearization explorer in its own page</a>.</p>
+
+</details>
+
+The full program for both parts of post 01 is at the end of [post 01a](../post01a-linear-least-squares/#4-the-full-program).
 
 ## Key Takeaways
 
-* Linear least squares (\(r = Ax - b\)) has a quadratic bowl as its cost and is solved in one step by the normal equations \(A^\top A x = A^\top b\).
-* Solve them with Cholesky (fast) or QR (more accurate), never with an explicit inverse. Forming \(A^\top A\) squares the condition number: 14.9 became 223.2 in our line fit.
 * Nonlinear least squares, like range-only localization, has no closed-form answer, and its cost can have curved valleys and several minima.
 * The Jacobian \(J = \partial r / \partial x\) gives the linear model \(r(x + \delta) \approx r(x) + J\delta\), with an error that shrinks like \(\lVert\delta\rVert^2\). That turns one hard nonlinear problem into a series of easy linear ones.
 
-**Previous:** [Post 00b: Weights, Constraints and a First Fit](../post00b-weights-constraints-and-a-first-fit/)
+{{< quiz >}}
+- q: 'Why is the range residual \(r_i(p) = \lVert p - b_i \rVert - z_i\) nonlinear in \(p\)?'
+  options:
+    - 'Because the beacon positions \(b_i\) are noisy.'
+    - 'Because the unknowns \(p_x, p_y\) are inside a square root, so it cannot be written as \(Ap - b\).'
+    - 'Because there are four beacons.'
+  answer: 1
+- q: 'What is row \(i\) of the Jacobian for range-only localization?'
+  options:
+    - 'The unit vector \((p - b_i)^\top / \lVert p - b_i \rVert\), pointing from beacon \(i\) to the robot.'
+    - 'The beacon position \(b_i\).'
+    - 'The measured distance \(z_i\).'
+  answer: 0
+  explain: 'Moving the robot along this direction changes the distance fastest; moving it sideways barely changes it.'
+- q: 'Why is the 4-beacon cost a long, curved valley instead of a round bowl?'
+  options:
+    - 'Because the noise is too large.'
+    - 'Because the beacons are all far away in one direction: moving sideways, along a circle around them, barely changes any distance.'
+    - 'Because the robot is outside the room.'
+  answer: 1
+  explain: 'Toward or away from the beacons, all distances change and the cost rises fast. The valley bends because the circle bends.'
+- q: 'With only 2 beacons, the cost has two minima. Which one does a search find?'
+  options:
+    - 'Always the true robot position.'
+    - 'Always the one with the lower cost.'
+    - 'It depends on where the search starts.'
+  answer: 2
+  explain: 'Our methods only promise a *local* minimum, the bottom of the valley we start in. A linear problem can never do this: a bowl has one bottom.'
+- q: 'Halving the step \(\lVert\delta\rVert\) shrinks the linearization error \(\lVert r(x+\delta) - (r(x) + J\delta) \rVert\) by about how much?'
+  options: ['2 times', '4 times', '10 times', 'Not at all']
+  answer: 1
+  explain: 'The error shrinks like \(\lVert\delta\rVert^2\). In the script, 10 times smaller steps gave 100 times smaller errors.'
+- q: 'Putting the linear model into the cost gives \(\frac{1}{2}\lVert r(x) + J\delta \rVert^2\). What kind of problem is this in \(\delta\)?'
+  options:
+    - 'Nonlinear least squares, as hard as before.'
+    - 'Linear least squares, with \(A = J\) and \(b = -r(x)\), solvable in one step.'
+    - 'A problem with no minimum.'
+  answer: 1
+  explain: 'Linearize, solve for \(\delta\), step, and repeat: that is Gauss-Newton (post 03).'
+- q: 'Why not use the classic trilateration trick (subtract squared ranges to get a linear system) as the final answer?'
+  options:
+    - 'It only works in 3D.'
+    - 'It minimizes a different cost and weights the noise wrongly; it is good only as a first guess.'
+    - 'It needs at least 10 beacons.'
+  answer: 1
+{{< /quiz >}}
+
+**Previous:** [Post 01a: Linear Least Squares and the Normal Equations](../post01a-linear-least-squares/)
 **Next:** [Post 02: Gradient Descent](../post02-gradient-descent/)
