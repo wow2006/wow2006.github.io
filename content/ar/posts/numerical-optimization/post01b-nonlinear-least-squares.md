@@ -2,7 +2,6 @@
 title: "المقال 01ب: المربعات الصغرى غير الخطية والتقريب الخطي"
 date: 2026-11-10T10:30:00+03:00
 weight: 4
-draft: true
 toc: false
 images:
 math: true

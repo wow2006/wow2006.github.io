@@ -2,7 +2,6 @@
 title: "Post 01a: Linear Least Squares and the Normal Equations"
 date: 2026-11-10T10:00:00+03:00
 weight: 3
-draft: true
 toc: false
 images:
 math: true
